@@ -1,4 +1,7 @@
-package org.apache.commons.csv;
+package org.apache.commons.csv.format;
+
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

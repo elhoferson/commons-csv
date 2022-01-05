@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;

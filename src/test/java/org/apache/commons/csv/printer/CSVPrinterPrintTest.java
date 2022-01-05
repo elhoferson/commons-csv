@@ -2,6 +2,7 @@ package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.*;
 import org.apache.commons.csv.enums.EmptyEnum;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.util.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;

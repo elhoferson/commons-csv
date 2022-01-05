@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.io.IOUtils;
 
 /**

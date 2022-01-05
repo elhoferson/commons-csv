@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.format;
+
+import org.apache.commons.csv.*;
 
 import static org.apache.commons.csv.Constants.BACKSLASH;
 import static org.apache.commons.csv.Constants.COMMA;

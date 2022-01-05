@@ -1,6 +1,5 @@
 package org.apache.commons.csv.format;
 
-import org.apache.commons.csv.CSVFormat;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.commons.csv.Constants.CR;

@@ -49,7 +49,7 @@ public final class ExtendedBufferedReader extends BufferedReader {
     /**
      * Created extended buffered reader using default buffer-size
      */
-    ExtendedBufferedReader(final Reader reader) {
+    public ExtendedBufferedReader(final Reader reader) {
         super(reader);
     }
 

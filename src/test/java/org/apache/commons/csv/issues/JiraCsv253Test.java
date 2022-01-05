@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;

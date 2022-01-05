@@ -17,6 +17,9 @@
 
 package org.apache.commons.csv;
 
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatBuilder;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -108,7 +111,7 @@ public final class CSVRecord implements Serializable, Iterable<String> {
      * @see #isMapped(String)
      * @see #isConsistent()
      * @see #getParser()
-     * @see CSVFormat.CSVFormatBuilder#setNullString(String)
+     * @see CSVFormatBuilder#setNullString(String)
      */
     public String get(final String name) {
         final Map<String, Integer> headerMap = getHeaderMapRaw();

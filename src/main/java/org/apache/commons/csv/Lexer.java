@@ -17,6 +17,8 @@
 
 package org.apache.commons.csv;
 
+import org.apache.commons.csv.format.CSVFormat;
+
 import static org.apache.commons.csv.Constants.BACKSPACE;
 import static org.apache.commons.csv.Constants.CR;
 import static org.apache.commons.csv.Constants.END_OF_STREAM;

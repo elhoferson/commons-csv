@@ -1,6 +1,5 @@
 package org.apache.commons.csv.format;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.enums.EmptyEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

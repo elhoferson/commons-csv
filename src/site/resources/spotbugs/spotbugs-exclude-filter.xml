@@ -29,7 +29,7 @@
 
   <!-- A format is immutable. -->
   <Match>
-    <Class name="org.apache.commons.csv.CSVFormat.CSVFormatPredefinedFormats" />
+    <Class name="org.apache.commons.csv.format.CSVFormat.CSVFormatPredefinedFormats" />
     <Method name="getFormat" />
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>

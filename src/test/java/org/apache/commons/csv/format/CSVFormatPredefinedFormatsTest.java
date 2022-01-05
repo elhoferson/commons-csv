@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.format;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link CSVFormatPredefinedFormats}.
  */
-public class CSVFormatCSVFormatPredefinedFormatsTest {
+public class CSVFormatPredefinedFormatsTest {
 
     private void test(final CSVFormat format, final String enumName) {
         assertEquals(format, CSVFormatPredefinedFormats.valueOf(enumName).getFormat());

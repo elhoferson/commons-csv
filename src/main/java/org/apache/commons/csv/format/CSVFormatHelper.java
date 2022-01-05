@@ -1,4 +1,4 @@
-package org.apache.commons.csv;
+package org.apache.commons.csv.format;
 
 import java.util.Objects;
 

@@ -17,7 +17,6 @@
 
 package org.apache.commons.csv.printer;
 
-import static org.apache.commons.csv.Constants.BACKSLASH;
 import static org.apache.commons.csv.Constants.CR;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,45 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.sql.BatchUpdateException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Vector;
 
 import org.apache.commons.csv.*;
-import org.apache.commons.csv.enums.EmptyEnum;
-import org.apache.commons.csv.util.Utils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.h2.tools.SimpleResultSet;
-import org.junit.jupiter.api.Disabled;
+import org.apache.commons.csv.format.CSVFormat;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -17,6 +17,8 @@
 
 package org.apache.commons.csv;
 
+import org.apache.commons.csv.format.CSVFormat;
+
 import static org.apache.commons.csv.Constants.CR;
 import static org.apache.commons.csv.Constants.LF;
 import static org.apache.commons.csv.Constants.SP;

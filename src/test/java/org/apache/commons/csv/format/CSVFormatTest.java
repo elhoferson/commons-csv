@@ -17,7 +17,7 @@
 
 package org.apache.commons.csv.format;
 
-import static org.apache.commons.csv.CSVFormat.RFC4180;
+import static org.apache.commons.csv.format.CSVFormat.RFC4180;
 import static org.apache.commons.csv.Constants.CRLF;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,8 +38,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Objects;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
