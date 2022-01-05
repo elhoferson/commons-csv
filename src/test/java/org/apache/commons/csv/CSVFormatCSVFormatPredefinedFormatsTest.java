@@ -22,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests {@link CSVFormat.Predefined}.
+ * Tests {@link CSVFormatPredefinedFormats}.
  */
-public class CSVFormatPredefinedTest {
+public class CSVFormatCSVFormatPredefinedFormatsTest {
 
     private void test(final CSVFormat format, final String enumName) {
-        assertEquals(format, CSVFormat.Predefined.valueOf(enumName).getFormat());
+        assertEquals(format, CSVFormatPredefinedFormats.valueOf(enumName).getFormat());
         assertEquals(format, CSVFormat.valueOf(enumName));
     }
 

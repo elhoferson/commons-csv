@@ -18,9 +18,7 @@
 package org.apache.commons.csv.format;
 
 import static org.apache.commons.csv.CSVFormat.RFC4180;
-import static org.apache.commons.csv.Constants.CR;
 import static org.apache.commons.csv.Constants.CRLF;
-import static org.apache.commons.csv.Constants.LF;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,14 +36,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Objects;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -226,8 +220,8 @@ public class CSVFormatTest {
     @Test
     public void testToStringAndWithCommentMarkerTakingCharacter() {
 
-        final CSVFormat.Predefined csvFormat_Predefined = CSVFormat.Predefined.Default;
-        final CSVFormat csvFormat = csvFormat_Predefined.getFormat();
+        final CSVFormatPredefinedFormats csvFormat_CSVFormat_PredefinedFormats = CSVFormatPredefinedFormats.Default;
+        final CSVFormat csvFormat = csvFormat_CSVFormat_PredefinedFormats.getFormat();
 
         assertNull(csvFormat.getEscapeCharacter());
         assertTrue(csvFormat.isQuoteCharacterSet());

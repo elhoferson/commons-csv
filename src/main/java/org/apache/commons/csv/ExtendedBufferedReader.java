@@ -33,7 +33,7 @@ import java.io.Reader;
  * {@link #read()}. This reader also tracks how many characters have been read with {@link #getPosition()}.
  * </p>
  */
-final class ExtendedBufferedReader extends BufferedReader {
+public final class ExtendedBufferedReader extends BufferedReader {
 
     /** The last char returned */
     private int lastChar = UNDEFINED;
@@ -149,7 +149,7 @@ final class ExtendedBufferedReader extends BufferedReader {
      * @return the next n characters.
      * @throws IOException If an I/O error occurs
      */
-    char[] lookAhead(final int n) throws IOException {
+    public char[] lookAhead(final int n) throws IOException {
         final char[] buf = new char[n];
         return lookAhead(buf);
     }
