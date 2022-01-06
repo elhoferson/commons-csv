@@ -164,7 +164,51 @@ import java.util.Set;
  */
 public final class CSVFormat implements Serializable {
 
-    public boolean isAllowDuplicateHeaderNames() {
+    private boolean allowDuplicateHeaderNames;
+
+    private boolean allowMissingColumnNames;
+
+    private boolean autoFlush;
+
+    private Character commentMarker; // null if commenting is disabled
+
+    private String delimiter;
+
+    private Character escapeCharacter; // null if escaping is disabled
+
+    private String[] header; // array of header column names
+
+    private String[] headerComments; // array of header comment lines
+
+    private boolean ignoreEmptyLines;
+
+    private boolean ignoreHeaderCase; // should ignore header names case
+
+    private boolean ignoreSurroundingSpaces; // Should leading/trailing spaces be ignored around values?
+
+    private String nullString; // the string to be used for null values
+
+    private Character quoteCharacter; // null if quoting is disabled
+
+    private String quotedNullString;
+
+    private QuoteMode quoteMode;
+
+    private String recordSeparator; // for outputs
+
+    private boolean skipHeaderRecord;
+
+    private boolean trailingDelimiter;
+
+    private boolean trim;
+
+    /**
+     * Returns true if and only if duplicate names are allowed in the headers.
+     *
+     * @return whether duplicate header names are allowed
+     * @since 1.7
+     */
+    public boolean getAllowDuplicateHeaderNames() {
         return allowDuplicateHeaderNames;
     }
 
@@ -172,7 +216,12 @@ public final class CSVFormat implements Serializable {
         this.allowDuplicateHeaderNames = allowDuplicateHeaderNames;
     }
 
-    public boolean isAllowMissingColumnNames() {
+    /**
+     * Specifies whether missing column names are allowed when parsing the header line.
+     *
+     * @return {@code true} if missing column names are allowed when parsing the header line, {@code false} to throw an {@link IllegalArgumentException}.
+     */
+    public boolean getAllowMissingColumnNames() {
         return allowMissingColumnNames;
     }
 
@@ -180,7 +229,13 @@ public final class CSVFormat implements Serializable {
         this.allowMissingColumnNames = allowMissingColumnNames;
     }
 
-    public boolean isAutoFlush() {
+    /**
+     * Returns whether to flush on close.
+     *
+     * @return whether to flush on close.
+     * @since 1.6
+     */
+    public boolean getAutoFlush() {
         return autoFlush;
     }
 
@@ -188,27 +243,90 @@ public final class CSVFormat implements Serializable {
         this.autoFlush = autoFlush;
     }
 
+    /**
+     * Returns the character marking the start of a line comment.
+     *
+     * @return the comment start marker, may be {@code null}
+     */
+    public Character getCommentMarker() {
+        return commentMarker;
+    }
+
     public void setCommentMarker(Character commentMarker) {
         this.commentMarker = commentMarker;
+    }
+
+    /**
+     * Returns the first character delimiting the values (typically ';', ',' or '\t').
+     *
+     * @return the first delimiter character.
+     * @deprecated Use {@link #getDelimiterString()}.
+     */
+    @Deprecated
+    public char getDelimiter() {
+        return delimiter.charAt(0);
+    }
+
+    /**
+     * Returns the character delimiting the values (typically ";", "," or "\t").
+     *
+     * @return the delimiter.
+     */
+    public String getDelimiterString() {
+        return delimiter;
     }
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
 
+    /**
+     * Returns the escape character.
+     *
+     * @return the escape character, may be {@code null}
+     */
+    public Character getEscapeCharacter() {
+        return escapeCharacter;
+    }
+
     public void setEscapeCharacter(Character escapeCharacter) {
         this.escapeCharacter = escapeCharacter;
+    }
+
+    /**
+     * Returns a copy of the header array.
+     *
+     * @return a copy of the header array; {@code null} if disabled, the empty array if to be read from the file
+     */
+    public String[] getHeader() {
+        return header != null ? header.clone() : null;
     }
 
     public void setHeader(String[] header) {
         this.header = header;
     }
 
+    /**
+     * Returns a copy of the header comment array.
+     *
+     * @return a copy of the header comment array; {@code null} if disabled.
+     */
+    public String[] getHeaderComments() {
+        return headerComments != null ? headerComments.clone() : null;
+    }
+
     public void setHeaderComments(String[] headerComments) {
         this.headerComments = headerComments;
     }
 
-    public boolean isIgnoreEmptyLines() {
+
+
+    /**
+     * Specifies whether empty lines between records are ignored when parsing input.
+     *
+     * @return {@code true} if empty lines between records are ignored, {@code false} if they are turned into empty records.
+     */
+    public boolean getIgnoreEmptyLines() {
         return ignoreEmptyLines;
     }
 
@@ -216,7 +334,15 @@ public final class CSVFormat implements Serializable {
         this.ignoreEmptyLines = ignoreEmptyLines;
     }
 
-    public boolean isIgnoreHeaderCase() {
+
+
+    /**
+     * Specifies whether header names will be accessed ignoring case.
+     *
+     * @return {@code true} if header names cases are ignored, {@code false} if they are case sensitive.
+     * @since 1.3
+     */
+    public boolean getIgnoreHeaderCase() {
         return ignoreHeaderCase;
     }
 
@@ -224,7 +350,14 @@ public final class CSVFormat implements Serializable {
         this.ignoreHeaderCase = ignoreHeaderCase;
     }
 
-    public boolean isIgnoreSurroundingSpaces() {
+
+
+    /**
+     * Specifies whether spaces around values are ignored when parsing input.
+     *
+     * @return {@code true} if spaces around values are ignored, {@code false} if they are treated as part of the value.
+     */
+    public boolean getIgnoreSurroundingSpaces() {
         return ignoreSurroundingSpaces;
     }
 
@@ -232,8 +365,30 @@ public final class CSVFormat implements Serializable {
         this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
     }
 
+    /**
+     * Gets the String to convert to and from {@code null}.
+     * <ul>
+     * <li><strong>Reading:</strong> Converts strings equal to the given {@code nullString} to {@code null} when reading records.</li>
+     * <li><strong>Writing:</strong> Writes {@code null} as the given {@code nullString} when writing records.</li>
+     * </ul>
+     *
+     * @return the String to convert to and from {@code null}. No substitution occurs if {@code null}
+     */
+    public String getNullString() {
+        return nullString;
+    }
+
     public void setNullString(String nullString) {
         this.nullString = nullString;
+    }
+
+    /**
+     * Returns the character used to encapsulate values containing special characters.
+     *
+     * @return the quoteChar character, may be {@code null}
+     */
+    public Character getQuoteCharacter() {
+        return quoteCharacter;
     }
 
     public void setQuoteCharacter(Character quoteCharacter) {
@@ -248,15 +403,40 @@ public final class CSVFormat implements Serializable {
         this.quotedNullString = quotedNullString;
     }
 
+    /**
+     * Returns the quote policy output fields.
+     *
+     * @return the quote policy
+     */
+    public QuoteMode getQuoteMode() {
+        return quoteMode;
+    }
+
     public void setQuoteMode(QuoteMode quoteMode) {
         this.quoteMode = quoteMode;
+    }
+
+    /**
+     * Returns the record separator delimiting output records.
+     *
+     * @return the record separator
+     */
+    public String getRecordSeparator() {
+        return recordSeparator;
     }
 
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
     }
 
-    public boolean isSkipHeaderRecord() {
+
+
+    /**
+     * Returns whether to skip the header record.
+     *
+     * @return whether to skip the header record.
+     */
+    public boolean getSkipHeaderRecord() {
         return skipHeaderRecord;
     }
 
@@ -264,7 +444,15 @@ public final class CSVFormat implements Serializable {
         this.skipHeaderRecord = skipHeaderRecord;
     }
 
-    public boolean isTrailingDelimiter() {
+
+
+    /**
+     * Returns whether to add a trailing delimiter.
+     *
+     * @return whether to add a trailing delimiter.
+     * @since 1.3
+     */
+    public boolean getTrailingDelimiter() {
         return trailingDelimiter;
     }
 
@@ -272,7 +460,13 @@ public final class CSVFormat implements Serializable {
         this.trailingDelimiter = trailingDelimiter;
     }
 
-    public boolean isTrim() {
+    /**
+     * Returns whether to trim leading and trailing blanks. This is used by {@link #print(Object, Appendable, boolean)} Also by
+     * {CSVParser#addRecordValue(boolean)}
+     *
+     * @return whether to trim leading and trailing blanks.
+     */
+    public boolean getTrim() {
         return trim;
     }
 
@@ -665,106 +859,6 @@ public final class CSVFormat implements Serializable {
             .build();
     // @formatter:on
 
-    /**
-     * Null-safe clone of an array.
-     *
-     * @param <T>    The array element type.
-     * @param values the source array
-     * @return the cloned array.
-     */
-    @SafeVarargs
-    static <T> T[] clone(final T... values) {
-        return values == null ? null : values.clone();
-    }
-
-    /**
-     * Creates a new CSV format with the specified delimiter.
-     *
-     * <p>
-     * Use this method if you want to create a CSVFormat from scratch. All fields but the delimiter will be initialized with null/false.
-     * </p>
-     *
-     * @param delimiter the char used for value separation, must not be a line break character
-     * @return a new CSV format.
-     * @throws IllegalArgumentException if the delimiter is a line break character
-     *
-     * @see #DEFAULT
-     * @see #RFC4180
-     * @see #MYSQL
-     * @see #EXCEL
-     * @see #TDF
-     */
-    public static CSVFormat newFormat(final char delimiter) {
-        return new CSVFormat(String.valueOf(delimiter), null, null, null, null, false, false, null, null, null, null, false, false, false, false, false, false,
-                true);
-    }
-
-    static CharSequence trim(final CharSequence charSequence) {
-        if (charSequence instanceof String) {
-            return ((String) charSequence).trim();
-        }
-        final int count = charSequence.length();
-        int len = count;
-        int pos = 0;
-
-        while (pos < len && charSequence.charAt(pos) <= SP) {
-            pos++;
-        }
-        while (pos < len && charSequence.charAt(len - 1) <= SP) {
-            len--;
-        }
-        return pos > 0 || len < count ? charSequence.subSequence(pos, len) : charSequence;
-    }
-
-    /**
-     * Gets one of the predefined formats from {@link CSVFormatPredefinedFormats}.
-     *
-     * @param format name
-     * @return one of the predefined formats
-     * @since 1.2
-     */
-    public static CSVFormat valueOf(final String format) {
-        return CSVFormatPredefinedFormats.valueOf(format).getFormat();
-    }
-
-    private boolean allowDuplicateHeaderNames;
-
-    private boolean allowMissingColumnNames;
-
-    private boolean autoFlush;
-
-    private Character commentMarker; // null if commenting is disabled
-
-    private String delimiter;
-
-    private Character escapeCharacter; // null if escaping is disabled
-
-    private String[] header; // array of header column names
-
-    private String[] headerComments; // array of header comment lines
-
-    private boolean ignoreEmptyLines;
-
-    private boolean ignoreHeaderCase; // should ignore header names case
-
-    private boolean ignoreSurroundingSpaces; // Should leading/trailing spaces be ignored around values?
-
-    private String nullString; // the string to be used for null values
-
-    private Character quoteCharacter; // null if quoting is disabled
-
-    private String quotedNullString;
-
-    private QuoteMode quoteMode;
-
-    private String recordSeparator; // for outputs
-
-    private boolean skipHeaderRecord;
-
-    private boolean trailingDelimiter;
-
-    private boolean trim;
-
     public CSVFormat(final CSVFormatBuilder CSVFormatBuilder) {
         this.setDelimiter(CSVFormatBuilder.getDelimiter());
         this.setQuoteCharacter(CSVFormatBuilder.getQuoteCharacter());
@@ -881,14 +975,14 @@ public final class CSVFormat implements Serializable {
             return false;
         }
         final CSVFormat other = (CSVFormat) obj;
-        return isAllowDuplicateHeaderNames() == other.isAllowDuplicateHeaderNames() && isAllowMissingColumnNames() == other.isAllowMissingColumnNames() &&
-                isAutoFlush() == other.isAutoFlush() && Objects.equals(getCommentMarker(), other.getCommentMarker()) && Objects.equals(getDelimiter(), other.getDelimiter()) &&
+        return getAllowDuplicateHeaderNames() == other.getAllowDuplicateHeaderNames() && getAllowMissingColumnNames() == other.getAllowMissingColumnNames() &&
+                getAutoFlush() == other.getAutoFlush() && Objects.equals(getCommentMarker(), other.getCommentMarker()) && Objects.equals(getDelimiter(), other.getDelimiter()) &&
                 Objects.equals(getEscapeCharacter(), other.getEscapeCharacter()) && Arrays.equals(getHeader(), other.getHeader()) &&
-                Arrays.equals(getHeaderComments(), other.getHeaderComments()) && isIgnoreEmptyLines() == other.isIgnoreEmptyLines() &&
-                isIgnoreHeaderCase() == other.isIgnoreHeaderCase() && isIgnoreSurroundingSpaces() == other.isIgnoreSurroundingSpaces() &&
+                Arrays.equals(getHeaderComments(), other.getHeaderComments()) && getIgnoreEmptyLines() == other.getIgnoreEmptyLines() &&
+                getIgnoreHeaderCase() == other.getIgnoreHeaderCase() && getIgnoreSurroundingSpaces() == other.getIgnoreSurroundingSpaces() &&
                 Objects.equals(getNullString(), other.getNullString()) && Objects.equals(getQuoteCharacter(), other.getQuoteCharacter()) && getQuoteMode() == other.getQuoteMode() &&
                 Objects.equals(getQuotedNullString(), other.getQuotedNullString()) && Objects.equals(getRecordSeparator(), other.getRecordSeparator()) &&
-                isSkipHeaderRecord() == other.isSkipHeaderRecord() && isTrailingDelimiter() == other.isTrailingDelimiter() && isTrim() == other.isTrim();
+                getSkipHeaderRecord() == other.getSkipHeaderRecord() && getTrailingDelimiter() == other.getTrailingDelimiter() && getTrim() == other.getTrim();
     }
 
     /**
@@ -910,197 +1004,15 @@ public final class CSVFormat implements Serializable {
         }
     }
 
-    /**
-     * Returns true if and only if duplicate names are allowed in the headers.
-     *
-     * @return whether duplicate header names are allowed
-     * @since 1.7
-     */
-    public boolean getAllowDuplicateHeaderNames() {
-        return isAllowDuplicateHeaderNames();
-    }
-
-    /**
-     * Specifies whether missing column names are allowed when parsing the header line.
-     *
-     * @return {@code true} if missing column names are allowed when parsing the header line, {@code false} to throw an {@link IllegalArgumentException}.
-     */
-    public boolean getAllowMissingColumnNames() {
-        return isAllowMissingColumnNames();
-    }
-
-    /**
-     * Returns whether to flush on close.
-     *
-     * @return whether to flush on close.
-     * @since 1.6
-     */
-    public boolean getAutoFlush() {
-        return isAutoFlush();
-    }
-
-    /**
-     * Returns the character marking the start of a line comment.
-     *
-     * @return the comment start marker, may be {@code null}
-     */
-    public Character getCommentMarker() {
-        return commentMarker;
-    }
-
-    /**
-     * Returns the first character delimiting the values (typically ';', ',' or '\t').
-     *
-     * @return the first delimiter character.
-     * @deprecated Use {@link #getDelimiterString()}.
-     */
-    @Deprecated
-    public char getDelimiter() {
-        return delimiter.charAt(0);
-    }
-
-    /**
-     * Returns the character delimiting the values (typically ";", "," or "\t").
-     *
-     * @return the delimiter.
-     */
-    public String getDelimiterString() {
-        return delimiter;
-    }
-
-    /**
-     * Returns the escape character.
-     *
-     * @return the escape character, may be {@code null}
-     */
-    public Character getEscapeCharacter() {
-        return escapeCharacter;
-    }
-
-    /**
-     * Returns a copy of the header array.
-     *
-     * @return a copy of the header array; {@code null} if disabled, the empty array if to be read from the file
-     */
-    public String[] getHeader() {
-        return header != null ? header.clone() : null;
-    }
-
-    /**
-     * Returns a copy of the header comment array.
-     *
-     * @return a copy of the header comment array; {@code null} if disabled.
-     */
-    public String[] getHeaderComments() {
-        return headerComments != null ? headerComments.clone() : null;
-    }
-
-    /**
-     * Specifies whether empty lines between records are ignored when parsing input.
-     *
-     * @return {@code true} if empty lines between records are ignored, {@code false} if they are turned into empty records.
-     */
-    public boolean getIgnoreEmptyLines() {
-        return isIgnoreEmptyLines();
-    }
-
-    /**
-     * Specifies whether header names will be accessed ignoring case.
-     *
-     * @return {@code true} if header names cases are ignored, {@code false} if they are case sensitive.
-     * @since 1.3
-     */
-    public boolean getIgnoreHeaderCase() {
-        return isIgnoreHeaderCase();
-    }
-
-    /**
-     * Specifies whether spaces around values are ignored when parsing input.
-     *
-     * @return {@code true} if spaces around values are ignored, {@code false} if they are treated as part of the value.
-     */
-    public boolean getIgnoreSurroundingSpaces() {
-        return isIgnoreSurroundingSpaces();
-    }
-
-    /**
-     * Gets the String to convert to and from {@code null}.
-     * <ul>
-     * <li><strong>Reading:</strong> Converts strings equal to the given {@code nullString} to {@code null} when reading records.</li>
-     * <li><strong>Writing:</strong> Writes {@code null} as the given {@code nullString} when writing records.</li>
-     * </ul>
-     *
-     * @return the String to convert to and from {@code null}. No substitution occurs if {@code null}
-     */
-    public String getNullString() {
-        return nullString;
-    }
-
-    /**
-     * Returns the character used to encapsulate values containing special characters.
-     *
-     * @return the quoteChar character, may be {@code null}
-     */
-    public Character getQuoteCharacter() {
-        return quoteCharacter;
-    }
-
-    /**
-     * Returns the quote policy output fields.
-     *
-     * @return the quote policy
-     */
-    public QuoteMode getQuoteMode() {
-        return quoteMode;
-    }
-
-    /**
-     * Returns the record separator delimiting output records.
-     *
-     * @return the record separator
-     */
-    public String getRecordSeparator() {
-        return recordSeparator;
-    }
-
-    /**
-     * Returns whether to skip the header record.
-     *
-     * @return whether to skip the header record.
-     */
-    public boolean getSkipHeaderRecord() {
-        return isSkipHeaderRecord();
-    }
-
-    /**
-     * Returns whether to add a trailing delimiter.
-     *
-     * @return whether to add a trailing delimiter.
-     * @since 1.3
-     */
-    public boolean getTrailingDelimiter() {
-        return isTrailingDelimiter();
-    }
-
-    /**
-     * Returns whether to trim leading and trailing blanks. This is used by {@link #print(Object, Appendable, boolean)} Also by
-     * {CSVParser#addRecordValue(boolean)}
-     *
-     * @return whether to trim leading and trailing blanks.
-     */
-    public boolean getTrim() {
-        return isTrim();
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.hashCode(getHeader());
         result = prime * result + Arrays.hashCode(getHeaderComments());
-        return prime * result + Objects.hash(isAllowDuplicateHeaderNames(), isAllowMissingColumnNames(), isAutoFlush(), getCommentMarker(), getDelimiter(), getEscapeCharacter(),
-                isIgnoreEmptyLines(), isIgnoreHeaderCase(), isIgnoreSurroundingSpaces(), getNullString(), getQuoteCharacter(), getQuoteMode(), getQuotedNullString(), getRecordSeparator(),
-                isSkipHeaderRecord(), isTrailingDelimiter(), isTrim());
+        return prime * result + Objects.hash(getAllowDuplicateHeaderNames(), getAllowMissingColumnNames(), getAutoFlush(), getCommentMarker(), getDelimiter(), getEscapeCharacter(),
+                getIgnoreEmptyLines(), getIgnoreHeaderCase(), getIgnoreSurroundingSpaces(), getNullString(), getQuoteCharacter(), getQuoteMode(), getQuotedNullString(), getRecordSeparator(),
+                getSkipHeaderRecord(), getTrailingDelimiter(), getTrim());
     }
 
     /**
@@ -1653,7 +1565,7 @@ public final class CSVFormat implements Serializable {
         if (getIgnoreHeaderCase()) {
             sb.append(" IgnoreHeaderCase:ignored");
         }
-        sb.append(" SkipHeaderRecord:").append(isSkipHeaderRecord());
+        sb.append(" SkipHeaderRecord:").append(getSkipHeaderRecord());
         if (getHeaderComments() != null) {
             sb.append(' ');
             sb.append("HeaderComments:").append(Arrays.toString(getHeaderComments()));
@@ -1700,7 +1612,7 @@ public final class CSVFormat implements Serializable {
         }
 
         // validate header
-        if (getHeader() != null && !isAllowDuplicateHeaderNames()) {
+        if (getHeader() != null && !getAllowDuplicateHeaderNames()) {
             final Set<String> dupCheck = new HashSet<>();
             for (final String hdr : getHeader()) {
                 if (!dupCheck.add(hdr)) {
@@ -1708,6 +1620,68 @@ public final class CSVFormat implements Serializable {
                 }
             }
         }
+    }
+
+    /**
+     * Null-safe clone of an array.
+     *
+     * @param <T>    The array element type.
+     * @param values the source array
+     * @return the cloned array.
+     */
+    @SafeVarargs
+    static <T> T[] clone(final T... values) {
+        return values == null ? null : values.clone();
+    }
+
+    /**
+     * Creates a new CSV format with the specified delimiter.
+     *
+     * <p>
+     * Use this method if you want to create a CSVFormat from scratch. All fields but the delimiter will be initialized with null/false.
+     * </p>
+     *
+     * @param delimiter the char used for value separation, must not be a line break character
+     * @return a new CSV format.
+     * @throws IllegalArgumentException if the delimiter is a line break character
+     *
+     * @see #DEFAULT
+     * @see #RFC4180
+     * @see #MYSQL
+     * @see #EXCEL
+     * @see #TDF
+     */
+    public static CSVFormat newFormat(final char delimiter) {
+        return new CSVFormat(String.valueOf(delimiter), null, null, null, null, false, false, null, null, null, null, false, false, false, false, false, false,
+                true);
+    }
+
+    static CharSequence trim(final CharSequence charSequence) {
+        if (charSequence instanceof String) {
+            return ((String) charSequence).trim();
+        }
+        final int count = charSequence.length();
+        int len = count;
+        int pos = 0;
+
+        while (pos < len && charSequence.charAt(pos) <= SP) {
+            pos++;
+        }
+        while (pos < len && charSequence.charAt(len - 1) <= SP) {
+            len--;
+        }
+        return pos > 0 || len < count ? charSequence.subSequence(pos, len) : charSequence;
+    }
+
+    /**
+     * Gets one of the predefined formats from {@link CSVFormatPredefinedFormats}.
+     *
+     * @param format name
+     * @return one of the predefined formats
+     * @since 1.2
+     */
+    public static CSVFormat valueOf(final String format) {
+        return CSVFormatPredefinedFormats.valueOf(format).getFormat();
     }
 
     /**

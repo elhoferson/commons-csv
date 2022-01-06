@@ -173,8 +173,8 @@ public class CSVFormatBuilder {
         this.quoteMode = csvFormat.getQuoteMode();
         this.commentMarker = csvFormat.getCommentMarker();
         this.escapeCharacter = csvFormat.getEscapeCharacter();
-        this.ignoreSurroundingSpaces = csvFormat.isIgnoreSurroundingSpaces();
-        this.allowMissingColumnNames = csvFormat.isAllowMissingColumnNames();
+        this.ignoreSurroundingSpaces = csvFormat.getIgnoreSurroundingSpaces();
+        this.allowMissingColumnNames = csvFormat.getAllowMissingColumnNames();
         this.ignoreEmptyLines = csvFormat.getIgnoreEmptyLines();
         this.recordSeparator = csvFormat.getRecordSeparator();
         this.nullString = csvFormat.getNullString();
@@ -186,7 +186,7 @@ public class CSVFormatBuilder {
         this.trim = csvFormat.getTrim();
         this.autoFlush = csvFormat.getAutoFlush();
         this.quotedNullString = csvFormat.getQuotedNullString();
-        this.allowDuplicateHeaderNames = csvFormat.isAllowDuplicateHeaderNames();
+        this.allowDuplicateHeaderNames = csvFormat.getAllowDuplicateHeaderNames();
     }
 
     /**
