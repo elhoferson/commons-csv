@@ -37,7 +37,7 @@ public class JiraCsv154Test {
             .build();
         // @formatter:on
         final StringBuilder out = new StringBuilder();
-        try (final CSVPrinter printer = format.print(out)) {
+        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
             printer.print("A");
             printer.print("B");
         }
@@ -56,7 +56,7 @@ public class JiraCsv154Test {
             .build();
         // @formatter:on
         final StringBuilder out = new StringBuilder();
-        try (final CSVPrinter printer = format.print(out)) {
+        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
             printer.print("A");
             printer.print("B");
         }

@@ -54,7 +54,7 @@ public class CSVPrinterTest extends AbstractCSVPrinterTest {
                 .setHeader("Col1", "Col2")
                 .build();
         // @formatter:on
-        final CSVPrinter csvPrinter = format.print(sw);
+        final CSVPrinter csvPrinter = new CSVPrinter(sw, format);
         csvPrinter.printRecord("A", "B");
         csvPrinter.printRecord("C", "D");
         csvPrinter.close();

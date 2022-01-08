@@ -19,18 +19,17 @@ package org.apache.commons.csv;
 
 import org.apache.commons.csv.format.CSVFormat;
 
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.LF;
-import static org.apache.commons.csv.Constants.SP;
-
-import java.io.Closeable;
-import java.io.Flushable;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
+
+import static org.apache.commons.csv.Constants.*;
 
 /**
  * Prints values in a {@link CSVFormat CSV format}.
@@ -112,6 +111,23 @@ public final class CSVPrinter implements Flushable, Closeable {
         }
     }
 
+    public CSVPrinter(final CSVFormat format) throws IOException {
+        Objects.requireNonNull(format, "format");
+
+        this.appendable = null;
+        this.format = format.copy();
+        // TODO: Is it a good idea to do this here instead of on the first call to a print method?
+        // It seems a pain to have to track whether the header has already been printed or not.
+        if (format.getHeaderComments() != null) {
+            for (final String line : format.getHeaderComments()) {
+                this.printComment(line);
+            }
+        }
+        if (format.getHeader() != null && !format.getSkipHeaderRecord()) {
+            this.printRecord((Object[]) format.getHeader());
+        }
+    }
+
     @Override
     public void close() throws IOException {
         close(false);
@@ -165,7 +181,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      *             If an I/O error occurs
      */
     public void print(final Object value) throws IOException {
-        format.print(value, appendable, newRecord);
+        print(value, appendable, newRecord);
         newRecord = false;
     }
 
@@ -261,6 +277,26 @@ public final class CSVPrinter implements Flushable, Closeable {
             print(value);
         }
         println();
+    }
+
+    /**
+     * Prints the given {@code values} to {@code out} as a single record of delimiter separated values followed by the record separator.
+     *
+     * <p>
+     * The values will be quoted if needed. Quotes and new-line characters will be escaped. This method adds the record separator to the output after printing
+     * the record, so there is no need to call {@link #println(Appendable)}.
+     * </p>
+     *
+     * @param appendable    where to write.
+     * @param values values to output.
+     * @throws IOException If an I/O error occurs.
+     * @since 1.4
+     */
+    public void printRecord(final Appendable appendable, final Object... values) throws IOException {
+        for (int i = 0; i < values.length; i++) {
+            print(values[i], appendable, i == 0);
+        }
+        println(appendable);
     }
 
     /**
@@ -410,5 +446,411 @@ public final class CSVPrinter implements Flushable, Closeable {
             printHeaders(resultSet);
         }
         printRecords(resultSet);
+    }
+
+    private void print(final Object object, final CharSequence value, final Appendable out, final boolean newRecord) throws IOException {
+        final int offset = 0;
+        final int len = value.length();
+        if (!newRecord) {
+            out.append(format.getDelimiterString());
+        }
+        if (object == null) {
+            out.append(value);
+        } else if (format.isQuoteCharacterSet()) {
+            // the original object is needed so can check for Number
+            printWithQuotes(object, value, out, newRecord);
+        } else if (format.isEscapeCharacterSet()) {
+            printWithEscapes(value, out);
+        } else {
+            out.append(value, offset, len);
+        }
+    }
+
+    /**
+     * Prints the {@code value} as the next value on the line to {@code out}. The value will be escaped or encapsulated as needed. Useful when one wants to
+     * avoid creating CSVPrinters. Trims the value if {@link CSVFormat#getTrim()} is true.
+     *
+     * @param value     value to output.
+     * @param out       where to print the value.
+     * @param newRecord if this a new record.
+     * @throws IOException If an I/O error occurs.
+     * @since 1.4
+     */
+    public void print(final Object value, final Appendable out, final boolean newRecord) throws IOException {
+        // null values are considered empty
+        // Only call CharSequence.toString() if you have to, helps GC-free use cases.
+        CharSequence charSequence;
+        if (value == null) {
+            // https://issues.apache.org/jira/browse/CSV-203
+            if (null == format.getNullString()) {
+                charSequence = EMPTY;
+            } else if (QuoteMode.ALL == format.getQuoteMode()) {
+                charSequence = format.getQuotedNullString();
+            } else {
+                charSequence = format.getNullString();
+            }
+        } else if (value instanceof CharSequence) {
+            charSequence = (CharSequence) value;
+        } else if (value instanceof Reader) {
+            print((Reader) value, out, newRecord);
+            return;
+        } else {
+            charSequence = value.toString();
+        }
+        charSequence = format.getTrim() ? trim(charSequence) : charSequence;
+        print(value, charSequence, out, newRecord);
+    }
+
+    private void print(final Reader reader, final Appendable out, final boolean newRecord) throws IOException {
+        // Reader is never null
+        if (!newRecord) {
+            append(format.getDelimiterString(), out);
+        }
+        if (format.isQuoteCharacterSet()) {
+            printWithQuotes(reader, out);
+        } else if (format.isEscapeCharacterSet()) {
+            printWithEscapes(reader, out);
+        } else if (out instanceof Writer) {
+            IOUtils.copyLarge(reader, (Writer) out);
+        } else {
+            IOUtils.copy(reader, out);
+        }
+
+    }
+
+    /*
+     * Note: Must only be called if escaping is enabled, otherwise will generate NPE.
+     */
+    private void printWithEscapes(final CharSequence charSeq, final Appendable appendable) throws IOException {
+        int start = 0;
+        int pos = 0;
+        final int end = charSeq.length();
+
+        final char[] delim = format.getDelimiterString().toCharArray();
+        final int delimLength = delim.length;
+        final char escape = format.getEscapeCharacter().charValue();
+
+        while (pos < end) {
+            char c = charSeq.charAt(pos);
+            final boolean isDelimiterStart = isDelimiter(c, charSeq, pos, delim, delimLength);
+            if (c == CR || c == LF || c == escape || isDelimiterStart) {
+                // write out segment up until this char
+                if (pos > start) {
+                    appendable.append(charSeq, start, pos);
+                }
+                if (c == LF) {
+                    c = 'n';
+                } else if (c == CR) {
+                    c = 'r';
+                }
+
+                appendable.append(escape);
+                appendable.append(c);
+
+                if (isDelimiterStart) {
+                    for (int i = 1; i < delimLength; i++) {
+                        pos++;
+                        c = charSeq.charAt(pos);
+                        appendable.append(escape);
+                        appendable.append(c);
+                    }
+                }
+
+                start = pos + 1; // start on the current char after this one
+            }
+            pos++;
+        }
+
+        // write last segment
+        if (pos > start) {
+            appendable.append(charSeq, start, pos);
+        }
+    }
+
+    private void printWithEscapes(final Reader reader, final Appendable appendable) throws IOException {
+        int start = 0;
+        int pos = 0;
+
+        @SuppressWarnings("resource") // Temp reader on input reader.
+        final ExtendedBufferedReader bufferedReader = new ExtendedBufferedReader(reader);
+        final char[] delim = format.getDelimiterString().toCharArray();
+        final int delimLength = delim.length;
+        final char escape = format.getEscapeCharacter().charValue();
+        final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
+
+        int c;
+        while (-1 != (c = bufferedReader.read())) {
+            builder.append((char) c);
+            final boolean isDelimiterStart = isDelimiter((char) c, builder.toString() + new String(bufferedReader.lookAhead(delimLength - 1)), pos, delim,
+                    delimLength);
+            if (c == CR || c == LF || c == escape || isDelimiterStart) {
+                // write out segment up until this char
+                if (pos > start) {
+                    append(builder.substring(start, pos), appendable);
+                    builder.setLength(0);
+                    pos = -1;
+                }
+                if (c == LF) {
+                    c = 'n';
+                } else if (c == CR) {
+                    c = 'r';
+                }
+
+                append(escape, appendable);
+                append((char) c, appendable);
+
+                if (isDelimiterStart) {
+                    for (int i = 1; i < delimLength; i++) {
+                        c = bufferedReader.read();
+                        append(escape, appendable);
+                        append((char) c, appendable);
+                    }
+                }
+
+                start = pos + 1; // start on the current char after this one
+            }
+            pos++;
+        }
+
+        // write last segment
+        if (pos > start) {
+            append(builder.substring(start, pos), appendable);
+        }
+    }
+
+    /*
+     * Note: must only be called if quoting is enabled, otherwise will generate NPE
+     */
+    // the original object is needed so can check for Number
+    private void printWithQuotes(final Object object, final CharSequence charSeq, final Appendable out, final boolean newRecord) throws IOException {
+        boolean quote = false;
+        int start = 0;
+        int pos = 0;
+        final int len = charSeq.length();
+
+        final char[] delim = format.getDelimiterString().toCharArray();
+        final int delimLength = delim.length;
+        final char quoteChar = format.getQuoteCharacter().charValue();
+        // If escape char not specified, default to the quote char
+        // This avoids having to keep checking whether there is an escape character
+        // at the cost of checking against quote twice
+        final char escapeChar = format.isEscapeCharacterSet() ? format.getEscapeCharacter().charValue() : quoteChar;
+
+        QuoteMode quoteModePolicy = format.getQuoteMode();
+        if (quoteModePolicy == null) {
+            quoteModePolicy = QuoteMode.MINIMAL;
+        }
+        switch (quoteModePolicy) {
+            case ALL:
+            case ALL_NON_NULL:
+                quote = true;
+                break;
+            case NON_NUMERIC:
+                quote = !(object instanceof Number);
+                break;
+            case NONE:
+                // Use the existing escaping code
+                printWithEscapes(charSeq, out);
+                return;
+            case MINIMAL:
+                if (len <= 0) {
+                    // always quote an empty token that is the first
+                    // on the line, as it may be the only thing on the
+                    // line. If it were not quoted in that case,
+                    // an empty line has no tokens.
+                    if (newRecord) {
+                        quote = true;
+                    }
+                } else {
+                    char c = charSeq.charAt(pos);
+
+                    if (c <= COMMENT) {
+                        // Some other chars at the start of a value caused the parser to fail, so for now
+                        // encapsulate if we start in anything less than '#'. We are being conservative
+                        // by including the default comment char too.
+                        quote = true;
+                    } else {
+                        while (pos < len) {
+                            c = charSeq.charAt(pos);
+                            if (c == LF || c == CR || c == quoteChar || c == escapeChar || isDelimiter(c, charSeq, pos, delim, delimLength)) {
+                                quote = true;
+                                break;
+                            }
+                            pos++;
+                        }
+
+                        if (!quote) {
+                            pos = len - 1;
+                            c = charSeq.charAt(pos);
+                            // Some other chars at the end caused the parser to fail, so for now
+                            // encapsulate if we end in anything less than ' '
+                            if (c <= SP) {
+                                quote = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!quote) {
+                    // no encapsulation needed - write out the original value
+                    out.append(charSeq, start, len);
+                    return;
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Quote value: " + quoteModePolicy);
+        }
+
+        if (!quote) {
+            // no encapsulation needed - write out the original value
+            out.append(charSeq, start, len);
+            return;
+        }
+
+        // we hit something that needed encapsulation
+        out.append(quoteChar);
+
+        // Pick up where we left off: pos should be positioned on the first character that caused
+        // the need for encapsulation.
+        while (pos < len) {
+            final char c = charSeq.charAt(pos);
+            if (c == quoteChar || c == escapeChar) {
+                // write out the chunk up until this point
+                out.append(charSeq, start, pos);
+                out.append(escapeChar); // now output the escape
+                start = pos; // and restart with the matched char
+            }
+            pos++;
+        }
+
+        // write the last segment
+        out.append(charSeq, start, pos);
+        out.append(quoteChar);
+    }
+
+    /**
+     * Always use quotes unless QuoteMode is NONE, so we not have to look ahead.
+     *
+     * @param reader What to print
+     * @param appendable Where to print it
+     * @throws IOException If an I/O error occurs
+     */
+    private void printWithQuotes(final Reader reader, final Appendable appendable) throws IOException {
+
+        if (format.getQuoteMode() == QuoteMode.NONE) {
+            printWithEscapes(reader, appendable);
+            return;
+        }
+
+        int pos = 0;
+
+        final char quote = format.getQuoteCharacter().charValue();
+        final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
+
+        append(quote, appendable);
+
+        int c;
+        while (-1 != (c = reader.read())) {
+            builder.append((char) c);
+            if (c == quote) {
+                // write out segment up until this char
+                if (pos > 0) {
+                    append(builder.substring(0, pos), appendable);
+                    append(quote, appendable);
+                    builder.setLength(0);
+                    pos = -1;
+                }
+
+                append((char) c, appendable);
+            }
+            pos++;
+        }
+
+        // write last segment
+        if (pos > 0) {
+            append(builder.substring(0, pos), appendable);
+        }
+
+        append(quote, appendable);
+    }
+
+    /**
+     * Outputs the trailing delimiter (if set) followed by the record separator (if set).
+     *
+     * @param appendable where to write
+     * @throws IOException If an I/O error occurs.
+     * @since 1.4
+     */
+    public void println(final Appendable appendable) throws IOException {
+        if (format.getTrailingDelimiter()) {
+            append(format.getDelimiterString(), appendable);
+        }
+        if (format.getRecordSeparator() != null) {
+            append(format.getRecordSeparator(), appendable);
+        }
+    }
+
+    /**
+     * Matches whether the next characters constitute a delimiter
+     *
+     * @param ch
+     *            the current char
+     * @param charSeq
+     *            the match char sequence
+     * @param startIndex
+     *            where start to match
+     * @param delimiter
+     *            the delimiter
+     * @param delimiterLength
+     *            the delimiter length
+     * @return true if the match is successful
+     */
+    private boolean isDelimiter(final char ch, final CharSequence charSeq, final int startIndex, final char[] delimiter, final int delimiterLength) {
+        if (ch != delimiter[0]) {
+            return false;
+        }
+        final int len = charSeq.length();
+        if (startIndex + delimiterLength > len) {
+            return false;
+        }
+        for (int i = 1; i < delimiterLength; i++) {
+            if (charSeq.charAt(startIndex + i) != delimiter[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void append(final CharSequence csq, final Appendable appendable) throws IOException {
+        //try {
+        appendable.append(csq);
+        //} catch (final IOException e) {
+        //    throw new UncheckedIOException(e);
+        //}
+    }
+
+    private void append(final char c, final Appendable appendable) throws IOException {
+        //try {
+        appendable.append(c);
+        //} catch (final IOException e) {
+        //    throw new UncheckedIOException(e);
+        //}
+    }
+
+    static CharSequence trim(final CharSequence charSequence) {
+        if (charSequence instanceof String) {
+            return ((String) charSequence).trim();
+        }
+        final int count = charSequence.length();
+        int len = count;
+        int pos = 0;
+
+        while (pos < len && charSequence.charAt(pos) <= SP) {
+            pos++;
+        }
+        while (pos < len && charSequence.charAt(len - 1) <= SP) {
+            len--;
+        }
+        return pos > 0 || len < count ? charSequence.subSequence(pos, len) : charSequence;
     }
 }

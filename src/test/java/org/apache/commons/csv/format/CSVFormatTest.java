@@ -38,6 +38,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Objects;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -159,7 +160,8 @@ public class CSVFormatTest {
         final Reader in = new StringReader("x,y,x\r\na,?b,c\r\n");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',').withQuote(null).withRecordSeparator(CRLF);
-        format.print(in,out,true);
+        CSVPrinter csvPrinter = new CSVPrinter(format);
+        csvPrinter.print(in, out, true);
         assertEquals("x?,y?,x?r?na?,??b?,c?r?n", out.toString());
     }
 
@@ -168,7 +170,8 @@ public class CSVFormatTest {
         final Reader in = new StringReader("x,y,x");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',').withQuote(null).withRecordSeparator(CRLF);
-        format.print(in,out,true);
+        CSVPrinter csvPrinter = new CSVPrinter(format);
+        csvPrinter.print(in, out, true);
         assertEquals("x?,y?,x", out.toString());
     }
 
@@ -323,22 +326,23 @@ public class CSVFormatTest {
 
         CharSequence in = "a,b,c";
         final StringBuilder out = new StringBuilder();
-        formatWithTrim.print(in, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(formatWithTrim);
+        csvPrinter.print(in, out, true);
         assertEquals("a,b,c", out.toString());
 
         in = new StringBuilder(" x,y,z");
         out.setLength(0);
-        formatWithTrim.print(in, out, true);
+        csvPrinter.print(in, out, true);
         assertEquals("x,y,z", out.toString());
 
         in = new StringBuilder("");
         out.setLength(0);
-        formatWithTrim.print(in, out, true);
+        csvPrinter.print(in, out, true);
         assertEquals("", out.toString());
 
         in = new StringBuilder("header\r\n");
         out.setLength(0);
-        formatWithTrim.print(in, out, true);
+        csvPrinter.print(in, out, true);
         assertEquals("header", out.toString());
     }
 

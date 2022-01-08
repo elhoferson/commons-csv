@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.BatchUpdateException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +29,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
     @Test
     public void testPrint() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = CSVFormat.DEFAULT.print(sw)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT)) {
             printer.printRecord("a", "b\\c");
             assertEquals("a,b\\c" + recordSeparator, sw.toString());
         }
@@ -44,7 +45,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[][] res = {{"a1", "b1"}, {"a2", "b2"}, {"a3", "b3"}, {"a4", "b4"}};
         final CSVFormat format = CSVFormat.DEFAULT;
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = format.print(sw); final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, format); final CSVParser parser = CSVParser.parse(code, format)) {
             printer.printRecords(parser);
         }
         try (final CSVParser parser = CSVParser.parse(sw.toString(), format)) {
@@ -64,7 +65,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[][] res = {{"a1", "b1"}, {"a2", "b2"}, {"a3", "b3"}, {"a4", "b4"}};
         final CSVFormat format = CSVFormat.DEFAULT;
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = format.print(sw); final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, format); final CSVParser parser = CSVParser.parse(code, format)) {
             for (final CSVRecord record : parser) {
                 printer.printRecord(record);
             }
@@ -86,7 +87,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[][] res = {{"a1", "b1"}, {"a2", "b2"}, {"a3", "b3"}, {"a4", "b4"}};
         final CSVFormat format = CSVFormat.DEFAULT;
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = format.print(sw); final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, format); final CSVParser parser = CSVParser.parse(code, format)) {
             printer.printRecords(parser.getRecords());
         }
         try (final CSVParser parser = CSVParser.parse(sw.toString(), format)) {
@@ -234,7 +235,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String rowData = StringUtils.join(values, ',');
         final CharArrayWriter charArrayWriter = new CharArrayWriter(0);
         try (final CSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT);
-             final CSVPrinter csvPrinter = CSVFormat.INFORMIX_UNLOAD.print(charArrayWriter)) {
+             final CSVPrinter csvPrinter = new CSVPrinter(charArrayWriter, CSVFormat.INFORMIX_UNLOAD)) {
             for (final CSVRecord record : parser) {
                 csvPrinter.printRecord(record);
             }
@@ -248,7 +249,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final PrintStream out = System.out;
         try {
             System.setOut(new PrintStream(NullOutputStream.NULL_OUTPUT_STREAM));
-            try (CSVPrinter csvPrinter = CSVFormat.POSTGRESQL_TEXT.printer()) {
+            try (CSVPrinter csvPrinter = new CSVPrinter(System.out, CSVFormat.POSTGRESQL_CSV)) {
                 final Vector<EmptyEnum> vector = new Vector<>();
                 final int expectedCapacity = 23;
                 vector.setSize(expectedCapacity);
@@ -263,7 +264,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
     @Test
     public void testPrintRecordsWithObjectArray() throws IOException {
         final CharArrayWriter charArrayWriter = new CharArrayWriter(0);
-        try (CSVPrinter csvPrinter = CSVFormat.INFORMIX_UNLOAD.print(charArrayWriter)) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(charArrayWriter, CSVFormat.INFORMIX_UNLOAD)) {
             final HashSet<BatchUpdateException> hashSet = new HashSet<>();
             final Object[] objectArray = new Object[6];
             objectArray[3] = hashSet;
@@ -275,7 +276,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
 
     @Test
     public void testPrintRecordsWithResultSetOneRow() throws IOException, SQLException {
-        try (CSVPrinter csvPrinter = CSVFormat.MYSQL.printer()) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(System.out, CSVFormat.MYSQL)) {
             try (ResultSet resultSet = new SimpleResultSet()) {
                 csvPrinter.printRecords(resultSet);
                 assertEquals(0, resultSet.getRow());
@@ -286,7 +287,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
     @Test
     public void testPrintToFileWithCharsetUtf16Be() throws IOException {
         final File file = File.createTempFile(getClass().getName(), ".csv");
-        try (final CSVPrinter printer = CSVFormat.DEFAULT.print(file, StandardCharsets.UTF_16BE)) {
+        try (final CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_16BE), CSVFormat.DEFAULT)) {
             printer.printRecord("a", "b\\c");
         }
         assertEquals("a,b\\c" + recordSeparator, FileUtils.readFileToString(file, StandardCharsets.UTF_16BE));
@@ -295,7 +296,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
     @Test
     public void testPrintToFileWithDefaultCharset() throws IOException {
         final File file = File.createTempFile(getClass().getName(), ".csv");
-        try (final CSVPrinter printer = CSVFormat.DEFAULT.print(file, Charset.defaultCharset())) {
+        try (final CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(new FileOutputStream(file), Charset.defaultCharset()), CSVFormat.DEFAULT)) {
             printer.printRecord("a", "b\\c");
         }
         assertEquals("a,b\\c" + recordSeparator, FileUtils.readFileToString(file, Charset.defaultCharset()));
@@ -304,7 +305,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
     @Test
     public void testPrintToPathWithDefaultCharset() throws IOException {
         final File file = File.createTempFile(getClass().getName(), ".csv");
-        try (final CSVPrinter printer = CSVFormat.DEFAULT.print(file.toPath(), Charset.defaultCharset())) {
+        try (final CSVPrinter printer = new CSVPrinter(Files.newBufferedWriter(file.toPath(), Charset.defaultCharset()), CSVFormat.DEFAULT)) {
             printer.printRecord("a", "b\\c");
         }
         assertEquals("a,b\\c" + recordSeparator, FileUtils.readFileToString(file, Charset.defaultCharset()));

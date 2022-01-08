@@ -41,7 +41,7 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
             setUpTable(connection);
             try (final Statement stmt = connection.createStatement();
                  final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST");
-                 final CSVPrinter printer = CSVFormat.DEFAULT.withHeader(resultSet).print(sw)) {
+                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(resultSet))) {
                 printer.printRecords(resultSet);
             }
         }
@@ -78,7 +78,7 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
             setUpTable(connection);
             try (final Statement stmt = connection.createStatement();
                  final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST");
-                 final CSVPrinter printer = CSVFormat.DEFAULT.withHeader(resultSet.getMetaData()).print(sw)) {
+                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(resultSet.getMetaData()))) {
                 printer.printRecords(resultSet);
                 assertEquals("ID,NAME,TEXT" + recordSeparator + "1,r1,\"long text 1\"" + recordSeparator + "2,r2,\""
                         + longText2 + "\"" + recordSeparator, sw.toString());

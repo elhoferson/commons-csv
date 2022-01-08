@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Test;
@@ -45,32 +46,33 @@ public class JiraCsv263Test {
         final StringBuilder out = new StringBuilder();
 
         final Reader atStartOnly = new StringReader("\"a,b,c\r\nx,y,z");
-        format.print(atStartOnly, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(format);
+        csvPrinter.print(atStartOnly, out, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"", out.toString());
 
         final Reader atEndOnly = new StringReader("a,b,c\r\nx,y,z\"");
         out.setLength(0);
-        format.print(atEndOnly, out, true);
+        csvPrinter.print(atEndOnly, out, true);
         assertEquals("\"a,b,c\r\nx,y,z\"\"\"", out.toString());
 
         final Reader atBeginEnd = new StringReader("\"a,b,c\r\nx,y,z\"");
         out.setLength(0);
-        format.print(atBeginEnd, out, true);
+        csvPrinter.print(atBeginEnd, out, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"\"\"", out.toString());
 
         final Reader embeddedBeginMiddle = new StringReader("\"a\",b,c\r\nx,\"y\",z");
         out.setLength(0);
-        format.print(embeddedBeginMiddle, out, true);
+        csvPrinter.print(embeddedBeginMiddle, out, true);
         assertEquals("\"\"\"a\"\",b,c\r\nx,\"\"y\"\",z\"", out.toString());
 
         final Reader embeddedMiddleEnd = new StringReader("a,\"b\",c\r\nx,y,\"z\"");
         out.setLength(0);
-        format.print(embeddedMiddleEnd, out, true);
+        csvPrinter.print(embeddedMiddleEnd, out, true);
         assertEquals("\"a,\"\"b\"\",c\r\nx,y,\"\"z\"\"\"", out.toString());
 
         final Reader nested = new StringReader("a,\"b \"and\" c\",d");
         out.setLength(0);
-        format.print(nested, out, true);
+        csvPrinter.print(nested, out, true);
         assertEquals("\"a,\"\"b \"\"and\"\" c\"\",d\"", out.toString());
     }
 

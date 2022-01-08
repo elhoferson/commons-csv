@@ -1,5 +1,6 @@
 package org.apache.commons.csv.format;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Test;
 
@@ -94,7 +95,8 @@ public class CSVFormatQuoteTest {
         final Reader in = new StringReader("");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withDelimiter(',').withQuote('"').withEscape('?').withQuoteMode(QuoteMode.NON_NUMERIC);
-        format.print(in, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(format);
+        csvPrinter.print(in, out, true);
         assertEquals("\"\"", out.toString());
     }
 
@@ -103,7 +105,8 @@ public class CSVFormatQuoteTest {
         final Reader in = new StringReader("a,b,c");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withDelimiter(',').withQuote('"').withEscape('?').withQuoteMode(QuoteMode.NONE);
-        format.print(in, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(format);
+        csvPrinter.print(in, out, true);
         assertEquals("a?,b?,c", out.toString());
     }
 
@@ -112,7 +115,8 @@ public class CSVFormatQuoteTest {
         final Reader in = new StringReader("\"a,b,c\r\nx,y,z");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withDelimiter(',').withQuote('"').withEscape('?').withQuoteMode(QuoteMode.NON_NUMERIC);
-        format.print(in, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(format);
+        csvPrinter.print(in, out, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"", out.toString());
     }
 
