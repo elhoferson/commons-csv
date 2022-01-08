@@ -50,7 +50,7 @@ public class JiraCsv93Test {
         throws IOException {
         final String source = csvFormat.format(objects);
         assertEquals(format, csvFormat.format(objects));
-        try (final CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (final CSVParser csvParser = new CSVParser(new StringReader(source), csvFormat)) {
             final CSVRecord csvRecord = csvParser.iterator().next();
             for (int i = 0; i < data.length; i++) {
                 assertEquals(csvRecord.get(i), data[i]);

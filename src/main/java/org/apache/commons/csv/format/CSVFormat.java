@@ -1085,21 +1085,6 @@ public final class CSVFormat implements Serializable {
     }
 
     /**
-     * Parses the specified content.
-     *
-     * <p>
-     * See also the various static parse methods on {@link CSVParser}.
-     * </p>
-     *
-     * @param reader the input stream
-     * @return a parser over a stream of {@link CSVRecord}s.
-     * @throws IOException If an I/O error occurs
-     */
-    public CSVParser parse(final Reader reader) throws IOException {
-        return new CSVParser(reader, this);
-    }
-
-    /**
      * Prints to the specified output.
      *
      * <p>

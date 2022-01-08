@@ -43,7 +43,7 @@ public class JiraCsv211Test {
 
         final CSVFormat parseFormat = CSVFormat.DEFAULT.builder().setDelimiter('\t').setHeader()
             .setSkipHeaderRecord(true).build();
-        try (final CSVParser parser = parseFormat.parse(new StringReader(formatted))) {
+        try (final CSVParser parser = new CSVParser(new StringReader(formatted), parseFormat)) {
             for (final CSVRecord record : parser) {
                 assertEquals("1", record.get(0));
                 assertEquals("Jane Doe", record.get(1));

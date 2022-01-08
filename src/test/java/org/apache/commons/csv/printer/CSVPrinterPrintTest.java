@@ -233,7 +233,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[] values = {"A", "B", "C"};
         final String rowData = StringUtils.join(values, ',');
         final CharArrayWriter charArrayWriter = new CharArrayWriter(0);
-        try (final CSVParser parser = CSVFormat.DEFAULT.parse(new StringReader(rowData));
+        try (final CSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT);
              final CSVPrinter csvPrinter = CSVFormat.INFORMIX_UNLOAD.print(charArrayWriter)) {
             for (final CSVRecord record : parser) {
                 csvPrinter.printRecord(record);

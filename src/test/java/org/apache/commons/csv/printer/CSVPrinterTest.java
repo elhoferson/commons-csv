@@ -214,7 +214,7 @@ public class CSVPrinterTest extends AbstractCSVPrinterTest {
         }
         final String csvString = sw.toString();
         assertEquals("a,NULL,b" + recordSeparator, csvString);
-        try (final CSVParser iterable = format.parse(new StringReader(csvString))) {
+        try (final CSVParser iterable = new CSVParser(new StringReader(csvString), format)) {
             final Iterator<CSVRecord> iterator = iterable.iterator();
             final CSVRecord record = iterator.next();
             assertEquals("a", record.get(0));

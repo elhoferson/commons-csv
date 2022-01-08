@@ -50,7 +50,7 @@ public class JiraCsv213Test {
                     .build();
         // @formatter:on
         try (Reader reader = Files.newBufferedReader(csvFile.toPath(), StandardCharsets.UTF_8);
-            CSVParser parser = csvFormat.parse(reader)) {
+            CSVParser parser = new CSVParser(reader, csvFormat)) {
             if (parser.iterator().hasNext()) {
                 // System.out.println(parser.getCurrentLineNumber());
                 // System.out.println(parser.getRecordNumber());
