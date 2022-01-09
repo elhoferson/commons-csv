@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.params.ParameterizedTest;

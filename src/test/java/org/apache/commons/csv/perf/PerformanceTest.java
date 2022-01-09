@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
@@ -71,7 +71,7 @@ public class PerformanceTest {
     private long parse(final Reader reader, final boolean traverseColumns) throws IOException {
         final CSVFormat format = CSVFormat.DEFAULT.builder().setIgnoreSurroundingSpaces(false).build();
         long recordCount = 0;
-        try (final CSVParser parser = format.parse(reader)) {
+        try (final CSVParser parser = new CSVParser(reader, format)) {
             for (final CSVRecord record : parser) {
                 recordCount++;
                 if (traverseColumns) {

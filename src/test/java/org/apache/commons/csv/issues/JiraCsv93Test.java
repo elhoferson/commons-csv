@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
@@ -50,7 +50,7 @@ public class JiraCsv93Test {
         throws IOException {
         final String source = csvFormat.format(objects);
         assertEquals(format, csvFormat.format(objects));
-        try (final CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (final CSVParser csvParser = new CSVParser(new StringReader(source), csvFormat)) {
             final CSVRecord csvRecord = csvParser.iterator().next();
             for (int i = 0; i < data.length; i++) {
                 assertEquals(csvRecord.get(i), data[i]);

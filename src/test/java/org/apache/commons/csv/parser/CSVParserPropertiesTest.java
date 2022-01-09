@@ -1,6 +1,6 @@
 package org.apache.commons.csv.parser;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Test;
@@ -112,7 +112,7 @@ public class CSVParserPropertiesTest {
     public void testParseWithDelimiterStringWithEscape() throws IOException {
         final String source = "a![!|!]b![|]c[|]xyz\r\nabc[abc][|]xyz";
         final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter("[|]").setEscape('!').build();
-        try (CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (CSVParser csvParser = new CSVParser(new StringReader(source), csvFormat)) {
             CSVRecord csvRecord = csvParser.nextRecord();
             assertEquals("a[|]b![|]c", csvRecord.get(0));
             assertEquals("xyz", csvRecord.get(1));
@@ -126,7 +126,7 @@ public class CSVParserPropertiesTest {
     public void testParseWithDelimiterStringWithQuote() throws IOException {
         final String source = "'a[|]b[|]c'[|]xyz\r\nabc[abc][|]xyz";
         final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter("[|]").setQuote('\'').build();
-        try (CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (CSVParser csvParser = new CSVParser(new StringReader(source), csvFormat)) {
             CSVRecord csvRecord = csvParser.nextRecord();
             assertEquals("a[|]b[|]c", csvRecord.get(0));
             assertEquals("xyz", csvRecord.get(1));
@@ -140,7 +140,7 @@ public class CSVParserPropertiesTest {
     public void testParseWithDelimiterWithEscape() throws IOException {
         final String source = "a!,b!,c,xyz";
         final CSVFormat csvFormat = CSVFormat.DEFAULT.withEscape('!');
-        try (CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (CSVParser csvParser =  new CSVParser(new StringReader(source), csvFormat)) {
             final CSVRecord csvRecord = csvParser.nextRecord();
             assertEquals("a,b,c", csvRecord.get(0));
             assertEquals("xyz", csvRecord.get(1));
@@ -151,7 +151,7 @@ public class CSVParserPropertiesTest {
     public void testParseWithDelimiterWithQuote() throws IOException {
         final String source = "'a,b,c',xyz";
         final CSVFormat csvFormat = CSVFormat.DEFAULT.withQuote('\'');
-        try (CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (CSVParser csvParser = new CSVParser(new StringReader(source), csvFormat)) {
             final CSVRecord csvRecord = csvParser.nextRecord();
             assertEquals("a,b,c", csvRecord.get(0));
             assertEquals("xyz", csvRecord.get(1));
@@ -161,16 +161,16 @@ public class CSVParserPropertiesTest {
     @Test
     public void testParseWithQuoteThrowsException() {
         final CSVFormat csvFormat = CSVFormat.DEFAULT.withQuote('\'');
-        assertThrows(IOException.class, () -> csvFormat.parse(new StringReader("'a,b,c','")).nextRecord());
-        assertThrows(IOException.class, () -> csvFormat.parse(new StringReader("'a,b,c'abc,xyz")).nextRecord());
-        assertThrows(IOException.class, () -> csvFormat.parse(new StringReader("'abc'a,b,c',xyz")).nextRecord());
+        assertThrows(IOException.class, () -> new CSVParser(new StringReader("'a,b,c','"), csvFormat).nextRecord());
+        assertThrows(IOException.class, () -> new CSVParser(new StringReader("'a,b,c'abc,xyz"), csvFormat).nextRecord());
+        assertThrows(IOException.class, () -> new CSVParser(new StringReader("'abc'a,b,c',xyz"), csvFormat).nextRecord());
     }
 
     @Test
     public void testParseWithQuoteWithEscape() throws IOException {
         final String source = "'a?,b?,c?d',xyz";
         final CSVFormat csvFormat = CSVFormat.DEFAULT.withQuote('\'').withEscape('?');
-        try (CSVParser csvParser = csvFormat.parse(new StringReader(source))) {
+        try (CSVParser csvParser = new CSVParser(new StringReader(source), csvFormat)) {
             final CSVRecord csvRecord = csvParser.nextRecord();
             assertEquals("a,b,c?d", csvRecord.get(0));
             assertEquals("xyz", csvRecord.get(1));

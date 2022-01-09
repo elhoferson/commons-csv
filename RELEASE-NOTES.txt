@@ -242,7 +242,7 @@ NEW FEATURES
 
 o CSV-217:  Add autoFlush option for CsvPrinter. PR #24.
             Thanks to Korolyov Alexei.
-o CSV-220:  Add API org.apache.commons.csv.CSVFormat.withSystemRecordSeparator().
+o CSV-220:  Add API org.apache.commons.csv.format.CSVFormat.withSystemRecordSeparator().
             Thanks to Gary Gregory.
 
 FIXED BUGS
@@ -492,7 +492,7 @@ Fixed Bugs:
 o [CSV-140] QuoteMode.NON_NUMERIC doesn't work with CSVPrinter.printRecords(ResultSet). Thanks to Damjan Jovanovic. 
 o [CSV-130] CSVFormat#withHeader doesn't work well with #printComment, add withHeaderComments(String...). Thanks to Sergei Lebedev. 
 o [CSV-128] CSVFormat.EXCEL should ignore empty header names. 
-o [CSV-132] Incorrect Javadoc referencing org.apache.commons.csv.CSVFormat withQuote(). Thanks to Sascha Szott. 
+o [CSV-132] Incorrect Javadoc referencing org.apache.commons.csv.format.CSVFormat withQuote(). Thanks to Sascha Szott.
 
 Changes:
 o [CSV-124] Improve toString() implementation of CSVRecord. Thanks to Kalyan. 

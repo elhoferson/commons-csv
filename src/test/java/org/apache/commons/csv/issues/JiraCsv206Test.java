@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
@@ -59,7 +59,7 @@ public class JiraCsv206Test {
                 .setHeaderComments(comment).build();
         // @formatter:on
         final StringBuilder out = new StringBuilder();
-        try (final CSVPrinter printer = format.print(out)) {
+        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
             printer.print(record.get(0));
             printer.print(record.get(1));
             printer.print(record.get(2));

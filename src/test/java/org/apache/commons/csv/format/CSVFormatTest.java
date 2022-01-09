@@ -17,10 +17,8 @@
 
 package org.apache.commons.csv.format;
 
-import static org.apache.commons.csv.CSVFormat.RFC4180;
-import static org.apache.commons.csv.Constants.CR;
+import static org.apache.commons.csv.format.CSVFormat.RFC4180;
 import static org.apache.commons.csv.Constants.CRLF;
-import static org.apache.commons.csv.Constants.LF;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,14 +36,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Objects;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -167,7 +160,8 @@ public class CSVFormatTest {
         final Reader in = new StringReader("x,y,x\r\na,?b,c\r\n");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',').withQuote(null).withRecordSeparator(CRLF);
-        format.print(in,out,true);
+        CSVPrinter csvPrinter = new CSVPrinter(out, format);
+        csvPrinter.print(in,  true);
         assertEquals("x?,y?,x?r?na?,??b?,c?r?n", out.toString());
     }
 
@@ -176,7 +170,8 @@ public class CSVFormatTest {
         final Reader in = new StringReader("x,y,x");
         final Appendable out = new StringBuilder();
         final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',').withQuote(null).withRecordSeparator(CRLF);
-        format.print(in,out,true);
+        CSVPrinter csvPrinter = new CSVPrinter(out, format);
+        csvPrinter.print(in, true);
         assertEquals("x?,y?,x", out.toString());
     }
 
@@ -226,8 +221,8 @@ public class CSVFormatTest {
     @Test
     public void testToStringAndWithCommentMarkerTakingCharacter() {
 
-        final CSVFormat.Predefined csvFormat_Predefined = CSVFormat.Predefined.Default;
-        final CSVFormat csvFormat = csvFormat_Predefined.getFormat();
+        final CSVFormatPredefinedFormats csvFormat_CSVFormat_PredefinedFormats = CSVFormatPredefinedFormats.Default;
+        final CSVFormat csvFormat = csvFormat_CSVFormat_PredefinedFormats.getFormat();
 
         assertNull(csvFormat.getEscapeCharacter());
         assertTrue(csvFormat.isQuoteCharacterSet());
@@ -331,22 +326,23 @@ public class CSVFormatTest {
 
         CharSequence in = "a,b,c";
         final StringBuilder out = new StringBuilder();
-        formatWithTrim.print(in, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(out, formatWithTrim);
+        csvPrinter.print(in, true);
         assertEquals("a,b,c", out.toString());
 
         in = new StringBuilder(" x,y,z");
         out.setLength(0);
-        formatWithTrim.print(in, out, true);
+        csvPrinter.print(in, true);
         assertEquals("x,y,z", out.toString());
 
         in = new StringBuilder("");
         out.setLength(0);
-        formatWithTrim.print(in, out, true);
+        csvPrinter.print(in, true);
         assertEquals("", out.toString());
 
         in = new StringBuilder("header\r\n");
         out.setLength(0);
-        formatWithTrim.print(in, out, true);
+        csvPrinter.print(in, true);
         assertEquals("header", out.toString());
     }
 

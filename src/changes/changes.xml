@@ -163,7 +163,8 @@ removed in version 2.0.
       <action issue="CSV-217" type="add" dev="ggregory" due-to="Korolyov Alexei">Add autoFlush option for CsvPrinter. PR #24.</action>
       <action issue="CSV-219" type="fix" dev="ggregory" due-to="Zhang Hongda">The behavior of quote char using is not similar as Excel does when the first string contains CJK char(s).</action>
       <action issue="CSV-172" type="fix" dev="ggregory" due-to="Andrew Pennebaker">Don't quote cells just because they have UTF-8 encoded characters.</action>
-      <action issue="CSV-220" type="add" dev="ggregory" due-to="Gary Gregory">Add API org.apache.commons.csv.CSVFormat.withSystemRecordSeparator().</action>
+      <action issue="CSV-220" type="add" dev="ggregory" due-to="Gary Gregory">Add API
+          org.apache.commons.csv.format.CSVFormat.withSystemRecordSeparator().</action>
       <action issue="CSV-223" type="fix" dev="ggregory" due-to="Samuel Martin">Inconsistency between Javadoc of CSVFormat DEFAULT EXCEL.</action>
       <action issue="CSV-209" type="fix" dev="ggregory" due-to="Gary Gregory">Create CSVFormat.ORACLE preset.</action>
       <action issue="CSV-224" type="fix" dev="ggregory" due-to="David Warshaw">Some multi-iterator parsing peek sequences incorrectly consume elements.</action>
@@ -213,7 +214,8 @@ removed in version 2.0.
       <action issue="CSV-140" type="fix" dev="ggregory" due-to="Damjan Jovanovic">QuoteMode.NON_NUMERIC doesn't work with CSVPrinter.printRecords(ResultSet)</action>
       <action issue="CSV-130" type="fix" dev="ggregory" due-to="Sergei Lebedev">CSVFormat#withHeader doesn't work well with #printComment, add withHeaderComments(String...)</action>
       <action issue="CSV-128" type="fix" dev="ggregory">CSVFormat.EXCEL should ignore empty header names</action>
-      <action issue="CSV-132" type="fix" dev="ggregory" due-to="Sascha Szott">Incorrect Javadoc referencing org.apache.commons.csv.CSVFormat withQuote()</action>
+      <action issue="CSV-132" type="fix" dev="ggregory" due-to="Sascha Szott">Incorrect Javadoc referencing
+          org.apache.commons.csv.format.CSVFormat withQuote()</action>
       <action issue="CSV-124" type="update" dev="brentworden" due-to="Kalyan">Improve toString() implementation of CSVRecord</action>
       <action issue="CSV-134" type="update" dev="ggregory" due-to="wu wen">Unified parameter validation</action>
       <action issue="CSV-129" type="add" dev="ggregory">Add CSVFormat#with 0-arg methods matching boolean arg methods</action>

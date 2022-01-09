@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ public class JiraCsv154Test {
             .build();
         // @formatter:on
         final StringBuilder out = new StringBuilder();
-        try (final CSVPrinter printer = format.print(out)) {
+        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
             printer.print("A");
             printer.print("B");
         }
@@ -56,7 +56,7 @@ public class JiraCsv154Test {
             .build();
         // @formatter:on
         final StringBuilder out = new StringBuilder();
-        try (final CSVPrinter printer = format.print(out)) {
+        try (final CSVPrinter printer = new CSVPrinter(out, format)) {
             printer.print("A");
             printer.print("B");
         }

@@ -36,6 +36,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,11 +72,11 @@ public class CSVRecordTest {
     public void setUp() throws Exception {
         values = new String[] { "A", "B", "C" };
         final String rowData = StringUtils.join(values, ',');
-        try (final CSVParser parser = CSVFormat.DEFAULT.parse(new StringReader(rowData))) {
+        try (final CSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT)) {
             record = parser.iterator().next();
         }
         final String[] headers = { "first", "second", "third" };
-        try (final CSVParser parser = CSVFormat.DEFAULT.withHeader(headers).parse(new StringReader(rowData))) {
+        try (final CSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT.withHeader(headers))) {
             recordWithHeader = parser.iterator().next();
             headerMap = parser.getHeaderMap();
         }
@@ -160,7 +161,7 @@ public class CSVRecordTest {
     public void testIsInconsistent() throws IOException {
         final String[] headers = { "first", "second", "third" };
         final String rowData = StringUtils.join(values, ',');
-        try (final CSVParser parser = CSVFormat.DEFAULT.withHeader(headers).parse(new StringReader(rowData))) {
+        try (final CSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT.withHeader(headers))) {
             final Map<String, Integer> map = parser.getHeaderMapRaw();
             final CSVRecord record1 = parser.iterator().next();
             map.put("fourth", Integer.valueOf(4));

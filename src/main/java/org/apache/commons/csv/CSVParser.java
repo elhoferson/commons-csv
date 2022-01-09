@@ -17,6 +17,8 @@
 
 package org.apache.commons.csv;
 
+import org.apache.commons.csv.format.CSVFormat;
+
 import static org.apache.commons.csv.Token.Type.TOKEN;
 
 import java.io.Closeable;
@@ -65,13 +67,6 @@ import java.util.stream.StreamSupport;
  * <p>
  * Alternatively parsers can also be created by passing a {@link Reader} directly to the sole constructor.
  *
- * For those who like fluent APIs, parsers can be created using {@link CSVFormat#parse(java.io.Reader)} as a shortcut:
- * </p>
- * <pre>
- * for(CSVRecord record : CSVFormat.EXCEL.parse(in)) {
- *     ...
- * }
- * </pre>
  *
  * <h2>Parsing record wise</h2>
  * <p>

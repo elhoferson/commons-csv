@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
@@ -74,7 +74,7 @@ public class JiraCsv167Test {
         // @formatter:on
         int comments = 0;
         int records = 0;
-        try (final Reader reader = getTestReader(); final CSVParser parser = format.parse(reader)) {
+        try (final Reader reader = getTestReader(); final CSVParser parser = new CSVParser(reader, format)) {
             for (final CSVRecord csvRecord : parser) {
                 records++;
                 if (csvRecord.hasComment()) {

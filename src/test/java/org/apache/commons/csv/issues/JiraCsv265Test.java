@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ public class JiraCsv265Test {
             .setSkipHeaderRecord(true)
             .build();
         // @formatter:on
-        try (final CSVParser parser = csvFormat.parse(new StringReader(csv))) {
+        try (final CSVParser parser = new CSVParser(new StringReader(csv), csvFormat)) {
             final Iterator<CSVRecord> itr = parser.iterator();
             final CSVRecord record1 = itr.next();
             assertEquals(csv.indexOf("# Comment2"), record1.getCharacterPosition());
@@ -76,7 +76,7 @@ public class JiraCsv265Test {
             .setSkipHeaderRecord(true)
             .build();
         // @formatter:on
-        try (final CSVParser parser = csvFormat.parse(new StringReader(csv))) {
+        try (final CSVParser parser = new CSVParser(new StringReader(csv), csvFormat)) {
             final Iterator<CSVRecord> itr = parser.iterator();
             final CSVRecord record1 = itr.next();
             assertEquals(csv.indexOf("# Comment3"), record1.getCharacterPosition());

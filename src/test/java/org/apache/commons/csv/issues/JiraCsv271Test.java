@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
