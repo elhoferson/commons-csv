@@ -68,7 +68,7 @@ import static org.apache.commons.csv.Constants.*;
  * 2,mary,Mary,Meyer,1985-03-29
  * </pre>
  */
-public class CSVPrinter implements Flushable, Closeable {
+public class CSVPrinter implements ICSVPrinter {
 
     /** The place that the values get written. */
     private final Appendable appendable;
@@ -163,6 +163,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void print(final Object value) throws IOException {
         print(value, newRecord);
         newRecord = false;
@@ -189,6 +190,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printComment(final String comment) throws IOException {
         if (comment == null || !format.isCommentMarkerSet()) {
             return;
@@ -227,6 +229,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws SQLException If a database access error occurs or this method is called on a closed result set.
      * @since 1.9.0
      */
+    @Override
     public void printHeaders(final ResultSet resultSet) throws IOException, SQLException {
         printRecord((Object[]) format.builder().setHeader(resultSet).build().getHeader());
     }
@@ -244,6 +247,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecord(final Iterable<?> values) throws IOException {
         for (final Object value : values) {
             print(value);
@@ -264,6 +268,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecord(final Object... values) throws IOException {
         printRecord(Arrays.asList(values));
     }
@@ -307,6 +312,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecords(final Iterable<?> values) throws IOException {
         for (final Object value : values) {
             if (value instanceof Object[]) {
@@ -358,6 +364,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecords(final Object... values) throws IOException {
         printRecords(Arrays.asList(values));
     }
@@ -372,6 +379,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws SQLException
      *             if a database access error occurs
      */
+    @Override
     public void printRecords(final ResultSet resultSet) throws SQLException, IOException {
         final int columnCount = resultSet.getMetaData().getColumnCount();
         while (resultSet.next()) {
@@ -393,6 +401,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws SQLException if a database access error occurs
      * @since 1.9.0
      */
+    @Override
     public void printRecords(final ResultSet resultSet, final boolean printHeader) throws SQLException, IOException {
         if (printHeader) {
             printHeaders(resultSet);
@@ -427,6 +436,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException If an I/O error occurs.
      * @since 1.4
      */
+    @Override
     public void print(final Object value, final boolean newRecord) throws IOException {
         // null values are considered empty
         // Only call CharSequence.toString() if you have to, helps GC-free use cases.
@@ -730,6 +740,7 @@ public class CSVPrinter implements Flushable, Closeable {
      * @throws IOException If an I/O error occurs.
      * @since 1.4
      */
+    @Override
     public void println() throws IOException {
         if (format.getTrailingDelimiter()) {
             append(format.getDelimiterString());
