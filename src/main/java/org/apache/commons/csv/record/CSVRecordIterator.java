@@ -1,12 +1,12 @@
-package org.apache.commons.csv.parser;
+package org.apache.commons.csv.record;
 
-import org.apache.commons.csv.record.CSVRecord;
+import org.apache.commons.csv.parser.CSVParser;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class CSVRecordIterator implements Iterator<CSVRecord> {
+public class CSVRecordIterator implements Iterator<CSVRecord> {
     private final CSVParser csvParser;
     private CSVRecord current;
 

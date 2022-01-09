@@ -18,9 +18,11 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.Constants;
-import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.ICSVFormat;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.record.CSVRecord;
+import org.apache.commons.csv.record.CSVRecordIterator;
+import org.apache.commons.csv.record.Headers;
 
 import java.io.*;
 import java.net.URL;
@@ -37,7 +39,7 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  * Parses CSV files according to the specified format.
  *
  * Because CSV appears in many different dialects, the parser supports many formats by allowing the
- * specification of a {@link CSVFormat}.
+ * specification of a {@link ICSVFormat}.
  *
  * The parser works record wise. It is not possible to go back, once a record has been parsed from the input stream.
  *
@@ -46,9 +48,9 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  * There are several static factory methods that can be used to create instances for various types of resources:
  * </p>
  * <ul>
- *     <li>{@link #parse(java.io.File, Charset, CSVFormat)}</li>
- *     <li>{@link #parse(String, CSVFormat)}</li>
- *     <li>{@link #parse(java.net.URL, java.nio.charset.Charset, CSVFormat)}</li>
+ *     <li>{@link #parse(java.io.File, Charset, ICSVFormat)}</li>
+ *     <li>{@link #parse(String, ICSVFormat)}</li>
+ *     <li>{@link #parse(java.net.URL, java.nio.charset.Charset, ICSVFormat)}</li>
  * </ul>
  * <p>
  * Alternatively parsers can also be created by passing a {@link Reader} directly to the sole constructor.
@@ -61,7 +63,7 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  *
  * <pre>
  * File csvData = new File(&quot;/path/to/csv&quot;);
- * CSVParser parser = CSVParser.parse(csvData, CSVFormat.RFC4180);
+ * CSVParser parser = CSVParser.parse(csvData, ICSVFormat.RFC4180);
  * for (CSVRecord csvRecord : parser) {
  *     ...
  * }
@@ -77,7 +79,7 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  * </p>
  *
  * <pre>
- * CSVParser parser = CSVParser.parse(csvData, CSVFormat.EXCEL);
+ * CSVParser parser = CSVParser.parse(csvData, ICSVFormat.EXCEL);
  * for (CSVRecord csvRecord : parser) {
  *     ...
  * }
@@ -85,7 +87,7 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  *
  * <p>
  * If the predefined formats don't match the format at hands, custom formats can be defined. More information about
- * customising CSVFormats is available in {@link CSVFormat CSVFormat Javadoc}.
+ * customising ICSVFormats is available in {@link ICSVFormat ICSVFormat Javadoc}.
  * </p>
  *
  * <h2>Parsing into memory</h2>
@@ -95,7 +97,7 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  *
  * <pre>
  * Reader in = new StringReader(&quot;a;b\nc;d&quot;);
- * CSVParser parser = new CSVParser(in, CSVFormat.EXCEL);
+ * CSVParser parser = new CSVParser(in, ICSVFormat.EXCEL);
  * List&lt;CSVRecord&gt; list = parser.getRecords();
  * </pre>
  *
@@ -127,20 +129,20 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param charset
      *            The Charset to decode the given file.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @return a new parser
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either file or format are null.
      * @throws IOException
      *             If an I/O error occurs
      */
-    public static CSVParser parse(final File file, final Charset charset, final CSVFormat format) throws IOException {
+    public static CSVParser parse(final File file, final Charset charset, final ICSVFormat format) throws IOException {
         Objects.requireNonNull(file, "file");
         return parse(file.toPath(), charset, format);
     }
 
     /**
-     * Creates a CSV parser using the given {@link CSVFormat}.
+     * Creates a CSV parser using the given {@link ICSVFormat}.
      *
      * <p>
      * If you do not read all records from the given {@code reader}, you should call {@link #close()} on the parser,
@@ -152,7 +154,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param charset
      *            The Charset to decode the given file.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @return a new CSVParser configured with the given reader and format.
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either reader or format are null.
@@ -161,7 +163,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @since 1.5
      */
     @SuppressWarnings("resource")
-    public static CSVParser parse(final InputStream inputStream, final Charset charset, final CSVFormat format)
+    public static CSVParser parse(final InputStream inputStream, final Charset charset, final ICSVFormat format)
             throws IOException {
         Objects.requireNonNull(inputStream, "inputStream");
         Objects.requireNonNull(format, "format");
@@ -176,7 +178,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param charset
      *            The Charset to decode the given file.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @return a new parser
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either file or format are null.
@@ -185,14 +187,14 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @since 1.5
      */
     @SuppressWarnings("resource")
-    public static CSVParser parse(final Path path, final Charset charset, final CSVFormat format) throws IOException {
+    public static CSVParser parse(final Path path, final Charset charset, final ICSVFormat format) throws IOException {
         Objects.requireNonNull(path, "path");
         Objects.requireNonNull(format, "format");
         return parse(Files.newInputStream(path), charset, format);
     }
 
     /**
-     * Creates a CSV parser using the given {@link CSVFormat}
+     * Creates a CSV parser using the given {@link ICSVFormat}
      *
      * <p>
      * If you do not read all records from the given {@code reader}, you should call {@link #close()} on the parser,
@@ -202,7 +204,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param reader
      *            a Reader containing CSV-formatted input. Must not be null.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @return a new CSVParser configured with the given reader and format.
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either reader or format are null.
@@ -210,7 +212,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      *             If there is a problem reading the header or skipping the first record
      * @since 1.5
      */
-    public static CSVParser parse(final Reader reader, final CSVFormat format) throws IOException {
+    public static CSVParser parse(final Reader reader, final ICSVFormat format) throws IOException {
         return new CSVParser(reader, format);
     }
 
@@ -222,14 +224,14 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param string
      *            a CSV string. Must not be null.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @return a new parser
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either string or format are null.
      * @throws IOException
      *             If an I/O error occurs
      */
-    public static CSVParser parse(final String string, final CSVFormat format) throws IOException {
+    public static CSVParser parse(final String string, final ICSVFormat format) throws IOException {
         Objects.requireNonNull(string, "string");
         Objects.requireNonNull(format, "format");
 
@@ -249,7 +251,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param charset
      *            the charset for the resource. Must not be null.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @return a new parser
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either url, charset or format are null.
@@ -257,7 +259,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      *             If an I/O error occurs
      */
     @SuppressWarnings("resource")
-    public static CSVParser parse(final URL url, final Charset charset, final CSVFormat format) throws IOException {
+    public static CSVParser parse(final URL url, final Charset charset, final ICSVFormat format) throws IOException {
         Objects.requireNonNull(url, "url");
         Objects.requireNonNull(charset, "charset");
         Objects.requireNonNull(format, "format");
@@ -265,7 +267,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
         return new CSVParser(new InputStreamReader(url.openStream(), charset), format);
     }
 
-    private final CSVFormat format;
+    private final ICSVFormat format;
 
     private final Headers headers;
 
@@ -290,7 +292,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
     private final Token reusableToken = new Token();
 
     /**
-     * Customized CSV parser using the given {@link CSVFormat}
+     * Customized CSV parser using the given {@link ICSVFormat}
      *
      * <p>
      * If you do not read all records from the given {@code reader}, you should call {@link #close()} on the parser,
@@ -300,18 +302,18 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param reader
      *            a Reader containing CSV-formatted input. Must not be null.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @throws IllegalArgumentException
      *             If the parameters of the format are inconsistent or if either reader or format are null.
      * @throws IOException
      *             If there is a problem reading the header or skipping the first record
      */
-    public CSVParser(final Reader reader, final CSVFormat format) throws IOException {
+    public CSVParser(final Reader reader, final ICSVFormat format) throws IOException {
         this(reader, format, 0, 1);
     }
 
     /**
-     * Customized CSV parser using the given {@link CSVFormat}
+     * Customized CSV parser using the given {@link ICSVFormat}
      *
      * <p>
      * If you do not read all records from the given {@code reader}, you should call {@link #close()} on the parser,
@@ -321,7 +323,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @param reader
      *            a Reader containing CSV-formatted input. Must not be null.
      * @param format
-     *            the CSVFormat used for CSV parsing. Must not be null.
+     *            the ICSVFormat used for CSV parsing. Must not be null.
      * @param characterOffset
      *            Lexer offset when the parser does not start parsing at the beginning of the source.
      * @param recordNumber
@@ -333,7 +335,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @since 1.1
      */
     @SuppressWarnings("resource")
-    public CSVParser(final Reader reader, final CSVFormat format, final long characterOffset, final long recordNumber)
+    public CSVParser(final Reader reader, final ICSVFormat format, final long characterOffset, final long recordNumber)
         throws IOException {
         Objects.requireNonNull(reader, "reader");
         Objects.requireNonNull(format, "format");
@@ -414,7 +416,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
                     if (containsHeader && !emptyHeader && !this.format.getAllowDuplicateHeaderNames()) {
                         throw new IllegalArgumentException(
                             String.format(
-                                "The header contains a duplicate name: \"%s\" in %s. If this is valid then use CSVFormat.withAllowDuplicateHeaderNames().",
+                                "The header contains a duplicate name: \"%s\" in %s. If this is valid then use ICSVFormat.withAllowDuplicateHeaderNames().",
                                 header, Arrays.toString(headerRecord)));
                     }
                     if (header != null) {
@@ -472,11 +474,11 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @return a copy of the header map.
      */
     public Map<String, Integer> getHeaderMap() {
-        if (this.headers.headerMap == null) {
+        if (this.headers.getHeaderMap() == null) {
             return null;
         }
         final Map<String, Integer> map = createEmptyHeaderMap();
-        map.putAll(this.headers.headerMap);
+        map.putAll(this.headers.getHeaderMap());
         return map;
     }
 
@@ -486,7 +488,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @return the header map.
      */
     public Map<String, Integer> getHeaderMapRaw() {
-        return this.headers.headerMap;
+        return this.headers.getHeaderMap();
     }
 
     /**
@@ -502,7 +504,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @since 1.7
      */
     public List<String> getHeaderNames() {
-        return Collections.unmodifiableList(headers.headerNames);
+        return Collections.unmodifiableList(headers.getHeaderNames());
     }
 
     /**
