@@ -18,6 +18,7 @@
 package org.apache.commons.csv.format;
 
 import org.apache.commons.csv.*;
+import org.apache.commons.csv.printer.CSVPrinter;
 
 import static org.apache.commons.csv.Constants.BACKSLASH;
 import static org.apache.commons.csv.Constants.COMMA;
@@ -29,7 +30,6 @@ import static org.apache.commons.csv.Constants.PIPE;
 import static org.apache.commons.csv.Constants.TAB;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -151,7 +151,7 @@ import java.util.Set;
  * This class is immutable.
  * </p>
  */
-public final class CSVFormat implements Serializable {
+public final class CSVFormat implements ICSVFormat {
 
     private boolean allowDuplicateHeaderNames;
 
@@ -197,6 +197,7 @@ public final class CSVFormat implements Serializable {
      * @return whether duplicate header names are allowed
      * @since 1.7
      */
+    @Override
     public boolean getAllowDuplicateHeaderNames() {
         return allowDuplicateHeaderNames;
     }
@@ -210,6 +211,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return {@code true} if missing column names are allowed when parsing the header line, {@code false} to throw an {@link IllegalArgumentException}.
      */
+    @Override
     public boolean getAllowMissingColumnNames() {
         return allowMissingColumnNames;
     }
@@ -224,6 +226,7 @@ public final class CSVFormat implements Serializable {
      * @return whether to flush on close.
      * @since 1.6
      */
+    @Override
     public boolean getAutoFlush() {
         return autoFlush;
     }
@@ -237,6 +240,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the comment start marker, may be {@code null}
      */
+    @Override
     public Character getCommentMarker() {
         return commentMarker;
     }
@@ -251,6 +255,7 @@ public final class CSVFormat implements Serializable {
      * @return the first delimiter character.
      * @deprecated Use {@link #getDelimiterString()}.
      */
+    @Override
     @Deprecated
     public char getDelimiter() {
         return delimiter.charAt(0);
@@ -261,6 +266,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the delimiter.
      */
+    @Override
     public String getDelimiterString() {
         return delimiter;
     }
@@ -274,6 +280,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the escape character, may be {@code null}
      */
+    @Override
     public Character getEscapeCharacter() {
         return escapeCharacter;
     }
@@ -287,6 +294,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return a copy of the header array; {@code null} if disabled, the empty array if to be read from the file
      */
+    @Override
     public String[] getHeader() {
         return header != null ? header.clone() : null;
     }
@@ -300,6 +308,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return a copy of the header comment array; {@code null} if disabled.
      */
+    @Override
     public String[] getHeaderComments() {
         return headerComments != null ? headerComments.clone() : null;
     }
@@ -315,6 +324,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return {@code true} if empty lines between records are ignored, {@code false} if they are turned into empty records.
      */
+    @Override
     public boolean getIgnoreEmptyLines() {
         return ignoreEmptyLines;
     }
@@ -331,6 +341,7 @@ public final class CSVFormat implements Serializable {
      * @return {@code true} if header names cases are ignored, {@code false} if they are case sensitive.
      * @since 1.3
      */
+    @Override
     public boolean getIgnoreHeaderCase() {
         return ignoreHeaderCase;
     }
@@ -346,6 +357,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return {@code true} if spaces around values are ignored, {@code false} if they are treated as part of the value.
      */
+    @Override
     public boolean getIgnoreSurroundingSpaces() {
         return ignoreSurroundingSpaces;
     }
@@ -363,6 +375,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the String to convert to and from {@code null}. No substitution occurs if {@code null}
      */
+    @Override
     public String getNullString() {
         return nullString;
     }
@@ -376,6 +389,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the quoteChar character, may be {@code null}
      */
+    @Override
     public Character getQuoteCharacter() {
         return quoteCharacter;
     }
@@ -384,6 +398,7 @@ public final class CSVFormat implements Serializable {
         this.quoteCharacter = quoteCharacter;
     }
 
+    @Override
     public String getQuotedNullString() {
         return quotedNullString;
     }
@@ -397,6 +412,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the quote policy
      */
+    @Override
     public QuoteMode getQuoteMode() {
         return quoteMode;
     }
@@ -410,6 +426,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return the record separator
      */
+    @Override
     public String getRecordSeparator() {
         return recordSeparator;
     }
@@ -425,6 +442,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return whether to skip the header record.
      */
+    @Override
     public boolean getSkipHeaderRecord() {
         return skipHeaderRecord;
     }
@@ -441,6 +459,7 @@ public final class CSVFormat implements Serializable {
      * @return whether to add a trailing delimiter.
      * @since 1.3
      */
+    @Override
     public boolean getTrailingDelimiter() {
         return trailingDelimiter;
     }
@@ -454,6 +473,7 @@ public final class CSVFormat implements Serializable {
      *
      * @return whether to trim leading and trailing blanks.
      */
+    @Override
     public boolean getTrim() {
         return trim;
     }
