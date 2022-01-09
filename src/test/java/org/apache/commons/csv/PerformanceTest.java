@@ -18,10 +18,7 @@
 package org.apache.commons.csv;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.parser.ExtendedBufferedReader;
-import org.apache.commons.csv.parser.Lexer;
-import org.apache.commons.csv.parser.Token;
-import org.apache.commons.csv.parser.Type;
+import org.apache.commons.csv.parser.*;
 import org.apache.commons.csv.record.CSVRecord;
 import org.apache.commons.io.IOUtils;
 

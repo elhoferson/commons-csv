@@ -16,9 +16,9 @@
  */
 package org.apache.commons.csv.issues;
 
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 

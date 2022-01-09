@@ -17,8 +17,8 @@
 
 package org.apache.commons.csv.perf;
 
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;

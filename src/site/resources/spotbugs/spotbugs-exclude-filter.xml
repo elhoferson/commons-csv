@@ -36,7 +36,7 @@
   
   <!-- Should not have called this method iterator() since it returns the current iterator and not a new one. -->
   <Match>
-    <Class name="org.apache.commons.csv.CSVParser" />
+    <Class name="org.apache.commons.csv.parser.CSVParser" />
     <Method name="iterator" />
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>

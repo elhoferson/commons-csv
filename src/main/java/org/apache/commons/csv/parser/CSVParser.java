@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
+import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.QuoteMode;
-import org.apache.commons.csv.parser.ExtendedBufferedReader;
-import org.apache.commons.csv.parser.Lexer;
-import org.apache.commons.csv.parser.Token;
 import org.apache.commons.csv.record.CSVRecord;
 
 import java.io.*;
@@ -120,75 +118,6 @@ import static org.apache.commons.csv.parser.Type.TOKEN;
  * @see <a href="package-summary.html">package documentation for more details</a>
  */
 public class CSVParser implements Iterable<CSVRecord>, Closeable {
-
-    class CSVRecordIterator implements Iterator<CSVRecord> {
-        private CSVRecord current;
-
-        private CSVRecord getNextRecord() {
-            try {
-                return CSVParser.this.nextRecord();
-            } catch (final IOException e) {
-                throw new IllegalStateException(
-                        e.getClass().getSimpleName() + " reading next record: " + e.toString(), e);
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            if (CSVParser.this.isClosed()) {
-                return false;
-            }
-            if (this.current == null) {
-                this.current = this.getNextRecord();
-            }
-
-            return this.current != null;
-        }
-
-        @Override
-        public CSVRecord next() {
-            if (CSVParser.this.isClosed()) {
-                throw new NoSuchElementException("CSVParser has been closed");
-            }
-            CSVRecord next = this.current;
-            this.current = null;
-
-            if (next == null) {
-                // hasNext() wasn't called before
-                next = this.getNextRecord();
-                if (next == null) {
-                    throw new NoSuchElementException("No more CSV records available");
-                }
-            }
-
-            return next;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
-     * Header information based on name and position.
-     */
-    private static final class Headers {
-        /**
-         * Header column positions (0-based)
-         */
-        final Map<String, Integer> headerMap;
-
-        /**
-         * Header names in column order
-         */
-        final List<String> headerNames;
-
-        Headers(final Map<String, Integer> headerMap, final List<String> headerNames) {
-            this.headerMap = headerMap;
-            this.headerNames = headerNames;
-        }
-    }
 
     /**
      * Creates a parser for the given {@link File}.
@@ -411,7 +340,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
 
         this.format = format.copy();
         this.lexer = new Lexer(format, new ExtendedBufferedReader(reader));
-        this.csvRecordIterator = new CSVRecordIterator();
+        this.csvRecordIterator = new CSVRecordIterator(this);
         this.headers = createHeaders();
         this.characterOffset = characterOffset;
         this.recordNumber = recordNumber - 1;

@@ -17,10 +17,10 @@
 
 package org.apache.commons.csv.record;
 
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.CSVFormatBuilder;
+import org.apache.commons.csv.parser.CSVParser;
 
 import java.io.Serializable;
 import java.util.*;

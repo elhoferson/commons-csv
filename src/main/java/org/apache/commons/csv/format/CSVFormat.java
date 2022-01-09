@@ -17,7 +17,7 @@
 
 package org.apache.commons.csv.format;
 
-import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.record.CSVRecord;
 

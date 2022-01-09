@@ -16,17 +16,17 @@
  */
 package org.apache.commons.csv.issues;
 
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.CSVParser;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.format.QuoteMode;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests https://issues.apache.org/jira/browse/CSV-213
