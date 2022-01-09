@@ -6,10 +6,6 @@ import org.apache.commons.csv.QuoteMode;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Objects;
-
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.LF;
 
 /**
  * Builds CSVFormat instances.
@@ -257,7 +253,7 @@ public class CSVFormatBuilder {
      * @throws IllegalArgumentException thrown if the specified character is a line break
      */
     public CSVFormatBuilder setCommentMarker(final Character commentMarker) {
-        if (isLineBreak(commentMarker)) {
+        if (CSVFormatHelper.isLineBreak(commentMarker)) {
             throw new IllegalArgumentException("The comment start marker character cannot be a line break");
         }
         this.commentMarker = commentMarker;
@@ -281,7 +277,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      */
     public CSVFormatBuilder setDelimiter(final String delimiter) {
-        if (containsLineBreak(delimiter)) {
+        if (CSVFormatHelper.containsLineBreak(delimiter)) {
             throw new IllegalArgumentException("The delimiter cannot be a line break");
         }
         this.delimiter = delimiter;
@@ -308,7 +304,7 @@ public class CSVFormatBuilder {
      * @throws IllegalArgumentException thrown if the specified character is a line break
      */
     public CSVFormatBuilder setEscape(final Character escapeCharacter) {
-        if (isLineBreak(escapeCharacter)) {
+        if (CSVFormatHelper.isLineBreak(escapeCharacter)) {
             throw new IllegalArgumentException("The escape character cannot be a line break");
         }
         this.escapeCharacter = escapeCharacter;
@@ -528,7 +524,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      */
     public CSVFormatBuilder setQuote(final Character quoteCharacter) {
-        if (isLineBreak(quoteCharacter)) {
+        if (CSVFormatHelper.isLineBreak(quoteCharacter)) {
             throw new IllegalArgumentException("The quoteChar cannot be a line break");
         }
         this.quoteCharacter = quoteCharacter;
@@ -609,50 +605,5 @@ public class CSVFormatBuilder {
     public CSVFormatBuilder setTrim(final boolean trim) {
         this.trim = trim;
         return this;
-    }
-
-    /**
-     * Returns true if the given string contains the search char.
-     *
-     * @param source the string to check.
-     * @param searchCh the character to search.
-     *
-     * @return true if {@code c} contains a line break character
-     */
-    private static boolean contains(final String source, final char searchCh) {
-        return Objects.requireNonNull(source, "source").indexOf(searchCh) >= 0;
-    }
-
-    /**
-     * Returns true if the given string contains a line break character.
-     *
-     * @param source the string to check.
-     *
-     * @return true if {@code c} contains a line break character.
-     */
-    private static boolean containsLineBreak(final String source) {
-        return contains(source, CR) || contains(source, LF);
-    }
-
-    /**
-     * Returns true if the given character is a line break character.
-     *
-     * @param c the character to check.
-     *
-     * @return true if {@code c} is a line break character.
-     */
-    private static boolean isLineBreak(final char c) {
-        return c == LF || c == CR;
-    }
-
-    /**
-     * Returns true if the given character is a line break character.
-     *
-     * @param c the character to check, may be null.
-     *
-     * @return true if {@code c} is a line break character (and not null).
-     */
-    private static boolean isLineBreak(final Character c) {
-        return c != null && isLineBreak(c.charValue());
     }
 }

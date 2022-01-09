@@ -20,9 +20,6 @@ package org.apache.commons.csv;
 import org.apache.commons.csv.format.CSVFormat;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
