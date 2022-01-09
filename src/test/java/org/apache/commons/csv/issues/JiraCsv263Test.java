@@ -46,33 +46,33 @@ public class JiraCsv263Test {
         final StringBuilder out = new StringBuilder();
 
         final Reader atStartOnly = new StringReader("\"a,b,c\r\nx,y,z");
-        CSVPrinter csvPrinter = new CSVPrinter(format);
-        csvPrinter.print(atStartOnly, out, true);
+        CSVPrinter csvPrinter = new CSVPrinter(out, format);
+        csvPrinter.print(atStartOnly, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"", out.toString());
 
         final Reader atEndOnly = new StringReader("a,b,c\r\nx,y,z\"");
         out.setLength(0);
-        csvPrinter.print(atEndOnly, out, true);
+        csvPrinter.print(atEndOnly, true);
         assertEquals("\"a,b,c\r\nx,y,z\"\"\"", out.toString());
 
         final Reader atBeginEnd = new StringReader("\"a,b,c\r\nx,y,z\"");
         out.setLength(0);
-        csvPrinter.print(atBeginEnd, out, true);
+        csvPrinter.print(atBeginEnd, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"\"\"", out.toString());
 
         final Reader embeddedBeginMiddle = new StringReader("\"a\",b,c\r\nx,\"y\",z");
         out.setLength(0);
-        csvPrinter.print(embeddedBeginMiddle, out, true);
+        csvPrinter.print(embeddedBeginMiddle, true);
         assertEquals("\"\"\"a\"\",b,c\r\nx,\"\"y\"\",z\"", out.toString());
 
         final Reader embeddedMiddleEnd = new StringReader("a,\"b\",c\r\nx,y,\"z\"");
         out.setLength(0);
-        csvPrinter.print(embeddedMiddleEnd, out, true);
+        csvPrinter.print(embeddedMiddleEnd, true);
         assertEquals("\"a,\"\"b\"\",c\r\nx,y,\"\"z\"\"\"", out.toString());
 
         final Reader nested = new StringReader("a,\"b \"and\" c\",d");
         out.setLength(0);
-        csvPrinter.print(nested, out, true);
+        csvPrinter.print(nested, true);
         assertEquals("\"a,\"\"b \"\"and\"\" c\"\",d\"", out.toString());
     }
 

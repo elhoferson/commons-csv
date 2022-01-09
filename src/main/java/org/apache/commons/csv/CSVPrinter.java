@@ -111,23 +111,6 @@ public final class CSVPrinter implements Flushable, Closeable {
         }
     }
 
-    public CSVPrinter(final CSVFormat format) throws IOException {
-        Objects.requireNonNull(format, "format");
-
-        this.appendable = null;
-        this.format = format.copy();
-        // TODO: Is it a good idea to do this here instead of on the first call to a print method?
-        // It seems a pain to have to track whether the header has already been printed or not.
-        if (format.getHeaderComments() != null) {
-            for (final String line : format.getHeaderComments()) {
-                this.printComment(line);
-            }
-        }
-        if (format.getHeader() != null && !format.getSkipHeaderRecord()) {
-            this.printRecord((Object[]) format.getHeader());
-        }
-    }
-
     @Override
     public void close() throws IOException {
         close(false);
@@ -181,7 +164,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      *             If an I/O error occurs
      */
     public void print(final Object value) throws IOException {
-        print(value, appendable, newRecord);
+        print(value, newRecord);
         newRecord = false;
     }
 
@@ -246,17 +229,6 @@ public final class CSVPrinter implements Flushable, Closeable {
      */
     public void printHeaders(final ResultSet resultSet) throws IOException, SQLException {
         printRecord((Object[]) format.builder().setHeader(resultSet).build().getHeader());
-    }
-
-    /**
-     * Outputs the record separator.
-     *
-     * @throws IOException
-     *             If an I/O error occurs
-     */
-    public void println() throws IOException {
-        println(appendable);
-        newRecord = true;
     }
 
     /**
@@ -428,21 +400,21 @@ public final class CSVPrinter implements Flushable, Closeable {
         printRecords(resultSet);
     }
 
-    private void print(final Object object, final CharSequence value, final Appendable out, final boolean newRecord) throws IOException {
+    private void print(final Object object, final CharSequence value, final boolean newRecord) throws IOException {
         final int offset = 0;
         final int len = value.length();
         if (!newRecord) {
-            out.append(format.getDelimiterString());
+            append(format.getDelimiterString());
         }
         if (object == null) {
-            out.append(value);
+            append(value);
         } else if (format.isQuoteCharacterSet()) {
             // the original object is needed so can check for Number
-            printWithQuotes(object, value, out, newRecord);
+            printWithQuotes(object, value, newRecord);
         } else if (format.isEscapeCharacterSet()) {
-            printWithEscapes(value, out);
+            printWithEscapes(value);
         } else {
-            out.append(value, offset, len);
+            appendable.append(value, offset, len);
         }
     }
 
@@ -451,12 +423,11 @@ public final class CSVPrinter implements Flushable, Closeable {
      * avoid creating CSVPrinters. Trims the value if {@link CSVFormat#getTrim()} is true.
      *
      * @param value     value to output.
-     * @param out       where to print the value.
      * @param newRecord if this a new record.
      * @throws IOException If an I/O error occurs.
      * @since 1.4
      */
-    public void print(final Object value, final Appendable out, final boolean newRecord) throws IOException {
+    public void print(final Object value, final boolean newRecord) throws IOException {
         // null values are considered empty
         // Only call CharSequence.toString() if you have to, helps GC-free use cases.
         CharSequence charSequence;
@@ -472,28 +443,28 @@ public final class CSVPrinter implements Flushable, Closeable {
         } else if (value instanceof CharSequence) {
             charSequence = (CharSequence) value;
         } else if (value instanceof Reader) {
-            print((Reader) value, out, newRecord);
+            print((Reader) value, newRecord);
             return;
         } else {
             charSequence = value.toString();
         }
         charSequence = format.getTrim() ? trim(charSequence) : charSequence;
-        print(value, charSequence, out, newRecord);
+        print(value, charSequence, newRecord);
     }
 
-    private void print(final Reader reader, final Appendable out, final boolean newRecord) throws IOException {
+    private void print(final Reader reader, final boolean newRecord) throws IOException {
         // Reader is never null
         if (!newRecord) {
-            append(format.getDelimiterString(), out);
+            append(format.getDelimiterString());
         }
         if (format.isQuoteCharacterSet()) {
-            printWithQuotes(reader, out);
+            printWithQuotes(reader);
         } else if (format.isEscapeCharacterSet()) {
-            printWithEscapes(reader, out);
-        } else if (out instanceof Writer) {
-            IOUtils.copyLarge(reader, (Writer) out);
+            printWithEscapes(reader);
+        } else if (appendable instanceof Writer) {
+            IOUtils.copyLarge(reader, (Writer) appendable);
         } else {
-            IOUtils.copy(reader, out);
+            IOUtils.copy(reader, appendable);
         }
 
     }
@@ -501,7 +472,7 @@ public final class CSVPrinter implements Flushable, Closeable {
     /*
      * Note: Must only be called if escaping is enabled, otherwise will generate NPE.
      */
-    private void printWithEscapes(final CharSequence charSeq, final Appendable appendable) throws IOException {
+    private void printWithEscapes(final CharSequence charSeq) throws IOException {
         int start = 0;
         int pos = 0;
         final int end = charSeq.length();
@@ -547,7 +518,7 @@ public final class CSVPrinter implements Flushable, Closeable {
         }
     }
 
-    private void printWithEscapes(final Reader reader, final Appendable appendable) throws IOException {
+    private void printWithEscapes(final Reader reader) throws IOException {
         int start = 0;
         int pos = 0;
 
@@ -566,7 +537,7 @@ public final class CSVPrinter implements Flushable, Closeable {
             if (c == CR || c == LF || c == escape || isDelimiterStart) {
                 // write out segment up until this char
                 if (pos > start) {
-                    append(builder.substring(start, pos), appendable);
+                    append(builder.substring(start, pos));
                     builder.setLength(0);
                     pos = -1;
                 }
@@ -576,14 +547,14 @@ public final class CSVPrinter implements Flushable, Closeable {
                     c = 'r';
                 }
 
-                append(escape, appendable);
-                append((char) c, appendable);
+                append(escape);
+                append((char) c);
 
                 if (isDelimiterStart) {
                     for (int i = 1; i < delimLength; i++) {
                         c = bufferedReader.read();
-                        append(escape, appendable);
-                        append((char) c, appendable);
+                        append(escape);
+                        append((char) c);
                     }
                 }
 
@@ -594,7 +565,7 @@ public final class CSVPrinter implements Flushable, Closeable {
 
         // write last segment
         if (pos > start) {
-            append(builder.substring(start, pos), appendable);
+            append(builder.substring(start, pos));
         }
     }
 
@@ -602,7 +573,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * Note: must only be called if quoting is enabled, otherwise will generate NPE
      */
     // the original object is needed so can check for Number
-    private void printWithQuotes(final Object object, final CharSequence charSeq, final Appendable out, final boolean newRecord) throws IOException {
+    private void printWithQuotes(final Object object, final CharSequence charSeq, final boolean newRecord) throws IOException {
         boolean quote = false;
         int start = 0;
         int pos = 0;
@@ -630,7 +601,7 @@ public final class CSVPrinter implements Flushable, Closeable {
                 break;
             case NONE:
                 // Use the existing escaping code
-                printWithEscapes(charSeq, out);
+                printWithEscapes(charSeq);
                 return;
             case MINIMAL:
                 if (len <= 0) {
@@ -673,7 +644,7 @@ public final class CSVPrinter implements Flushable, Closeable {
 
                 if (!quote) {
                     // no encapsulation needed - write out the original value
-                    out.append(charSeq, start, len);
+                    appendable.append(charSeq, start, len);
                     return;
                 }
                 break;
@@ -683,12 +654,12 @@ public final class CSVPrinter implements Flushable, Closeable {
 
         if (!quote) {
             // no encapsulation needed - write out the original value
-            out.append(charSeq, start, len);
+            appendable.append(charSeq, start, len);
             return;
         }
 
         // we hit something that needed encapsulation
-        out.append(quoteChar);
+        appendable.append(quoteChar);
 
         // Pick up where we left off: pos should be positioned on the first character that caused
         // the need for encapsulation.
@@ -696,29 +667,28 @@ public final class CSVPrinter implements Flushable, Closeable {
             final char c = charSeq.charAt(pos);
             if (c == quoteChar || c == escapeChar) {
                 // write out the chunk up until this point
-                out.append(charSeq, start, pos);
-                out.append(escapeChar); // now output the escape
+                appendable.append(charSeq, start, pos);
+                append(escapeChar); // now output the escape
                 start = pos; // and restart with the matched char
             }
             pos++;
         }
 
         // write the last segment
-        out.append(charSeq, start, pos);
-        out.append(quoteChar);
+        appendable.append(charSeq, start, pos);
+        append(quoteChar);
     }
 
     /**
      * Always use quotes unless QuoteMode is NONE, so we not have to look ahead.
      *
      * @param reader What to print
-     * @param appendable Where to print it
      * @throws IOException If an I/O error occurs
      */
-    private void printWithQuotes(final Reader reader, final Appendable appendable) throws IOException {
+    private void printWithQuotes(final Reader reader) throws IOException {
 
         if (format.getQuoteMode() == QuoteMode.NONE) {
-            printWithEscapes(reader, appendable);
+            printWithEscapes(reader);
             return;
         }
 
@@ -727,7 +697,7 @@ public final class CSVPrinter implements Flushable, Closeable {
         final char quote = format.getQuoteCharacter().charValue();
         final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
 
-        append(quote, appendable);
+        append(quote);
 
         int c;
         while (-1 != (c = reader.read())) {
@@ -735,39 +705,40 @@ public final class CSVPrinter implements Flushable, Closeable {
             if (c == quote) {
                 // write out segment up until this char
                 if (pos > 0) {
-                    append(builder.substring(0, pos), appendable);
-                    append(quote, appendable);
+                    append(builder.substring(0, pos));
+                    append(quote);
                     builder.setLength(0);
                     pos = -1;
                 }
 
-                append((char) c, appendable);
+                append((char) c);
             }
             pos++;
         }
 
         // write last segment
         if (pos > 0) {
-            append(builder.substring(0, pos), appendable);
+            append(builder.substring(0, pos));
         }
 
-        append(quote, appendable);
+        append(quote);
     }
 
     /**
      * Outputs the trailing delimiter (if set) followed by the record separator (if set).
      *
-     * @param appendable where to write
      * @throws IOException If an I/O error occurs.
      * @since 1.4
      */
-    public void println(final Appendable appendable) throws IOException {
+    public void println() throws IOException {
         if (format.getTrailingDelimiter()) {
-            append(format.getDelimiterString(), appendable);
+            append(format.getDelimiterString());
         }
         if (format.getRecordSeparator() != null) {
-            append(format.getRecordSeparator(), appendable);
+            append(format.getRecordSeparator());
         }
+
+        newRecord = true;
     }
 
     /**
@@ -801,7 +772,7 @@ public final class CSVPrinter implements Flushable, Closeable {
         return true;
     }
 
-    private void append(final CharSequence csq, final Appendable appendable) throws IOException {
+    private void append(final CharSequence csq) throws IOException {
         //try {
         appendable.append(csq);
         //} catch (final IOException e) {
@@ -809,7 +780,7 @@ public final class CSVPrinter implements Flushable, Closeable {
         //}
     }
 
-    private void append(final char c, final Appendable appendable) throws IOException {
+    private void append(final char c) throws IOException {
         //try {
         appendable.append(c);
         //} catch (final IOException e) {
