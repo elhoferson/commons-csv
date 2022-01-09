@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.util.*;
 import org.junit.jupiter.api.Disabled;

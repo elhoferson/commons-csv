@@ -17,15 +17,11 @@
 
 package org.apache.commons.csv.printer;
 
-import static org.apache.commons.csv.Constants.CR;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -33,9 +29,8 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.commons.csv.*;
-import org.apache.commons.csv.format.CSVFormat;
-import org.junit.jupiter.api.Test;
+import static org.apache.commons.csv.Constants.CR;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests {@link CSVPrinter}.

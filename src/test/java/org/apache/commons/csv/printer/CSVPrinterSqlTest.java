@@ -1,9 +1,8 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.IOUtils;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.util.IOUtils;
+import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 

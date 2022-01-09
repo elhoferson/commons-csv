@@ -34,6 +34,10 @@ import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.parser.ExtendedBufferedReader;
+import org.apache.commons.csv.parser.Lexer;
+import org.apache.commons.csv.parser.Token;
+import org.apache.commons.csv.parser.Type;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -240,7 +244,7 @@ public class PerformanceTest {
                     default:
                         throw new IllegalStateException("Unexpected Token type: " + token.type);
                     }
-                } while (!token.type.equals(Token.Type.EOF));
+                } while (!token.type.equals(Type.EOF));
                 stats = new Stats(count, fields);
             }
             show(simpleName + dynamic + " " + (newToken ? "new" : "reset"), stats, startMillis);

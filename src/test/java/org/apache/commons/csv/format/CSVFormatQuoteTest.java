@@ -1,7 +1,6 @@
 package org.apache.commons.csv.format;
 
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

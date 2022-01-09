@@ -26,7 +26,7 @@ import java.io.Reader;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Test;
 
 public class JiraCsv167Test {

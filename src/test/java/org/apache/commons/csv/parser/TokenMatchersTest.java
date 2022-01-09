@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
-import static org.apache.commons.csv.TokenMatchers.hasContent;
-import static org.apache.commons.csv.TokenMatchers.hasType;
-import static org.apache.commons.csv.TokenMatchers.isReady;
-import static org.apache.commons.csv.TokenMatchers.matches;
+import static org.apache.commons.csv.parser.TokenMatchers.hasContent;
+import static org.apache.commons.csv.parser.TokenMatchers.hasType;
+import static org.apache.commons.csv.parser.TokenMatchers.isReady;
+import static org.apache.commons.csv.parser.TokenMatchers.matches;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,7 +34,7 @@ public class TokenMatchersTest {
     @BeforeEach
     public void setUp() {
         token = new Token();
-        token.type = Token.Type.TOKEN;
+        token.type = Type.TOKEN;
         token.isReady = true;
         token.content.append("content");
     }
@@ -47,10 +47,10 @@ public class TokenMatchersTest {
 
     @Test
     public void testHasType() {
-        assertFalse(hasType(Token.Type.COMMENT).matches(token));
-        assertFalse(hasType(Token.Type.EOF).matches(token));
-        assertFalse(hasType(Token.Type.EORECORD).matches(token));
-        assertTrue(hasType(Token.Type.TOKEN).matches(token));
+        assertFalse(hasType(Type.COMMENT).matches(token));
+        assertFalse(hasType(Type.EOF).matches(token));
+        assertFalse(hasType(Type.EORECORD).matches(token));
+        assertTrue(hasType(Type.TOKEN).matches(token));
     }
 
     @Test
@@ -62,15 +62,15 @@ public class TokenMatchersTest {
 
     @Test
     public void testMatches() {
-        assertTrue(matches(Token.Type.TOKEN, "content").matches(token));
-        assertFalse(matches(Token.Type.EOF, "content").matches(token));
-        assertFalse(matches(Token.Type.TOKEN, "not the content").matches(token));
-        assertFalse(matches(Token.Type.EORECORD, "not the content").matches(token));
+        assertTrue(matches(Type.TOKEN, "content").matches(token));
+        assertFalse(matches(Type.EOF, "content").matches(token));
+        assertFalse(matches(Type.TOKEN, "not the content").matches(token));
+        assertFalse(matches(Type.EORECORD, "not the content").matches(token));
     }
 
     @Test
     public void testToString() {
-        assertTrue(matches(Token.Type.TOKEN, "content").matches(token));
+        assertTrue(matches(Type.TOKEN, "content").matches(token));
         assertEquals("TOKEN", token.type.name());
         assertEquals("TOKEN [content]", token.toString());
     }

@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Test;
 
 /**

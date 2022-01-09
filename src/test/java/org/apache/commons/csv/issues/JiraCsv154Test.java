@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
 public class JiraCsv154Test {

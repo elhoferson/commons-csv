@@ -24,7 +24,7 @@ import java.util.Iterator;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Test;
 

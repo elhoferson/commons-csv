@@ -24,7 +24,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
 public class JiraCsv271Test {

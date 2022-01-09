@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
 import static org.hamcrest.core.AllOf.allOf;
 
+import org.apache.commons.csv.parser.Token;
+import org.apache.commons.csv.parser.Type;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -46,7 +48,7 @@ final class TokenMatchers {
         };
     }
 
-    public static Matcher<Token> hasType(final Token.Type expectedType) {
+    public static Matcher<Token> hasType(final Type expectedType) {
         return new TypeSafeDiagnosingMatcher<Token>() {
 
             @Override
@@ -82,7 +84,7 @@ final class TokenMatchers {
         };
     }
 
-    public static Matcher<Token> matches(final Token.Type expectedType, final String expectedContent) {
+    public static Matcher<Token> matches(final Type expectedType, final String expectedContent) {
         return allOf(hasType(expectedType), hasContent(expectedContent));
     }
 

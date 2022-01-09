@@ -24,7 +24,7 @@ import java.nio.file.Files;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
