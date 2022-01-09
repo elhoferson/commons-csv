@@ -461,8 +461,7 @@ public final class CSVFormat implements Serializable {
     }
 
     /**
-     * Returns whether to trim leading and trailing blanks. This is used by {@link #print(Object, Appendable, boolean)} Also by
-     * {CSVParser#addRecordValue(boolean)}
+     * Returns whether to trim leading and trailing blanks.
      *
      * @return whether to trim leading and trailing blanks.
      */
@@ -932,22 +931,6 @@ public final class CSVFormat implements Serializable {
         validate();
     }
 
-    private void append(final char c, final Appendable appendable) throws IOException {
-        //try {
-            appendable.append(c);
-        //} catch (final IOException e) {
-        //    throw new UncheckedIOException(e);
-        //}
-    }
-
-    private void append(final CharSequence csq, final Appendable appendable) throws IOException {
-        //try {
-            appendable.append(csq);
-        //} catch (final IOException e) {
-        //    throw new UncheckedIOException(e);
-        //}
-    }
-
     /**
      * Creates a new Builder for this instance.
      *
@@ -1027,37 +1010,6 @@ public final class CSVFormat implements Serializable {
     }
 
     /**
-     * Matches whether the next characters constitute a delimiter
-     *
-     * @param ch
-     *            the current char
-     * @param charSeq
-     *            the match char sequence
-     * @param startIndex
-     *            where start to match
-     * @param delimiter
-     *            the delimiter
-     * @param delimiterLength
-     *            the delimiter length
-     * @return true if the match is successful
-     */
-    private boolean isDelimiter(final char ch, final CharSequence charSeq, final int startIndex, final char[] delimiter, final int delimiterLength) {
-        if (ch != delimiter[0]) {
-            return false;
-        }
-        final int len = charSeq.length();
-        if (startIndex + delimiterLength > len) {
-            return false;
-        }
-        for (int i = 1; i < delimiterLength; i++) {
-            if (charSeq.charAt(startIndex + i) != delimiter[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Returns whether escape are being processed.
      *
      * @return {@code true} if escapes are processed
@@ -1082,22 +1034,6 @@ public final class CSVFormat implements Serializable {
      */
     public boolean isQuoteCharacterSet() {
         return getQuoteCharacter() != null;
-    }
-
-    /**
-     * Outputs the trailing delimiter (if set) followed by the record separator (if set).
-     *
-     * @param appendable where to write
-     * @throws IOException If an I/O error occurs.
-     * @since 1.4
-     */
-    public void println(final Appendable appendable) throws IOException {
-        if (getTrailingDelimiter()) {
-            append(getDelimiterString(), appendable);
-        }
-        if (getRecordSeparator() != null) {
-            append(getRecordSeparator(), appendable);
-        }
     }
 
     @Override
@@ -1226,23 +1162,6 @@ public final class CSVFormat implements Serializable {
     public static CSVFormat newFormat(final char delimiter) {
         return new CSVFormat(String.valueOf(delimiter), null, null, null, null, false, false, null, null, null, null, false, false, false, false, false, false,
                 true);
-    }
-
-    static CharSequence trim(final CharSequence charSequence) {
-        if (charSequence instanceof String) {
-            return ((String) charSequence).trim();
-        }
-        final int count = charSequence.length();
-        int len = count;
-        int pos = 0;
-
-        while (pos < len && charSequence.charAt(pos) <= SP) {
-            pos++;
-        }
-        while (pos < len && charSequence.charAt(len - 1) <= SP) {
-            len--;
-        }
-        return pos > 0 || len < count ? charSequence.subSequence(pos, len) : charSequence;
     }
 
     /**

@@ -255,7 +255,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      *             If an I/O error occurs
      */
     public void println() throws IOException {
-        format.println(appendable);
+        println(appendable);
         newRecord = true;
     }
 
@@ -277,26 +277,6 @@ public final class CSVPrinter implements Flushable, Closeable {
             print(value);
         }
         println();
-    }
-
-    /**
-     * Prints the given {@code values} to {@code out} as a single record of delimiter separated values followed by the record separator.
-     *
-     * <p>
-     * The values will be quoted if needed. Quotes and new-line characters will be escaped. This method adds the record separator to the output after printing
-     * the record, so there is no need to call {@link #println(Appendable)}.
-     * </p>
-     *
-     * @param appendable    where to write.
-     * @param values values to output.
-     * @throws IOException If an I/O error occurs.
-     * @since 1.4
-     */
-    public void printRecord(final Appendable appendable, final Object... values) throws IOException {
-        for (int i = 0; i < values.length; i++) {
-            print(values[i], appendable, i == 0);
-        }
-        println(appendable);
     }
 
     /**
