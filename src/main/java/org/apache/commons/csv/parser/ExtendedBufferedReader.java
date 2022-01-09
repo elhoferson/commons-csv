@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
+
+import org.apache.commons.csv.Constants;
 
 import static org.apache.commons.csv.Constants.CR;
 import static org.apache.commons.csv.Constants.END_OF_STREAM;
@@ -72,7 +74,7 @@ public final class ExtendedBufferedReader extends BufferedReader {
      *
      * @return the current line number
      */
-    long getCurrentLineNumber() {
+    public long getCurrentLineNumber() {
         // Check if we are at EOL or EOF or just starting
         if (lastChar == CR || lastChar == LF || lastChar == UNDEFINED || lastChar == END_OF_STREAM) {
             return eolCounter; // counter is accurate
@@ -88,7 +90,7 @@ public final class ExtendedBufferedReader extends BufferedReader {
      *
      * @return the last character that was read
      */
-    int getLastChar() {
+    public int getLastChar() {
         return lastChar;
     }
 
@@ -97,7 +99,7 @@ public final class ExtendedBufferedReader extends BufferedReader {
      *
      * @return the current position in the reader (counting characters, not bytes since this is a Reader)
      */
-    long getPosition() {
+    public long getPosition() {
         return this.position;
     }
 
@@ -114,7 +116,7 @@ public final class ExtendedBufferedReader extends BufferedReader {
      * @throws IOException
      *             If an I/O error occurs
      */
-    int lookAhead() throws IOException {
+    public int lookAhead() throws IOException {
         super.mark(1);
         final int c = super.read();
         super.reset();
@@ -132,7 +134,7 @@ public final class ExtendedBufferedReader extends BufferedReader {
      * @return the buffer itself
      * @throws IOException If an I/O error occurs
      */
-    char[] lookAhead(final char[] buf) throws IOException {
+    public char[] lookAhead(final char[] buf) throws IOException {
         final int n = buf.length;
         super.mark(n);
         super.read(buf, 0, n);

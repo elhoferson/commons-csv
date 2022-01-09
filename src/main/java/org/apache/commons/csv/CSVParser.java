@@ -18,8 +18,12 @@
 package org.apache.commons.csv;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.ExtendedBufferedReader;
+import org.apache.commons.csv.parser.Lexer;
+import org.apache.commons.csv.parser.Token;
 
-import static org.apache.commons.csv.Token.Type.TOKEN;
+import static org.apache.commons.csv.parser.Type.TOKEN;
 
 import java.io.Closeable;
 import java.io.File;
