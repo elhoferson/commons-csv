@@ -29,13 +29,12 @@ import static org.apache.commons.csv.Constants.TAB;
 import static org.apache.commons.csv.Constants.UNDEFINED;
 import static org.apache.commons.csv.parser.Type.*;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 /**
  * Lexical analyzer.
  */
-public final class Lexer implements ILexer {
+public class Lexer implements ILexer {
 
     private static final String CR_STRING = Character.toString(CR);
     private static final String LF_STRING = Character.toString(LF);

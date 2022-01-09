@@ -135,7 +135,7 @@ import java.util.stream.StreamSupport;
  *
  * @see <a href="package-summary.html">package documentation for more details</a>
  */
-public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+public class CSVParser implements Iterable<CSVRecord>, Closeable {
 
     class CSVRecordIterator implements Iterator<CSVRecord> {
         private CSVRecord current;

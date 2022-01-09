@@ -24,7 +24,7 @@ import static org.apache.commons.csv.parser.Type.INVALID;
  * <p/>
  * It is used as contract between the lexer and the parser.
  */
-public final class Token {
+public class Token {
 
     /** length of the initial token (content-)buffer */
     private static final int INITIAL_TOKEN_LENGTH = 50;

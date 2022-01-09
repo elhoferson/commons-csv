@@ -151,7 +151,7 @@ import java.util.Set;
  * This class is immutable.
  * </p>
  */
-public final class CSVFormat implements ICSVFormat {
+public class CSVFormat implements ICSVFormat {
 
     private boolean allowDuplicateHeaderNames;
 

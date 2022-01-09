@@ -41,7 +41,7 @@ import java.util.stream.Stream;
  * mapping when transferring serialised forms pre-1.8 to 1.8 and vice versa.
  * </p>
  */
-public final class CSVRecord implements Serializable, Iterable<String> {
+public class CSVRecord implements Serializable, Iterable<String> {
 
     private static final long serialVersionUID = 1L;
 
