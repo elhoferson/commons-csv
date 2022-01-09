@@ -17,17 +17,9 @@
 
 package org.apache.commons.csv.format;
 
-import org.apache.commons.csv.*;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.printer.CSVPrinter;
-
-import static org.apache.commons.csv.Constants.BACKSLASH;
-import static org.apache.commons.csv.Constants.COMMA;
-import static org.apache.commons.csv.Constants.CRLF;
-import static org.apache.commons.csv.Constants.DOUBLE_QUOTE_CHAR;
-import static org.apache.commons.csv.Constants.EMPTY;
-import static org.apache.commons.csv.Constants.LF;
-import static org.apache.commons.csv.Constants.PIPE;
-import static org.apache.commons.csv.Constants.TAB;
+import org.apache.commons.csv.record.CSVRecord;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -38,6 +30,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import static org.apache.commons.csv.Constants.*;
 
 /**
  * Specifies the format of a CSV file and parses input.
@@ -1104,15 +1098,15 @@ public class CSVFormat implements ICSVFormat {
             throw new IllegalArgumentException("The delimiter cannot be a line break");
         }
 
-        if (getQuoteCharacter() != null && CSVFormatHelper.contains(getDelimiterString(), getQuoteCharacter().charValue())) {
+        if (getQuoteCharacter() != null && CSVFormatHelper.contains(getDelimiterString(), getQuoteCharacter())) {
             throw new IllegalArgumentException("The quoteChar character and the delimiter cannot be the same ('" + getQuoteCharacter() + "')");
         }
 
-        if (getEscapeCharacter() != null && CSVFormatHelper.contains(getDelimiterString(), getEscapeCharacter().charValue())) {
+        if (getEscapeCharacter() != null && CSVFormatHelper.contains(getDelimiterString(), getEscapeCharacter())) {
             throw new IllegalArgumentException("The escape character and the delimiter cannot be the same ('" + getEscapeCharacter() + "')");
         }
 
-        if (getCommentMarker() != null && CSVFormatHelper.contains(getDelimiterString(), getCommentMarker().charValue())) {
+        if (getCommentMarker() != null && CSVFormatHelper.contains(getDelimiterString(), getCommentMarker())) {
             throw new IllegalArgumentException("The comment start character and the delimiter cannot be the same ('" + getCommentMarker() + "')");
         }
 

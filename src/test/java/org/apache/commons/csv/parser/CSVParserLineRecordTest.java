@@ -1,8 +1,8 @@
 package org.apache.commons.csv.parser;
 
-import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.apache.commons.csv.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class CSVParserLineRecordTest {
 

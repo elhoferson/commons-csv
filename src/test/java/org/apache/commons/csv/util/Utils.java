@@ -18,12 +18,12 @@
 
 package org.apache.commons.csv.util;
 
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.record.CSVRecord;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.List;
 
 /**
  * Utility methods for test cases

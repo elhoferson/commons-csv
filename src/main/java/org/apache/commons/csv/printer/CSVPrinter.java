@@ -196,7 +196,7 @@ public class CSVPrinter implements Flushable, Closeable {
         if (!newRecord) {
             println();
         }
-        appendable.append(format.getCommentMarker().charValue());
+        appendable.append(format.getCommentMarker());
         appendable.append(SP);
         for (int i = 0; i < comment.length(); i++) {
             final char c = comment.charAt(i);
@@ -208,7 +208,7 @@ public class CSVPrinter implements Flushable, Closeable {
                 //$FALL-THROUGH$ break intentionally excluded.
             case LF:
                 println();
-                appendable.append(format.getCommentMarker().charValue());
+                appendable.append(format.getCommentMarker());
                 appendable.append(SP);
                 break;
             default:
@@ -479,7 +479,7 @@ public class CSVPrinter implements Flushable, Closeable {
 
         final char[] delim = format.getDelimiterString().toCharArray();
         final int delimLength = delim.length;
-        final char escape = format.getEscapeCharacter().charValue();
+        final char escape = format.getEscapeCharacter();
 
         while (pos < end) {
             char c = charSeq.charAt(pos);
@@ -526,7 +526,7 @@ public class CSVPrinter implements Flushable, Closeable {
         final ExtendedBufferedReader bufferedReader = new ExtendedBufferedReader(reader);
         final char[] delim = format.getDelimiterString().toCharArray();
         final int delimLength = delim.length;
-        final char escape = format.getEscapeCharacter().charValue();
+        final char escape = format.getEscapeCharacter();
         final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
 
         int c;
@@ -581,11 +581,11 @@ public class CSVPrinter implements Flushable, Closeable {
 
         final char[] delim = format.getDelimiterString().toCharArray();
         final int delimLength = delim.length;
-        final char quoteChar = format.getQuoteCharacter().charValue();
+        final char quoteChar = format.getQuoteCharacter();
         // If escape char not specified, default to the quote char
         // This avoids having to keep checking whether there is an escape character
         // at the cost of checking against quote twice
-        final char escapeChar = format.isEscapeCharacterSet() ? format.getEscapeCharacter().charValue() : quoteChar;
+        final char escapeChar = format.isEscapeCharacterSet() ? format.getEscapeCharacter() : quoteChar;
 
         QuoteMode quoteModePolicy = format.getQuoteMode();
         if (quoteModePolicy == null) {
@@ -694,7 +694,7 @@ public class CSVPrinter implements Flushable, Closeable {
 
         int pos = 0;
 
-        final char quote = format.getQuoteCharacter().charValue();
+        final char quote = format.getQuoteCharacter();
         final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
 
         append(quote);

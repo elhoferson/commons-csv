@@ -17,28 +17,21 @@
 
 package org.apache.commons.csv;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.parser.ExtendedBufferedReader;
+import org.apache.commons.csv.parser.Lexer;
+import org.apache.commons.csv.parser.Token;
+import org.apache.commons.csv.parser.Type;
+import org.apache.commons.csv.record.CSVRecord;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
-
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.parser.ExtendedBufferedReader;
-import org.apache.commons.csv.parser.Lexer;
-import org.apache.commons.csv.parser.Token;
-import org.apache.commons.csv.parser.Type;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Basic test harness.

@@ -22,34 +22,18 @@ import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.ExtendedBufferedReader;
 import org.apache.commons.csv.parser.Lexer;
 import org.apache.commons.csv.parser.Token;
+import org.apache.commons.csv.record.CSVRecord;
 
-import static org.apache.commons.csv.parser.Type.TOKEN;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static org.apache.commons.csv.parser.Type.TOKEN;
 
 /**
  * Parses CSV files according to the specified format.
@@ -505,7 +489,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
                                 header, Arrays.toString(headerRecord)));
                     }
                     if (header != null) {
-                        hdrMap.put(header, Integer.valueOf(i));
+                        hdrMap.put(header, i);
                         if (headerNames == null) {
                             headerNames = new ArrayList<>(headerRecord.length);
                         }
@@ -572,7 +556,7 @@ public class CSVParser implements Iterable<CSVRecord>, Closeable {
      *
      * @return the header map.
      */
-    Map<String, Integer> getHeaderMapRaw() {
+    public Map<String, Integer> getHeaderMapRaw() {
         return this.headers.headerMap;
     }
 

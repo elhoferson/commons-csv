@@ -20,16 +20,11 @@ package org.apache.commons.csv.parser;
 import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.format.ICSVFormat;
 
-import static org.apache.commons.csv.Constants.BACKSPACE;
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.END_OF_STREAM;
-import static org.apache.commons.csv.Constants.FF;
-import static org.apache.commons.csv.Constants.LF;
-import static org.apache.commons.csv.Constants.TAB;
-import static org.apache.commons.csv.Constants.UNDEFINED;
-import static org.apache.commons.csv.parser.Type.*;
-
 import java.io.IOException;
+
+import static org.apache.commons.csv.Constants.*;
+import static org.apache.commons.csv.parser.Type.COMMENT;
+import static org.apache.commons.csv.parser.Type.*;
 
 /**
  * Lexical analyzer.
@@ -201,7 +196,7 @@ public class Lexer implements ILexer {
     }
 
     private char mapNullToDisabled(final Character c) {
-        return c == null ? DISABLED : c.charValue();
+        return c == null ? DISABLED : c;
     }
 
     /**
@@ -330,16 +325,7 @@ public class Lexer implements ILexer {
             c = reader.read();
 
             if (isEscape(c)) {
-                if (isEscapeDelimiter()) {
-                    token.content.append(delimiter);
-                } else {
-                    final int unescaped = readEscape();
-                    if (unescaped == END_OF_STREAM) { // unexpected char after escape
-                        token.content.append((char) c).append((char) reader.getLastChar());
-                    } else {
-                        token.content.append((char) unescaped);
-                    }
-                }
+                handleEscape(token, (char) c);
             } else if (isQuoteChar(c)) {
                 if (isQuoteChar(reader.lookAhead())) {
                     // double or escaped encapsulator -> add single encapsulator to token
@@ -376,6 +362,19 @@ public class Lexer implements ILexer {
             } else {
                 // consume character
                 token.content.append((char) c);
+            }
+        }
+    }
+
+    private void handleEscape(Token token, char c) throws IOException {
+        if (isEscapeDelimiter()) {
+            token.content.append(delimiter);
+        } else {
+            final int unescaped = readEscape();
+            if (unescaped == END_OF_STREAM) { // unexpected char after escape
+                token.content.append(c).append((char) reader.getLastChar());
+            } else {
+                token.content.append((char) unescaped);
             }
         }
     }
@@ -418,16 +417,7 @@ public class Lexer implements ILexer {
             }
             // continue
             if (isEscape(ch)) {
-                if (isEscapeDelimiter()) {
-                    token.content.append(delimiter);
-                } else {
-                    final int unescaped = readEscape();
-                    if (unescaped == END_OF_STREAM) { // unexpected char after escape
-                        token.content.append((char) ch).append((char) reader.getLastChar());
-                    } else {
-                        token.content.append((char) unescaped);
-                    }
-                }
+                handleEscape(token, (char) ch);
             } else {
                 token.content.append((char) ch);
             }

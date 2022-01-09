@@ -1,8 +1,8 @@
 package org.apache.commons.csv.parser;
 
-import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CSVParserHeaderTest {
 

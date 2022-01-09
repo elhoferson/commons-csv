@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.record;
 
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.CSVFormatBuilder;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -59,7 +56,7 @@ public class CSVRecord implements Serializable, Iterable<String> {
     /** The parser that originates this record. This is not serialized. */
     private final transient CSVParser parser;
 
-    CSVRecord(final CSVParser parser, final String[] values, final String comment, final long recordNumber,
+    public CSVRecord(final CSVParser parser, final String[] values, final String comment, final long recordNumber,
             final long characterPosition) {
         this.recordNumber = recordNumber;
         this.values = values != null ? values : Constants.EMPTY_STRING_ARRAY;
@@ -125,11 +122,11 @@ public class CSVRecord implements Serializable, Iterable<String> {
                 headerMap.keySet()));
         }
         try {
-            return values[index.intValue()];
+            return values[index];
         } catch (final ArrayIndexOutOfBoundsException e) {
             throw new IllegalArgumentException(String.format(
                 "Index for header '%s' is %d but CSVRecord only has %d values!", name, index,
-                Integer.valueOf(values.length)));
+                    values.length));
         }
     }
 
@@ -248,7 +245,7 @@ public class CSVRecord implements Serializable, Iterable<String> {
      * @return whether a given columns is mapped and has a value
      */
     public boolean isSet(final String name) {
-        return isMapped(name) && getHeaderMapRaw().get(name).intValue() < values.length;
+        return isMapped(name) && Objects.requireNonNull(getHeaderMapRaw()).get(name) < values.length;
     }
 
     /**

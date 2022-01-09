@@ -17,16 +17,13 @@
 
 package org.apache.commons.csv.parser;
 
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.CRLF;
-import static org.apache.commons.csv.Constants.LF;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.printer.CSVPrinter;
+import org.apache.commons.csv.record.CSVRecord;
+import org.apache.commons.csv.util.Utils;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -38,13 +35,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.printer.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.util.*;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import static org.apache.commons.csv.Constants.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * CSVParserTest

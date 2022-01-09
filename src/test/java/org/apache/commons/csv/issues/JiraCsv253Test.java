@@ -16,17 +16,17 @@
  */
 package org.apache.commons.csv.issues;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.record.CSVRecord;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.format.QuoteMode;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Setting QuoteMode:ALL_NON_NULL or NON_NUMERIC can distinguish between empty string columns and absent value columns.

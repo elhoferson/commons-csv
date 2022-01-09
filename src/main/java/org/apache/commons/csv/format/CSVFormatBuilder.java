@@ -90,10 +90,6 @@ public class CSVFormatBuilder {
         return escapeCharacter;
     }
 
-    public void setEscapeCharacter(Character escapeCharacter) {
-        this.escapeCharacter = escapeCharacter;
-    }
-
     public String[] getHeaderComments() {
         return headerComments;
     }
@@ -126,16 +122,8 @@ public class CSVFormatBuilder {
         return quoteCharacter;
     }
 
-    public void setQuoteCharacter(Character quoteCharacter) {
-        this.quoteCharacter = quoteCharacter;
-    }
-
     public String getQuotedNullString() {
         return quotedNullString;
-    }
-
-    public void setQuotedNullString(String quotedNullString) {
-        this.quotedNullString = quotedNullString;
     }
 
     public QuoteMode getQuoteMode() {

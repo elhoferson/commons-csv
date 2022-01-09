@@ -43,14 +43,14 @@
   
   <!-- Could make package private in the next major version. -->
   <Match>
-    <Class name="org.apache.commons.csv.CSVRecord" />
+    <Class name="org.apache.commons.csv.record.CSVRecord" />
     <Method name="getParser" />
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
   
   <!-- [CSV-291] Make CSVRecord#values() public. -->
   <Match>
-    <Class name="org.apache.commons.csv.CSVRecord" />
+    <Class name="org.apache.commons.csv.record.CSVRecord" />
     <Method name="values" />
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
