@@ -38,7 +38,7 @@ public class PerformanceTest {
 
     @FunctionalInterface
     private interface CSVParserFactory {
-        CSVParser createParser() throws IOException;
+        ICSVParser createParser() throws IOException;
     }
 
     // Container for basic statistics
@@ -296,7 +296,7 @@ public class PerformanceTest {
         for (int i = 0; i < max; i++) {
             final long startMillis;
             final Stats stats;
-            try (final CSVParser parser = fac.createParser()) {
+            try (final ICSVParser parser = fac.createParser()) {
                 startMillis = System.currentTimeMillis();
                 stats = iterate(parser);
             }

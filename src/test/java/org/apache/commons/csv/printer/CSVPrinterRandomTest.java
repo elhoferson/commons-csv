@@ -2,6 +2,7 @@ package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.apache.commons.csv.util.Utils;
 import org.junit.jupiter.api.Disabled;
@@ -51,7 +52,7 @@ public class CSVPrinterRandomTest extends AbstractCSVPrinterTest {
         final String result = sw.toString();
         // System.out.println("### :" + printable(result));
 
-        try (final CSVParser parser = CSVParser.parse(result, format)) {
+        try (final ICSVParser parser = CSVParser.parse(result, format)) {
             final List<CSVRecord> parseResult = parser.getRecords();
 
             final String[][] expected = lines.clone();

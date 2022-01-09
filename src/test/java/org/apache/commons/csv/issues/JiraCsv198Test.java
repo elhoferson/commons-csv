@@ -18,6 +18,7 @@ package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class JiraCsv198Test {
             .getResourceAsStream("/org/apache/commons/csv/CSV-198/optd_por_public.csv");
         assertNotNull(pointsOfReference);
         try (@SuppressWarnings("resource")
-        CSVParser parser = new CSVParser(new InputStreamReader(pointsOfReference, StandardCharsets.UTF_8), CSVFormat.DEFAULT)) {
+             ICSVParser parser = new CSVParser(new InputStreamReader(pointsOfReference, StandardCharsets.UTF_8), CSVFormat.DEFAULT)) {
             for (final CSVRecord record : parser) {
                 final String locationType = record.get("location_type");
                 assertNotNull(locationType);

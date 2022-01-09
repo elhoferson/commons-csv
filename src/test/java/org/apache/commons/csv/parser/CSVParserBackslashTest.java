@@ -46,7 +46,7 @@ public class CSVParserBackslashTest {
         final CSVFormat format = CSVFormat.newFormat(',').withQuote('\'').withRecordSeparator(CRLF).withEscape('/')
                 .withIgnoreEmptyLines();
 
-        try (final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final ICSVParser parser = CSVParser.parse(code, format)) {
             final List<CSVRecord> records = parser.getRecords();
             assertFalse(records.isEmpty());
 
@@ -73,7 +73,7 @@ public class CSVParserBackslashTest {
         final CSVFormat format = CSVFormat.newFormat(',').withRecordSeparator(CRLF).withEscape('/')
                 .withIgnoreEmptyLines();
 
-        try (final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final ICSVParser parser = CSVParser.parse(code, format)) {
             final List<CSVRecord> records = parser.getRecords();
             assertFalse(records.isEmpty());
 
@@ -92,7 +92,7 @@ public class CSVParserBackslashTest {
                 {"a\\", "b"}, // a backslash must be returned
                 {"a\\\\,b"} // backslash in quotes only escapes a delimiter (",")
         };
-        try (final CSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(res.length, records.size());
             assertFalse(records.isEmpty());

@@ -21,6 +21,7 @@ import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.CSVFormatBuilder;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 
 import java.io.Serializable;
 import java.util.*;
@@ -54,10 +55,10 @@ public class CSVRecord implements Serializable, Iterable<String> {
     private final String[] values;
 
     /** The parser that originates this record. This is not serialized. */
-    private final transient CSVParser parser;
+    private final transient ICSVParser parser;
 
-    public CSVRecord(final CSVParser parser, final String[] values, final String comment, final long recordNumber,
-            final long characterPosition) {
+    public CSVRecord(final ICSVParser parser, final String[] values, final String comment, final long recordNumber,
+                     final long characterPosition) {
         this.recordNumber = recordNumber;
         this.values = values != null ? values : Constants.EMPTY_STRING_ARRAY;
         this.parser = parser;
@@ -167,7 +168,7 @@ public class CSVRecord implements Serializable, Iterable<String> {
      * @return the parser.
      * @since 1.7
      */
-    public CSVParser getParser() {
+    public ICSVParser getParser() {
         return parser;
     }
 

@@ -20,6 +20,7 @@ package org.apache.commons.csv.printer;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 
@@ -209,7 +210,7 @@ public class CSVPrinterTest extends AbstractCSVPrinterTest {
         }
         final String csvString = sw.toString();
         assertEquals("a,NULL,b" + recordSeparator, csvString);
-        try (final CSVParser iterable = new CSVParser(new StringReader(csvString), format)) {
+        try (final ICSVParser iterable = new CSVParser(new StringReader(csvString), format)) {
             final Iterator<CSVRecord> iterator = iterable.iterator();
             final CSVRecord record = iterator.next();
             assertEquals("a", record.get(0));

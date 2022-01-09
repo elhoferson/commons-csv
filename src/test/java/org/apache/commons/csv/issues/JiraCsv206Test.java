@@ -18,6 +18,7 @@ package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
@@ -37,8 +38,8 @@ public class JiraCsv206Test {
         final StringReader reader = new StringReader(source);
         final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter("[|]").build();
         CSVRecord record = null;
-        try (final CSVParser csvParser = new CSVParser(reader, csvFormat)) {
-            final Iterator<CSVRecord> iterator = csvParser.iterator();
+        try (final ICSVParser ICSVParser = new CSVParser(reader, csvFormat)) {
+            final Iterator<CSVRecord> iterator = ICSVParser.iterator();
             record = iterator.next();
             assertEquals("FirstName", record.get(0));
             assertEquals("LastName", record.get(1));

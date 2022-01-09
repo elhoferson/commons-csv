@@ -17,8 +17,8 @@ public class JiraCsv235Test {
     @Test
     public void testCSV235() throws IOException {
         final String dqString = "\"aaa\",\"b\"\"bb\",\"ccc\""; // "aaa","b""bb","ccc"
-        final CSVParser csvParser = new CSVParser(new StringReader(dqString), CSVFormat.RFC4180);
-        final Iterator<CSVRecord> records = csvParser.iterator();
+        final ICSVParser ICSVParser = new CSVParser(new StringReader(dqString), CSVFormat.RFC4180);
+        final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertFalse(records.hasNext());
         assertEquals(3, record.size());

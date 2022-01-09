@@ -13,7 +13,7 @@ public class JiraCsv57Test {
 
     @Test
     public void testCSV57() throws Exception {
-        try (final CSVParser parser = CSVParser.parse("", CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse("", CSVFormat.DEFAULT)) {
             final List<CSVRecord> list = parser.getRecords();
             assertNotNull(list);
             assertEquals(0, list.size());

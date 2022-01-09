@@ -19,6 +19,7 @@ package org.apache.commons.csv.issues;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +75,7 @@ public class JiraCsv167Test {
         // @formatter:on
         int comments = 0;
         int records = 0;
-        try (final Reader reader = getTestReader(); final CSVParser parser = new CSVParser(reader, format)) {
+        try (final Reader reader = getTestReader(); final ICSVParser parser = new CSVParser(reader, format)) {
             for (final CSVRecord csvRecord : parser) {
                 records++;
                 if (csvRecord.hasComment()) {

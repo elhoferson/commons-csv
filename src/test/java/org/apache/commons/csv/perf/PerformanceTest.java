@@ -19,6 +19,7 @@ package org.apache.commons.csv.perf;
 
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,7 +64,7 @@ public class PerformanceTest {
     private long parse(final Reader reader, final boolean traverseColumns) throws IOException {
         final CSVFormat format = CSVFormat.DEFAULT.builder().setIgnoreSurroundingSpaces(false).build();
         long recordCount = 0;
-        try (final CSVParser parser = new CSVParser(reader, format)) {
+        try (final ICSVParser parser = new CSVParser(reader, format)) {
             for (final CSVRecord record : parser) {
                 recordCount++;
                 if (traverseColumns) {
