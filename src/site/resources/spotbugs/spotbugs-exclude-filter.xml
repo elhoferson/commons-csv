@@ -22,7 +22,7 @@
 
   <!-- Deliberate switch statement fall-through. -->
   <Match>
-    <Class name="org.apache.commons.csv.CSVPrinter" />
+    <Class name="org.apache.commons.csv.printer.CSVPrinter" />
     <Method name="printComment" />
     <Bug code="SF" />
   </Match>

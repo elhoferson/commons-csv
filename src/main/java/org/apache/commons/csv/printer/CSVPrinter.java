@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.printer;
 
-import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.ICSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.ExtendedBufferedReader;
+import org.apache.commons.csv.util.IOUtils;
 
 import java.io.*;
 import java.sql.Clob;
@@ -29,13 +32,13 @@ import java.util.Objects;
 import static org.apache.commons.csv.Constants.*;
 
 /**
- * Prints values in a {@link CSVFormat CSV format}.
+ * Prints values in a {@link ICSVFormat CSV format}.
  *
  * <p>Values can be appended to the output by calling the {@link #print(Object)} method.
  * Values are printed according to {@link String#valueOf(Object)}.
  * To complete a record the {@link #println()} method has to be called.
  * Comments can be appended by calling {@link #printComment(String)}.
- * However a comment will only be written to the output if the {@link CSVFormat} supports comments.
+ * However a comment will only be written to the output if the {@link ICSVFormat} supports comments.
  * </p>
  *
  * <p>The printer also supports appending a complete record at once by calling {@link #printRecord(Object...)}
@@ -69,7 +72,7 @@ public final class CSVPrinter implements Flushable, Closeable {
 
     /** The place that the values get written. */
     private final Appendable appendable;
-    private final CSVFormat format;
+    private final ICSVFormat format;
 
     /** True if we just began a new record. */
     private boolean newRecord = true;
@@ -90,7 +93,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IllegalArgumentException
      *             thrown if the parameters of the format are inconsistent or if either out or format are null.
      */
-    public CSVPrinter(final Appendable appendable, final CSVFormat format) throws IOException {
+    public CSVPrinter(final Appendable appendable, final ICSVFormat format) throws IOException {
         Objects.requireNonNull(appendable, "appendable");
         Objects.requireNonNull(format, "format");
 
@@ -177,7 +180,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * If comments are disabled in the current CSV format this method does nothing.
      * </p>
      *
-     * <p>This method detects line breaks inside the comment string and inserts {@link CSVFormat#getRecordSeparator()}
+     * <p>This method detects line breaks inside the comment string and inserts {@link ICSVFormat#getRecordSeparator()}
      * to start a new line of the comment. Note that this might produce unexpected results for formats that do not use
      * line breaks as record separator.</p>
      *
@@ -417,7 +420,7 @@ public final class CSVPrinter implements Flushable, Closeable {
 
     /**
      * Prints the {@code value} as the next value on the line to {@code out}. The value will be escaped or encapsulated as needed. Useful when one wants to
-     * avoid creating CSVPrinters. Trims the value if {@link CSVFormat#getTrim()} is true.
+     * avoid creating CSVPrinters. Trims the value if {@link ICSVFormat#getTrim()} is true.
      *
      * @param value     value to output.
      * @param newRecord if this a new record.
