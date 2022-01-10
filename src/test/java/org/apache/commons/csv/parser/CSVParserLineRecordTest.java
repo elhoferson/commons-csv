@@ -1,6 +1,9 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatBuilder;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
+import org.apache.commons.csv.format.ICSVFormat;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +33,7 @@ public class CSVParserLineRecordTest {
     @Test
     public void testFirstEndOfLineCr() throws IOException {
         final String data = "foo\rbaar,\rhello,world\r,kanu";
-        try (final CSVParser parser = CSVParser.parse(data, CSVFormat.DEFAULT)) {
+        try (final CSVParser parser = CSVParser.parse(data, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(4, records.size());
             assertEquals("\r", parser.getFirstEndOfLine());
@@ -40,7 +43,7 @@ public class CSVParserLineRecordTest {
     @Test
     public void testFirstEndOfLineCrLf() throws IOException {
         final String data = "foo\r\nbaar,\r\nhello,world\r\n,kanu";
-        try (final CSVParser parser = CSVParser.parse(data, CSVFormat.DEFAULT)) {
+        try (final CSVParser parser = CSVParser.parse(data, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(4, records.size());
             assertEquals("\r\n", parser.getFirstEndOfLine());
@@ -50,7 +53,7 @@ public class CSVParserLineRecordTest {
     @Test
     public void testFirstEndOfLineLf() throws IOException {
         final String data = "foo\nbaar,\nhello,world\n,kanu";
-        try (final CSVParser parser = CSVParser.parse(data, CSVFormat.DEFAULT)) {
+        try (final CSVParser parser = CSVParser.parse(data, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(4, records.size());
             assertEquals("\n", parser.getFirstEndOfLine());
@@ -60,7 +63,9 @@ public class CSVParserLineRecordTest {
 
     @Test
     public void testGetLine() throws IOException {
-        try (final ICSVParser parser = CSVParser.parse(CSV_INPUT, CSVFormat.DEFAULT.withIgnoreSurroundingSpaces())) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setIgnoreSurroundingSpaces(true);
+        try (final ICSVParser parser = CSVParser.parse(CSV_INPUT, format)) {
             for (final String[] re : RESULT) {
                 assertArrayEquals(re, parser.nextRecord().values());
             }
@@ -86,7 +91,7 @@ public class CSVParserLineRecordTest {
 
     @Test
     public void testGetOneLine() throws IOException {
-        try (final ICSVParser parser = CSVParser.parse(CSV_INPUT_1, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(CSV_INPUT_1, CSVFormatPredefinedFormats.Default.getFormat())) {
             final CSVRecord record = parser.getRecords().get(0);
             assertArrayEquals(RESULT[0], record.values());
         }
@@ -99,7 +104,7 @@ public class CSVParserLineRecordTest {
      */
     @Test
     public void testGetOneLineOneParser() throws IOException {
-        final CSVFormat format = CSVFormat.DEFAULT;
+        final CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
         try (final PipedWriter writer = new PipedWriter();
              final ICSVParser parser = new CSVParser(new PipedReader(writer), format)) {
             writer.append(CSV_INPUT_1);
@@ -141,7 +146,9 @@ public class CSVParserLineRecordTest {
 
     @Test
     public void testGetRecords() throws IOException {
-        try (final ICSVParser parser = CSVParser.parse(CSV_INPUT, CSVFormat.DEFAULT.withIgnoreSurroundingSpaces())) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setIgnoreSurroundingSpaces(true);
+        try (final ICSVParser parser = CSVParser.parse(CSV_INPUT, format)) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(RESULT.length, records.size());
             assertFalse(records.isEmpty());
@@ -154,7 +161,7 @@ public class CSVParserLineRecordTest {
     @Test
     public void testCarriageReturnEndings() throws IOException {
         final String code = "foo\rbaar,\rhello,world\r,kanu";
-        try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(code, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(4, records.size());
         }
@@ -163,7 +170,7 @@ public class CSVParserLineRecordTest {
     @Test
     public void testCarriageReturnLineFeedEndings() throws IOException {
         final String code = "foo\r\nbaar,\r\nhello,world\r\n,kanu";
-        try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(code, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(4, records.size());
         }
@@ -172,7 +179,7 @@ public class CSVParserLineRecordTest {
     @Test
     public void testLineFeedEndings() throws IOException {
         final String code = "foo\nbaar,\nhello,world\n,kanu";
-        try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(code, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(4, records.size());
         }
@@ -180,9 +187,11 @@ public class CSVParserLineRecordTest {
 
     @Test
     public void testGetRecordWithMultiLineValues() throws Exception {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator(CRLF);
         try (final ICSVParser parser = CSVParser.parse(
                 "\"a\r\n1\",\"a\r\n2\"" + CRLF + "\"b\r\n1\",\"b\r\n2\"" + CRLF + "\"c\r\n1\",\"c\r\n2\"",
-                CSVFormat.DEFAULT.withRecordSeparator(CRLF))) {
+                format)) {
             CSVRecord record;
             assertEquals(0, parser.getRecordNumber());
             assertEquals(0, parser.getCurrentLineNumber());
@@ -209,15 +218,17 @@ public class CSVParserLineRecordTest {
         final String code = "\nfoo,baar\n\r\n,\n\n,world\r\n\n";
         // String code = "world\r\n\n";
         // String code = "foo;baar\r\n\r\nhello;\r\n\r\nworld;\r\n";
-        try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(code, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(3, records.size());
         }
     }
 
     private void validateLineNumbers(final String lineSeparator) throws IOException {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator(lineSeparator);
         try (final ICSVParser parser = CSVParser.parse("a" + lineSeparator + "b" + lineSeparator + "c",
-                CSVFormat.DEFAULT.withRecordSeparator(lineSeparator))) {
+                format)) {
             assertEquals(0, parser.getCurrentLineNumber());
             assertNotNull(parser.nextRecord());
             assertEquals(1, parser.getCurrentLineNumber());
@@ -233,8 +244,10 @@ public class CSVParserLineRecordTest {
     }
 
     private void validateRecordNumbers(final String lineSeparator) throws IOException {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator(lineSeparator);
         try (final ICSVParser parser = CSVParser.parse("a" + lineSeparator + "b" + lineSeparator + "c",
-                CSVFormat.DEFAULT.withRecordSeparator(lineSeparator))) {
+                format)) {
             CSVRecord record;
             assertEquals(0, parser.getRecordNumber());
             assertNotNull(record = parser.nextRecord());
@@ -261,7 +274,7 @@ public class CSVParserLineRecordTest {
                 // completeness...
                 "\u00c4,\u00d6,\u00dc" + lineSeparator + "EOF,EOF,EOF";
 
-        final CSVFormat format = CSVFormat.newFormat(',').withQuote('\'').withRecordSeparator(lineSeparator);
+        final CSVFormat format = new CSVFormatBuilder().setDelimiter(',').setQuote('\'').setRecordSeparator(lineSeparator).build();
         ICSVParser parser = CSVParser.parse(code, format);
 
         CSVRecord record;

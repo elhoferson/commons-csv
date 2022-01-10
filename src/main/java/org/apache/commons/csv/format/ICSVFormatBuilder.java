@@ -21,7 +21,7 @@ public interface ICSVFormatBuilder {
 
     String[] getHeaders();
 
-    void setHeaders(String[] headers);
+    CSVFormatBuilder setHeaders(String[] headers);
 
     boolean isIgnoreEmptyLines();
 
@@ -53,6 +53,10 @@ public interface ICSVFormatBuilder {
 
     CSVFormatBuilder setAutoFlush(boolean autoFlush);
 
+    CSVFormatBuilder setCommentMarker(char commentMarker);
+
+    CSVFormatBuilder setCommentMarker(Character commentMarker);
+
     CSVFormatBuilder setDelimiter(char delimiter);
 
     CSVFormatBuilder setDelimiter(String delimiter);
@@ -60,6 +64,18 @@ public interface ICSVFormatBuilder {
     CSVFormatBuilder setEscape(char escapeCharacter);
 
     CSVFormatBuilder setEscape(Character escapeCharacter);
+
+    CSVFormatBuilder setHeader(Class<? extends Enum<?>> headerEnum);
+
+    CSVFormatBuilder setHeader(ResultSet resultSet) throws SQLException;
+
+    CSVFormatBuilder setHeader(ResultSetMetaData resultSetMetaData) throws SQLException;
+
+    CSVFormatBuilder setHeader(String... header);
+
+    CSVFormatBuilder setHeaderComments(Object... headerComments);
+
+    CSVFormatBuilder setHeaderComments(String... headerComments);
 
     CSVFormatBuilder setIgnoreEmptyLines(boolean ignoreEmptyLines);
 

@@ -1,7 +1,6 @@
 package org.apache.commons.csv.format;
 
 import org.apache.commons.csv.Constants;
-import org.apache.commons.csv.printer.CSVPrinter;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -108,8 +107,9 @@ public class CSVFormatBuilder implements ICSVFormatBuilder {
     }
 
     @Override
-    public void setHeaders(String[] headers) {
+    public CSVFormatBuilder setHeaders(String... headers) {
         this.headers = headers;
+        return this;
     }
 
     @Override
@@ -253,6 +253,39 @@ public class CSVFormatBuilder implements ICSVFormatBuilder {
     }
 
     /**
+     * Sets the comment start marker, use {@code null} to disable.
+     *
+     * Note that the comment start character is only recognized at the start of a line.
+     *
+     * @param commentMarker the comment start marker, use {@code null} to disable.
+     * @return This instance.
+     * @throws IllegalArgumentException thrown if the specified character is a line break
+     */
+    @Override
+    public CSVFormatBuilder setCommentMarker(final char commentMarker) {
+        setCommentMarker(Character.valueOf(commentMarker));
+        return this;
+    }
+
+    /**
+     * Sets the comment start marker, use {@code null} to disable.
+     *
+     * Note that the comment start character is only recognized at the start of a line.
+     *
+     * @param commentMarker the comment start marker, use {@code null} to disable.
+     * @return This instance.
+     * @throws IllegalArgumentException thrown if the specified character is a line break
+     */
+    @Override
+    public CSVFormatBuilder setCommentMarker(final Character commentMarker) {
+        if (CSVFormatHelper.isLineBreak(commentMarker)) {
+            throw new IllegalArgumentException("The comment start marker character cannot be a line break");
+        }
+        this.commentMarker = commentMarker;
+        return this;
+    }
+
+    /**
      * Sets the delimiter character.
      *
      * @param delimiter the delimiter character.
@@ -304,6 +337,155 @@ public class CSVFormatBuilder implements ICSVFormatBuilder {
             throw new IllegalArgumentException("The escape character cannot be a line break");
         }
         this.escapeCharacter = escapeCharacter;
+        return this;
+    }
+
+    /**
+     * Sets the header defined by the given {@link Enum} class.
+     *
+     * <p>
+     * Example:
+     * </p>
+     *
+     * <pre>
+     * public enum HeaderEnum {
+     *     Name, Email, Phone
+     * }
+     *
+     * Builder builder = builder.setHeader(HeaderEnum.class);
+     * </pre>
+     * <p>
+     * The header is also used by the CSVPrinter.
+     * </p>
+     *
+     * @param headerEnum the enum defining the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     * @return This instance.
+     */
+    @Override
+    public CSVFormatBuilder setHeader(final Class<? extends Enum<?>> headerEnum) {
+        String[] header = null;
+        if (headerEnum != null) {
+            final Enum<?>[] enumValues = headerEnum.getEnumConstants();
+            header = new String[enumValues.length];
+            for (int i = 0; i < enumValues.length; i++) {
+                header[i] = enumValues[i].name();
+            }
+        }
+        return setHeader(header);
+    }
+
+    /**
+     * Sets the header from the result set metadata. The header can either be parsed automatically from the input file with:
+     *
+     * <pre>
+     * builder.setHeader();
+     * </pre>
+     *
+     * or specified manually with:
+     *
+     * <pre>
+     * builder.setHeader(resultSet);
+     * </pre>
+     * <p>
+     * The header is also used by the CSVPrinter.
+     * </p>
+     *
+     * @param resultSet the resultSet for the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     * @return This instance.
+     * @throws SQLException SQLException if a database access error occurs or this method is called on a closed result set.
+     */
+    @Override
+    public CSVFormatBuilder setHeader(final ResultSet resultSet) throws SQLException {
+        return setHeader(resultSet != null ? resultSet.getMetaData() : null);
+    }
+
+    /**
+     * Sets the header from the result set metadata. The header can either be parsed automatically from the input file with:
+     *
+     * <pre>
+     * builder.setHeader();
+     * </pre>
+     *
+     * or specified manually with:
+     *
+     * <pre>
+     * builder.setHeader(resultSetMetaData);
+     * </pre>
+     * <p>
+     * The header is also used by the CSVPrinter.
+     * </p>
+     *
+     * @param resultSetMetaData the metaData for the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     * @return This instance.
+     * @throws SQLException SQLException if a database access error occurs or this method is called on a closed result set.
+     */
+    @Override
+    public CSVFormatBuilder setHeader(final ResultSetMetaData resultSetMetaData) throws SQLException {
+        String[] labels = null;
+        if (resultSetMetaData != null) {
+            final int columnCount = resultSetMetaData.getColumnCount();
+            labels = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                labels[i] = resultSetMetaData.getColumnLabel(i + 1);
+            }
+        }
+        return setHeader(labels);
+    }
+
+    /**
+     * Sets the header to the given values. The header can either be parsed automatically from the input file with:
+     *
+     * <pre>
+     * builder.setHeader();
+     * </pre>
+     *
+     * or specified manually with:
+     *
+     * <pre>
+     * builder.setHeader(&quot;name&quot;, &quot;email&quot;, &quot;phone&quot;);
+     * </pre>
+     * <p>
+     * The header is also used by the CSVPrinter.
+     * </p>
+     *
+     * @param header the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     * @return This instance.
+     */
+    @Override
+    public CSVFormatBuilder setHeader(final String... header) {
+        this.headers = header;
+        return this;
+    }
+
+    /**
+     * Sets the header comments set to the given values. The comments will be printed first, before the headers. This setting is ignored by the parser.
+     *
+     * <pre>
+     * builder.setHeaderComments(&quot;Generated by Apache Commons CSV.&quot;, Instant.now());
+     * </pre>
+     *
+     * @param headerComments the headerComments which will be printed by the Printer before the actual CSV data.
+     * @return This instance.
+     */
+    @Override
+    public CSVFormatBuilder setHeaderComments(final Object... headerComments) {
+        this.headerComments = CSVFormat.clone(CSVFormatHelper.toStringArray(headerComments));
+        return this;
+    }
+
+    /**
+     * Sets the header comments set to the given values. The comments will be printed first, before the headers. This setting is ignored by the parser.
+     *
+     * <pre>
+     * Builder.setHeaderComments(&quot;Generated by Apache Commons CSV.&quot;, Instant.now());
+     * </pre>
+     *
+     * @param headerComments the headerComments which will be printed by the Printer before the actual CSV data.
+     * @return This instance.
+     */
+    @Override
+    public CSVFormatBuilder setHeaderComments(final String... headerComments) {
+        this.headerComments = CSVFormat.clone(headerComments);
         return this;
     }
 

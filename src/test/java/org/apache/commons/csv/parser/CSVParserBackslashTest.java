@@ -1,6 +1,8 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatBuilder;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.record.CSVRecord;
 import org.apache.commons.csv.util.Utils;
 import org.junit.jupiter.api.Disabled;
@@ -43,8 +45,8 @@ public class CSVParserBackslashTest {
                 {"/", "/"}, // 7
                 {"   8   ", "   \"quoted \"\" /\" / string\"   "}, {"9", "   \n   "},};
 
-        final CSVFormat format = CSVFormat.newFormat(',').withQuote('\'').withRecordSeparator(CRLF).withEscape('/')
-                .withIgnoreEmptyLines();
+        CSVFormat format = new CSVFormatBuilder().setDelimiter(',').setQuote('\'').setRecordSeparator(CRLF).setEscape('/')
+                .setIgnoreEmptyLines(true).build();
 
         try (final ICSVParser parser = CSVParser.parse(code, format)) {
             final List<CSVRecord> records = parser.getRecords();
@@ -70,8 +72,8 @@ public class CSVParserBackslashTest {
                 {" / ", " , ", " ,"}, // 3
         };
 
-        final CSVFormat format = CSVFormat.newFormat(',').withRecordSeparator(CRLF).withEscape('/')
-                .withIgnoreEmptyLines();
+        CSVFormat format = new CSVFormatBuilder().setDelimiter(',').setRecordSeparator(CRLF).setEscape('/')
+                .setIgnoreEmptyLines(true).build();
 
         try (final ICSVParser parser = CSVParser.parse(code, format)) {
             final List<CSVRecord> records = parser.getRecords();
@@ -92,7 +94,7 @@ public class CSVParserBackslashTest {
                 {"a\\", "b"}, // a backslash must be returned
                 {"a\\\\,b"} // backslash in quotes only escapes a delimiter (",")
         };
-        try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse(code, CSVFormatPredefinedFormats.Default.getFormat())) {
             final List<CSVRecord> records = parser.getRecords();
             assertEquals(res.length, records.size());
             assertFalse(records.isEmpty());

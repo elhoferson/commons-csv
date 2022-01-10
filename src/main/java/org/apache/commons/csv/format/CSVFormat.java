@@ -284,6 +284,10 @@ public class CSVFormat implements ICSVFormat {
         return header != null ? header.clone() : null;
     }
 
+    //public void setHeader(String[] header) {
+    //    this.header = header;
+    //}
+
     /**
      * Returns a copy of the header comment array.
      *
@@ -293,6 +297,10 @@ public class CSVFormat implements ICSVFormat {
     public String[] getHeaderComments() {
         return headerComments != null ? headerComments.clone() : null;
     }
+
+    //public void setHeaderComments(String[] headerComments) {
+    //    this.headerComments = headerComments;
+    //}
 
 
 
@@ -409,6 +417,9 @@ public class CSVFormat implements ICSVFormat {
         return recordSeparator;
     }
 
+    public void setRecordSeparator(Character recordSeparator) {
+        setRecordSeparator(String.valueOf(recordSeparator));
+    }
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
     }
@@ -722,6 +733,23 @@ public class CSVFormat implements ICSVFormat {
     @SafeVarargs
     static <T> T[] clone(final T... values) {
         return values == null ? null : values.clone();
+    }
+
+    /**
+     * Creates a new CSV format with the specified delimiter.
+     *
+     * <p>
+     * Use this method if you want to create a CSVFormat from scratch. All fields but the delimiter will be initialized with null/false.
+     * </p>
+     *
+     * @param delimiter the char used for value separation, must not be a line break character
+     * @return a new CSV format.
+     * @throws IllegalArgumentException if the delimiter is a line break character
+     *
+     */
+    public static CSVFormat newFormat(final char delimiter) {
+        return new CSVFormat(String.valueOf(delimiter), null, null, null, null, false, false, null, null, null, null, false, false, false, false, false, false,
+                true);
     }
 
     /**

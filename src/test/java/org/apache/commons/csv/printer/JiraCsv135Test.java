@@ -120,7 +120,7 @@ public class JiraCsv135Test extends AbstractCSVPrinterTest {
 
     private void tryFormat(final List<String> list, final Character quote, final Character escape, final String expected) throws IOException {
         CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
-        format.setRecordSeparator(null);
+        format.setRecordSeparator((String) null);
         format.setQuoteCharacter(quote);
         format.setEscapeCharacter(escape);
         final Appendable out = new StringBuilder();

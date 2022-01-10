@@ -35,51 +35,51 @@ public class CSVFormatPredefinedFormatsTest {
 
     @Test
     public void testDefault() {
-        test(CSVFormat.DEFAULT, "Default");
+        test(CSVFormatPredefinedFormats.Default.getFormat(), "Default");
     }
 
     @Test
     public void testExcel() {
-        test(CSVFormat.EXCEL, "Excel");
+        test(CSVFormatPredefinedFormats.Excel.getFormat(), "Excel");
     }
 
     @Test
     public void testMongoDbCsv() {
-        test(CSVFormat.MONGODB_CSV, "MongoDBCsv");
+        test(CSVFormatPredefinedFormats.MongoDBCsv.getFormat(), "MongoDBCsv");
     }
 
     @Test
     public void testMongoDbTsv() {
-        test(CSVFormat.MONGODB_TSV, "MongoDBTsv");
+        test(CSVFormatPredefinedFormats.MongoDBTsv.getFormat(), "MongoDBTsv");
     }
 
     @Test
     public void testMySQL() {
-        test(CSVFormat.MYSQL, "MySQL");
+        test(CSVFormatPredefinedFormats.MySQL.getFormat(), "MySQL");
     }
 
     @Test
     public void testOracle() {
-        test(CSVFormat.ORACLE, "Oracle");
+        test(CSVFormatPredefinedFormats.Oracle.getFormat(), "Oracle");
     }
 
     @Test
     public void testPostgreSqlCsv() {
-        test(CSVFormat.POSTGRESQL_CSV, "PostgreSQLCsv");
+        test(CSVFormatPredefinedFormats.PostgreSQLCsv.getFormat(), "PostgreSQLCsv");
     }
 
     @Test
     public void testPostgreSqlText() {
-        test(CSVFormat.POSTGRESQL_TEXT, "PostgreSQLText");
+        test(CSVFormatPredefinedFormats.PostgreSQLText.getFormat(), "PostgreSQLText");
     }
 
     @Test
     public void testRFC4180() {
-        test(CSVFormat.RFC4180, "RFC4180");
+        test(CSVFormatPredefinedFormats.RFC4180.getFormat(), "RFC4180");
     }
 
     @Test
     public void testTDF() {
-        test(CSVFormat.TDF, "TDF");
+        test(CSVFormatPredefinedFormats.TDF.getFormat(), "TDF");
     }
 }

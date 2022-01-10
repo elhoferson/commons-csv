@@ -60,8 +60,8 @@ public class CSVFormatTest {
         format.setRecordSeparator(CRLF);
         format.setNullString("");
         format.setIgnoreHeaderCase(true);
-        format.setHeaderComments(new String[] {"This is HeaderComments"});
-        format.setHeader(new String[] {"col1","col2","col3"});
+        format.setHeaderComments("This is HeaderComments");
+        format.setHeader("col1","col2","col3");
 
         assertEquals("Delimiter=<,> Escape=<?> QuoteChar=<\"> QuoteMode=<MINIMAL> NullString=<> RecordSeparator=<" +CRLF+
                 "> IgnoreHeaderCase:ignored SkipHeaderRecord:false HeaderComments:[This is HeaderComments] Header:[col1, col2, col3]", format.toString());

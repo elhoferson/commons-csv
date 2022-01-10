@@ -16,53 +16,55 @@ public class CSVFormatPropertiesTest {
 
     @Test
     public void testWithCommentStart() {
-        final CSVFormat formatWithCommentStart = CSVFormat.DEFAULT.withCommentMarker('#');
+        final CSVFormat formatWithCommentStart = new CSVFormatBuilder().setCommentMarker('#').build();
         assertEquals( Character.valueOf('#'), formatWithCommentStart.getCommentMarker());
     }
 
 
     @Test
     public void testWithCommentStartCRThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.withCommentMarker(CR));
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setCommentMarker(CR).build());
     }
 
 
     @Test
     public void testWithDelimiter() {
-        final CSVFormat formatWithDelimiter = CSVFormat.DEFAULT.withDelimiter('!');
+        final CSVFormat formatWithDelimiter = new CSVFormatBuilder().setDelimiter('!').build();
         assertEquals('!', formatWithDelimiter.getDelimiter());
     }
 
 
     @Test
     public void testWithDelimiterLFThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.withDelimiter(LF));
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setDelimiter(LF).build());
     }
 
 
     @Test
     public void testWithEmptyEnum() {
-        final CSVFormat formatWithHeader = CSVFormat.DEFAULT.withHeader(EmptyEnum.class);
+        final CSVFormat formatWithHeader = new CSVFormatBuilder().setHeader(EmptyEnum.class).build();
         assertEquals(0, formatWithHeader.getHeader().length);
     }
 
 
     @Test
     public void testWithEscape() {
-        final CSVFormat formatWithEscape = CSVFormat.DEFAULT.withEscape('&');
+        final CSVFormat formatWithEscape = new CSVFormatBuilder().setEscape('&').build();
         assertEquals(Character.valueOf('&'), formatWithEscape.getEscapeCharacter());
     }
 
 
     @Test
     public void testWithEscapeCRThrowsExceptions() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.withEscape(CR));
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setEscape(CR).build());
     }
 
 
     @Test
     public void testWithFirstRecordAsHeader() {
-        final CSVFormat formatWithFirstRecordAsHeader = CSVFormat.DEFAULT.withFirstRecordAsHeader();
+        final CSVFormat formatWithFirstRecordAsHeader = new CSVFormatBuilder().setHeaders()
+                .setSkipHeaderRecord(true)
+                .build();
         assertTrue(formatWithFirstRecordAsHeader.getSkipHeaderRecord());
         assertEquals(0, formatWithFirstRecordAsHeader.getHeader().length);
     }
@@ -71,7 +73,7 @@ public class CSVFormatPropertiesTest {
     public void testWithHeader() {
         final String[] header = {"one", "two", "three"};
         // withHeader() makes a copy of the header array.
-        final CSVFormat formatWithHeader = CSVFormat.DEFAULT.withHeader(header);
+        final CSVFormat formatWithHeader = new CSVFormatBuilder().setHeader(header).build();
         assertArrayEquals(header, formatWithHeader.getHeader());
         assertNotSame(header, formatWithHeader.getHeader());
     }
@@ -79,7 +81,7 @@ public class CSVFormatPropertiesTest {
     @Test
     public void testWithHeaderComments() {
 
-        final CSVFormat csvFormat = CSVFormat.DEFAULT;
+        final CSVFormat csvFormat = new CSVFormatBuilder().build();
 
         assertEquals('\"', (char)csvFormat.getQuoteCharacter());
         assertFalse(csvFormat.isCommentMarkerSet());
@@ -108,8 +110,9 @@ public class CSVFormatPropertiesTest {
         assertFalse(csvFormat.getIgnoreSurroundingSpaces());
         assertNull(csvFormat.getEscapeCharacter());
 
-        final Object[] objectArray = new Object[8];
-        final CSVFormat csvFormatTwo = csvFormat.withHeaderComments(objectArray);
+        final String[] objectArray = new String[8];
+        CSVFormat csvFormatTwo = csvFormat.copy();
+        csvFormatTwo.setHeaderComments(objectArray);
 
         assertEquals('\"', (char)csvFormat.getQuoteCharacter());
         assertFalse(csvFormat.isCommentMarkerSet());
@@ -182,57 +185,55 @@ public class CSVFormatPropertiesTest {
 
     @Test
     public void testWithHeaderEnumNull() {
-        final CSVFormat format =  CSVFormat.DEFAULT;
         final Class<Enum<?>> simpleName = null;
-        format.withHeader(simpleName);
+        final CSVFormat format =  new CSVFormatBuilder().setHeader(simpleName).build();
     }
 
     @Test
     public  void testWithHeaderResultSetNull() throws SQLException {
-        final CSVFormat format = CSVFormat.DEFAULT;
         final ResultSet resultSet = null;
-        format.withHeader(resultSet);
+        final CSVFormat format = new CSVFormatBuilder().setHeader(resultSet).build();
     }
 
     @Test
     public void testWithIgnoreEmptyLines() {
-        assertFalse(CSVFormat.DEFAULT.withIgnoreEmptyLines(false).getIgnoreEmptyLines());
-        assertTrue(CSVFormat.DEFAULT.withIgnoreEmptyLines().getIgnoreEmptyLines());
+        assertFalse(new CSVFormatBuilder().setIgnoreEmptyLines(false).build().getIgnoreEmptyLines());
+        assertTrue(new CSVFormatBuilder().setIgnoreEmptyLines(true).build().getIgnoreEmptyLines());
     }
 
     @Test
     public void testWithIgnoreSurround() {
-        assertFalse(CSVFormat.DEFAULT.withIgnoreSurroundingSpaces(false).getIgnoreSurroundingSpaces());
-        assertTrue(CSVFormat.DEFAULT.withIgnoreSurroundingSpaces().getIgnoreSurroundingSpaces());
+        assertFalse(new CSVFormatBuilder().setIgnoreSurroundingSpaces(false).build().getIgnoreSurroundingSpaces());
+        assertTrue(new CSVFormatBuilder().setIgnoreSurroundingSpaces(true).build().getIgnoreSurroundingSpaces());
     }
 
     @Test
     public void testWithNullString() {
-        final CSVFormat formatWithNullString = CSVFormat.DEFAULT.withNullString("null");
+        final CSVFormat formatWithNullString = new CSVFormatBuilder().setNullString("null").build();
         assertEquals("null", formatWithNullString.getNullString());
     }
 
     @Test
     public void testWithRecordSeparatorCR() {
-        final CSVFormat formatWithRecordSeparator = CSVFormat.DEFAULT.withRecordSeparator(CR);
+        final CSVFormat formatWithRecordSeparator = new CSVFormatBuilder().setRecordSeparator(CR).build();
         assertEquals(String.valueOf(CR), formatWithRecordSeparator.getRecordSeparator());
     }
 
     @Test
     public void testWithRecordSeparatorCRLF() {
-        final CSVFormat formatWithRecordSeparator = CSVFormat.DEFAULT.withRecordSeparator(CRLF);
+        final CSVFormat formatWithRecordSeparator = new CSVFormatBuilder().setRecordSeparator(CRLF).build();
         assertEquals(CRLF, formatWithRecordSeparator.getRecordSeparator());
     }
 
     @Test
     public void testWithRecordSeparatorLF() {
-        final CSVFormat formatWithRecordSeparator = CSVFormat.DEFAULT.withRecordSeparator(LF);
+        final CSVFormat formatWithRecordSeparator = new CSVFormatBuilder().setRecordSeparator(LF).build();
         assertEquals(String.valueOf(LF), formatWithRecordSeparator.getRecordSeparator());
     }
 
     @Test
     public void testWithSystemRecordSeparator() {
-        final CSVFormat formatWithRecordSeparator = CSVFormat.DEFAULT.withSystemRecordSeparator();
+        final CSVFormat formatWithRecordSeparator = new CSVFormatBuilder().setRecordSeparator(System.lineSeparator()).build();
         assertEquals(System.getProperty("line.separator"), formatWithRecordSeparator.getRecordSeparator());
     }
 }
