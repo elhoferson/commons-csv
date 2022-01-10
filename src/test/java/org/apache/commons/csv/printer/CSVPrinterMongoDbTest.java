@@ -50,7 +50,7 @@ public class CSVPrinterMongoDbTest extends AbstractCSVPrinterTest {
     @Test
     public void testMongoDbTsvBasic() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.MongoDBCsv.getFormat())) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.MongoDBTsv.getFormat())) {
             printer.printRecord("a", "b");
             assertEquals("a\tb" + recordSeparator, sw.toString());
         }
@@ -59,7 +59,7 @@ public class CSVPrinterMongoDbTest extends AbstractCSVPrinterTest {
     @Test
     public void testMongoDbTsvCommaInValue() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.MongoDBCsv.getFormat())) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.MongoDBTsv.getFormat())) {
             printer.printRecord("a,b", "c");
             assertEquals("a,b\tc" + recordSeparator, sw.toString());
         }
@@ -68,7 +68,7 @@ public class CSVPrinterMongoDbTest extends AbstractCSVPrinterTest {
     @Test
     public void testMongoDbTsvTabInValue() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.MongoDBCsv.getFormat())) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.MongoDBTsv.getFormat())) {
             printer.printRecord("a\tb", "c");
             assertEquals("\"a\tb\"\tc" + recordSeparator, sw.toString());
         }

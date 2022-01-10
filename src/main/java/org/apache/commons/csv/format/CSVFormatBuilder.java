@@ -253,39 +253,6 @@ public class CSVFormatBuilder implements ICSVFormatBuilder {
     }
 
     /**
-     * Sets the comment start marker, use {@code null} to disable.
-     *
-     * Note that the comment start character is only recognized at the start of a line.
-     *
-     * @param commentMarker the comment start marker, use {@code null} to disable.
-     * @return This instance.
-     * @throws IllegalArgumentException thrown if the specified character is a line break
-     */
-    @Override
-    public CSVFormatBuilder setCommentMarker(final char commentMarker) {
-        setCommentMarker(Character.valueOf(commentMarker));
-        return this;
-    }
-
-    /**
-     * Sets the comment start marker, use {@code null} to disable.
-     *
-     * Note that the comment start character is only recognized at the start of a line.
-     *
-     * @param commentMarker the comment start marker, use {@code null} to disable.
-     * @return This instance.
-     * @throws IllegalArgumentException thrown if the specified character is a line break
-     */
-    @Override
-    public CSVFormatBuilder setCommentMarker(final Character commentMarker) {
-        if (CSVFormatHelper.isLineBreak(commentMarker)) {
-            throw new IllegalArgumentException("The comment start marker character cannot be a line break");
-        }
-        this.commentMarker = commentMarker;
-        return this;
-    }
-
-    /**
      * Sets the delimiter character.
      *
      * @param delimiter the delimiter character.

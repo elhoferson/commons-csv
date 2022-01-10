@@ -57,21 +57,14 @@ public class JiraCsv167Test {
                 }
             }
         }
-        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+
         // @formatter:off
-        format.setAllowMissingColumnNames(false);
-        format.setCommentMarker('#');
-        format.setDelimiter(",");
-        format.setEscapeCharacter('\\');
-        format.setHeader("author", "title", "publishDate");
-        format.setHeaderComments("headerComment");
-        format.setNullString("NULL");
-        format.setIgnoreEmptyLines(true);
-        format.setIgnoreSurroundingSpaces(true);
-        format.setQuoteCharacter('"');
-        format.setQuoteMode(QuoteMode.ALL);
-        format.setRecordSeparator("\n");
-        format.setSkipHeaderRecord(false);
+        CSVFormat format = new CSVFormat(",", '"', QuoteMode.ALL,
+                '#', '\\', true,
+                true, "\n", "NULL", new String[] {"headerComment"},
+                new String[]{"author", "title", "publishDate"}, false,
+                false, true, true,
+                true, true, true);
 
         // @formatter:on
         int comments = 0;

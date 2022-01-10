@@ -53,10 +53,6 @@ public interface ICSVFormatBuilder {
 
     CSVFormatBuilder setAutoFlush(boolean autoFlush);
 
-    CSVFormatBuilder setCommentMarker(char commentMarker);
-
-    CSVFormatBuilder setCommentMarker(Character commentMarker);
-
     CSVFormatBuilder setDelimiter(char delimiter);
 
     CSVFormatBuilder setDelimiter(String delimiter);

@@ -91,7 +91,7 @@ import java.util.Set;
  * </pre>
  *
  * <p>
- * Calling {@link CSVFormatBuilder#setHeader(String...)} lets you use the given names to address values in a {@link CSVRecord}, and assumes that your CSV source does not
+ * Calling {@link #setHeader(String...)} lets you use the given names to address values in a {@link CSVRecord}, and assumes that your CSV source does not
  * contain a first record that also defines column names.
  *
  * If it does, then you are overriding this metadata with your names and you should skip the first record by calling
@@ -116,7 +116,7 @@ import java.util.Set;
  * <h2>Referencing columns safely</h2>
  *
  * <p>
- * If your source contains a header record, you can simplify your code and safely reference columns, by using {@link CSVFormatBuilder#setHeader(String...)} with no
+ * If your source contains a header record, you can simplify your code and safely reference columns, by using {@link #setHeader(String...)} with no
  * arguments:
  * </p>
  *
@@ -238,10 +238,6 @@ public class CSVFormat implements ICSVFormat {
         return commentMarker;
     }
 
-    public void setCommentMarker(Character commentMarker) {
-        this.commentMarker = commentMarker;
-    }
-
     /**
      * Returns the first character delimiting the values (typically ';', ',' or '\t').
      *
@@ -262,10 +258,6 @@ public class CSVFormat implements ICSVFormat {
     @Override
     public String getDelimiterString() {
         return delimiter;
-    }
-
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
     }
 
     /**
@@ -367,6 +359,7 @@ public class CSVFormat implements ICSVFormat {
 
     public void setNullString(String nullString) {
         this.nullString = nullString;
+        this.quotedNullString = quoteCharacter + nullString + quoteCharacter;
     }
 
     /**
@@ -493,7 +486,7 @@ public class CSVFormat implements ICSVFormat {
      * @param allowDuplicateHeaderNames TODO Doc me.
      * @throws IllegalArgumentException if the delimiter is a line break character.
      */
-    CSVFormat(final String delimiter, final Character quoteChar, final QuoteMode quoteMode, final Character commentStart, final Character escape,
+    public CSVFormat(final String delimiter, final Character quoteChar, final QuoteMode quoteMode, final Character commentStart, final Character escape,
               final boolean ignoreSurroundingSpaces, final boolean ignoreEmptyLines, final String recordSeparator, final String nullString,
               final Object[] headerComments, final String[] header, final boolean skipHeaderRecord, final boolean allowMissingColumnNames,
               final boolean ignoreHeaderCase, final boolean trim, final boolean trailingDelimiter, final boolean autoFlush,
@@ -875,5 +868,57 @@ public class CSVFormat implements ICSVFormat {
      */
     public void setHeaderComments(final String... headerComments) {
         this.headerComments = CSVFormat.clone(headerComments);
+    }
+
+    /**
+     * Sets the comment start marker, use {@code null} to disable.
+     *
+     * Note that the comment start character is only recognized at the start of a line.
+     *
+     * @param commentMarker the comment start marker, use {@code null} to disable.
+     * @return This instance.
+     * @throws IllegalArgumentException thrown if the specified character is a line break
+     */
+    public void setCommentMarker(final char commentMarker) {
+        setCommentMarker(Character.valueOf(commentMarker));
+    }
+
+    /**
+     * Sets the comment start marker, use {@code null} to disable.
+     *
+     * Note that the comment start character is only recognized at the start of a line.
+     *
+     * @param commentMarker the comment start marker, use {@code null} to disable.
+     * @return This instance.
+     * @throws IllegalArgumentException thrown if the specified character is a line break
+     */
+    public void setCommentMarker(final Character commentMarker) {
+        if (CSVFormatHelper.isLineBreak(commentMarker)) {
+            throw new IllegalArgumentException("The comment start marker character cannot be a line break");
+        }
+        this.commentMarker = commentMarker;
+    }
+
+    /**
+     * Sets the delimiter character.
+     *
+     * @param delimiter the delimiter character.
+     * @return This instance.
+     */
+    public void setDelimiter(final char delimiter) {
+        setDelimiter(String.valueOf(delimiter));
+    }
+
+    /**
+     * Sets the delimiter character.
+     *
+     * @param delimiter the delimiter character.
+     * @return This instance.
+     */
+    public void setDelimiter(final String delimiter) {
+        if (CSVFormatHelper.containsLineBreak(delimiter)) {
+            throw new IllegalArgumentException("The delimiter cannot be a line break");
+        }
+        this.delimiter = delimiter;
     }
 }
