@@ -12,7 +12,7 @@ import java.sql.SQLException;
  *
  * @since 1.9.0
  */
-public class CSVFormatBuilder {
+public class CSVFormatBuilder implements ICSVFormatBuilder {
 
     /**
      * Creates a new default builder.
@@ -67,82 +67,102 @@ public class CSVFormatBuilder {
 
     private boolean skipHeaderRecord;
 
+    @Override
     public boolean isAllowDuplicateHeaderNames() {
         return allowDuplicateHeaderNames;
     }
 
+    @Override
     public boolean isAllowMissingColumnNames() {
         return allowMissingColumnNames;
     }
 
+    @Override
     public boolean isAutoFlush() {
         return autoFlush;
     }
 
+    @Override
     public Character getCommentMarker() {
         return commentMarker;
     }
 
+    @Override
     public String getDelimiter() {
         return delimiter;
     }
 
+    @Override
     public Character getEscapeCharacter() {
         return escapeCharacter;
     }
 
+    @Override
     public String[] getHeaderComments() {
         return headerComments;
     }
 
+    @Override
     public String[] getHeaders() {
         return headers;
     }
 
+    @Override
     public void setHeaders(String[] headers) {
         this.headers = headers;
     }
 
+    @Override
     public boolean isIgnoreEmptyLines() {
         return ignoreEmptyLines;
     }
 
+    @Override
     public boolean isIgnoreHeaderCase() {
         return ignoreHeaderCase;
     }
 
+    @Override
     public boolean isIgnoreSurroundingSpaces() {
         return ignoreSurroundingSpaces;
     }
 
+    @Override
     public String getNullString() {
         return nullString;
     }
 
+    @Override
     public Character getQuoteCharacter() {
         return quoteCharacter;
     }
 
+    @Override
     public String getQuotedNullString() {
         return quotedNullString;
     }
 
+    @Override
     public QuoteMode getQuoteMode() {
         return quoteMode;
     }
 
+    @Override
     public String getRecordSeparator() {
         return recordSeparator;
     }
 
+    @Override
     public boolean isSkipHeaderRecord() {
         return skipHeaderRecord;
     }
 
+    @Override
     public boolean isTrailingDelimiter() {
         return trailingDelimiter;
     }
 
+    @Override
     public boolean isTrim() {
         return trim;
     }
@@ -179,6 +199,7 @@ public class CSVFormatBuilder {
      *
      * @return a new CSVFormat instance.
      */
+    @Override
     public CSVFormat build() {
         return new CSVFormat(this.getDelimiter(),this.getQuoteCharacter(),
                 this.getQuoteMode(),this.getCommentMarker(),
@@ -199,6 +220,7 @@ public class CSVFormatBuilder {
      * @param allowDuplicateHeaderNames the duplicate header names behavior, true to allow, false to disallow.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setAllowDuplicateHeaderNames(final boolean allowDuplicateHeaderNames) {
         this.allowDuplicateHeaderNames = allowDuplicateHeaderNames;
         return this;
@@ -212,6 +234,7 @@ public class CSVFormatBuilder {
      *                                cause an {@link IllegalArgumentException} to be thrown.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setAllowMissingColumnNames(final boolean allowMissingColumnNames) {
         this.allowMissingColumnNames = allowMissingColumnNames;
         return this;
@@ -223,6 +246,7 @@ public class CSVFormatBuilder {
      * @param autoFlush whether to flush on close.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setAutoFlush(final boolean autoFlush) {
         this.autoFlush = autoFlush;
         return this;
@@ -237,6 +261,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      * @throws IllegalArgumentException thrown if the specified character is a line break
      */
+    @Override
     public CSVFormatBuilder setCommentMarker(final char commentMarker) {
         setCommentMarker(Character.valueOf(commentMarker));
         return this;
@@ -251,6 +276,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      * @throws IllegalArgumentException thrown if the specified character is a line break
      */
+    @Override
     public CSVFormatBuilder setCommentMarker(final Character commentMarker) {
         if (CSVFormatHelper.isLineBreak(commentMarker)) {
             throw new IllegalArgumentException("The comment start marker character cannot be a line break");
@@ -265,6 +291,7 @@ public class CSVFormatBuilder {
      * @param delimiter the delimiter character.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setDelimiter(final char delimiter) {
         return setDelimiter(String.valueOf(delimiter));
     }
@@ -275,6 +302,7 @@ public class CSVFormatBuilder {
      * @param delimiter the delimiter character.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setDelimiter(final String delimiter) {
         if (CSVFormatHelper.containsLineBreak(delimiter)) {
             throw new IllegalArgumentException("The delimiter cannot be a line break");
@@ -290,6 +318,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      * @throws IllegalArgumentException thrown if the specified character is a line break
      */
+    @Override
     public CSVFormatBuilder setEscape(final char escapeCharacter) {
         setEscape(Character.valueOf(escapeCharacter));
         return this;
@@ -302,6 +331,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      * @throws IllegalArgumentException thrown if the specified character is a line break
      */
+    @Override
     public CSVFormatBuilder setEscape(final Character escapeCharacter) {
         if (CSVFormatHelper.isLineBreak(escapeCharacter)) {
             throw new IllegalArgumentException("The escape character cannot be a line break");
@@ -331,6 +361,7 @@ public class CSVFormatBuilder {
      * @param headerEnum the enum defining the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setHeader(final Class<? extends Enum<?>> headerEnum) {
         String[] header = null;
         if (headerEnum != null) {
@@ -363,6 +394,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      * @throws SQLException SQLException if a database access error occurs or this method is called on a closed result set.
      */
+    @Override
     public CSVFormatBuilder setHeader(final ResultSet resultSet) throws SQLException {
         return setHeader(resultSet != null ? resultSet.getMetaData() : null);
     }
@@ -387,6 +419,7 @@ public class CSVFormatBuilder {
      * @return This instance.
      * @throws SQLException SQLException if a database access error occurs or this method is called on a closed result set.
      */
+    @Override
     public CSVFormatBuilder setHeader(final ResultSetMetaData resultSetMetaData) throws SQLException {
         String[] labels = null;
         if (resultSetMetaData != null) {
@@ -418,6 +451,7 @@ public class CSVFormatBuilder {
      * @param header the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setHeader(final String... header) {
         this.headers = CSVFormat.clone(header);
         return this;
@@ -433,6 +467,7 @@ public class CSVFormatBuilder {
      * @param headerComments the headerComments which will be printed by the Printer before the actual CSV data.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setHeaderComments(final Object... headerComments) {
         this.headerComments = CSVFormat.clone(CSVFormatHelper.toStringArray(headerComments));
         return this;
@@ -448,6 +483,7 @@ public class CSVFormatBuilder {
      * @param headerComments the headerComments which will be printed by the Printer before the actual CSV data.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setHeaderComments(final String... headerComments) {
         this.headerComments = CSVFormat.clone(headerComments);
         return this;
@@ -461,6 +497,7 @@ public class CSVFormatBuilder {
      *                         empty lines to empty records.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setIgnoreEmptyLines(final boolean ignoreEmptyLines) {
         this.ignoreEmptyLines = ignoreEmptyLines;
         return this;
@@ -472,6 +509,7 @@ public class CSVFormatBuilder {
      * @param ignoreHeaderCase the case mapping behavior, {@code true} to access name/values, {@code false} to leave the mapping as is.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setIgnoreHeaderCase(final boolean ignoreHeaderCase) {
         this.ignoreHeaderCase = ignoreHeaderCase;
         return this;
@@ -483,6 +521,7 @@ public class CSVFormatBuilder {
      * @param ignoreSurroundingSpaces the parser trimming behavior, {@code true} to remove the surrounding spaces, {@code false} to leave the spaces as is.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setIgnoreSurroundingSpaces(final boolean ignoreSurroundingSpaces) {
         this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
         return this;
@@ -499,6 +538,7 @@ public class CSVFormatBuilder {
      * @param nullString the String to convert to and from {@code null}. No substitution occurs if {@code null}.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setNullString(final String nullString) {
         this.nullString = nullString;
         this.quotedNullString = quoteCharacter + nullString + quoteCharacter;
@@ -511,6 +551,7 @@ public class CSVFormatBuilder {
      * @param quoteCharacter the quote character.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setQuote(final char quoteCharacter) {
         setQuote(Character.valueOf(quoteCharacter));
         return this;
@@ -522,6 +563,7 @@ public class CSVFormatBuilder {
      * @param quoteCharacter the quote character, use {@code null} to disable.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setQuote(final Character quoteCharacter) {
         if (CSVFormatHelper.isLineBreak(quoteCharacter)) {
             throw new IllegalArgumentException("The quoteChar cannot be a line break");
@@ -536,6 +578,7 @@ public class CSVFormatBuilder {
      * @param quoteMode the quote policy to use for output.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setQuoteMode(final QuoteMode quoteMode) {
         this.quoteMode = quoteMode;
         return this;
@@ -552,6 +595,7 @@ public class CSVFormatBuilder {
      * @param recordSeparator the record separator to use for output.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setRecordSeparator(final char recordSeparator) {
         this.recordSeparator = String.valueOf(recordSeparator);
         return this;
@@ -568,6 +612,7 @@ public class CSVFormatBuilder {
      * @param recordSeparator the record separator to use for output.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setRecordSeparator(final String recordSeparator) {
         this.recordSeparator = recordSeparator;
         return this;
@@ -579,6 +624,7 @@ public class CSVFormatBuilder {
      * @param skipHeaderRecord whether to skip the header record.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setSkipHeaderRecord(final boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
         return this;
@@ -590,6 +636,7 @@ public class CSVFormatBuilder {
      * @param trailingDelimiter whether to add a trailing delimiter.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setTrailingDelimiter(final boolean trailingDelimiter) {
         this.trailingDelimiter = trailingDelimiter;
         return this;
@@ -601,6 +648,7 @@ public class CSVFormatBuilder {
      * @param trim whether to trim leading and trailing blanks.
      * @return This instance.
      */
+    @Override
     public CSVFormatBuilder setTrim(final boolean trim) {
         this.trim = trim;
         return this;
