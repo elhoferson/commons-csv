@@ -8,7 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.apache.commons.csv.Constants.*;
+import static org.apache.commons.csv.Constants.LF;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CSVFormatPropertiesTest {
 

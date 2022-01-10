@@ -17,9 +17,11 @@
 
 package org.apache.commons.csv.format;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link CSVFormatPredefinedFormats}.

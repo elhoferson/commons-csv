@@ -1,8 +1,8 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.util.IOUtils;
+import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
 

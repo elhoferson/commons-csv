@@ -17,15 +17,15 @@
 
 package org.apache.commons.csv.issues;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.printer.CSVPrinter;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.printer.CSVPrinter;
+import org.junit.jupiter.api.Test;
 
 public class JiraCsv271Test {
 

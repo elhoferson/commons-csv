@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import static org.apache.commons.csv.Constants.CR;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CSVFormatHeaderTest {
 

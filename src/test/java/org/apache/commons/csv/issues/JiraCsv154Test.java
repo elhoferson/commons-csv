@@ -16,13 +16,13 @@
  */
 package org.apache.commons.csv.issues;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.printer.CSVPrinter;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.printer.CSVPrinter;
+import org.junit.jupiter.api.Test;
 
 public class JiraCsv154Test {
 

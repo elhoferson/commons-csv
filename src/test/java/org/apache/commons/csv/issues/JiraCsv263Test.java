@@ -17,16 +17,16 @@
 
 package org.apache.commons.csv.issues;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.format.QuoteMode;
-import org.apache.commons.csv.printer.CSVPrinter;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.commons.csv.printer.CSVPrinter;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests [CSV-263] Print from Reader with embedded quotes generates incorrect output.
