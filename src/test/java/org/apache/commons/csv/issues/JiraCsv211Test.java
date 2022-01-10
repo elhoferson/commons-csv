@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
@@ -34,16 +35,19 @@ public class JiraCsv211Test {
         final String[] values = {"1", "Jane Doe", "USA", ""};
 
         // @formatter:off
-        final CSVFormat printFormat = CSVFormat.DEFAULT.builder()
-            .setDelimiter('\t')
-            .setHeader("ID", "Name", "Country", "Age")
-            .build();
+        CSVFormat printFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        printFormat.setDelimiter("\t");
+        printFormat.setHeader("ID", "Name", "Country", "Age");
+
         // @formatter:on
         final String formatted = printFormat.format(values);
         assertEquals("ID\tName\tCountry\tAge\r\n1\tJane Doe\tUSA\t", formatted);
 
-        final CSVFormat parseFormat = CSVFormat.DEFAULT.builder().setDelimiter('\t').setHeader()
-            .setSkipHeaderRecord(true).build();
+        CSVFormat parseFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        parseFormat.setDelimiter("\t");
+        parseFormat.setHeader();
+        parseFormat.setSkipHeaderRecord(true);
+
         try (final ICSVParser parser = new CSVParser(new StringReader(formatted), parseFormat)) {
             for (final CSVRecord record : parser) {
                 assertEquals("1", record.get(0));

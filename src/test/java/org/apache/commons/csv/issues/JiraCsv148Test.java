@@ -19,6 +19,7 @@ package org.apache.commons.csv.issues;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +28,10 @@ public class JiraCsv148Test {
     @Test
     public void testWithIgnoreSurroundingSpacesEmpty() {
         // @formatter:off
-        final CSVFormat format = CSVFormat.DEFAULT.builder()
-            .setQuoteMode(QuoteMode.ALL)
-            .setIgnoreSurroundingSpaces(true)
-            .build();
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteMode(QuoteMode.ALL);
+        format.setIgnoreSurroundingSpaces(true);
+
         // @formatter:on
         assertEquals(
             "\"\",\" \",\" Single space on the left\",\"Single space on the right \","
@@ -49,10 +50,11 @@ public class JiraCsv148Test {
     @Test
     public void testWithTrimEmpty() {
         // @formatter:off
-        final CSVFormat format = CSVFormat.DEFAULT.builder()
-            .setQuoteMode(QuoteMode.ALL)
-            .setTrim(true)
-            .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteMode(QuoteMode.ALL);
+        format.setTrim(true);
+
         // @formatter:on
         assertEquals(
             "\"\",\"\",\"Single space on the left\",\"Single space on the right\","

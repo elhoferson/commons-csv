@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ public class JiraCsv271Test {
 
     @Test
     public void testJiraCsv271_withArray() throws IOException {
-        final CSVFormat csvFormat = CSVFormat.DEFAULT;
+        final CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
         final StringWriter stringWriter = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
             printer.print("a");
@@ -42,7 +43,7 @@ public class JiraCsv271Test {
 
     @Test
     public void testJiraCsv271_withList() throws IOException {
-        final CSVFormat csvFormat = CSVFormat.DEFAULT;
+        final CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
         final StringWriter stringWriter = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
             printer.print("a");

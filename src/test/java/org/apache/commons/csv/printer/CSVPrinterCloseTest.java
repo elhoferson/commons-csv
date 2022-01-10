@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ public class CSVPrinterCloseTest {
     @Test
     public void testCloseBackwardCompatibility() throws IOException {
         try (final Writer writer = mock(Writer.class)) {
-            final CSVFormat csvFormat = CSVFormat.DEFAULT;
+            final CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
             try (CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
                 // empty
             }
@@ -24,7 +25,8 @@ public class CSVPrinterCloseTest {
     @Test
     public void testCloseWithCsvFormatAutoFlushOff() throws IOException {
         try (final Writer writer = mock(Writer.class)) {
-            final CSVFormat csvFormat = CSVFormat.DEFAULT.withAutoFlush(false);
+            CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+            csvFormat.setAutoFlush(false);
             try (CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
                 // empty
             }
@@ -37,7 +39,8 @@ public class CSVPrinterCloseTest {
     public void testCloseWithCsvFormatAutoFlushOn() throws IOException {
         // System.out.println("start method");
         try (final Writer writer = mock(Writer.class)) {
-            final CSVFormat csvFormat = CSVFormat.DEFAULT.withAutoFlush(true);
+            final CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+            csvFormat.setAutoFlush(true);
             try (CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
                 // empty
             }
@@ -48,7 +51,7 @@ public class CSVPrinterCloseTest {
     @Test
     public void testCloseWithFlushOff() throws IOException {
         try (final Writer writer = mock(Writer.class)) {
-            final CSVFormat csvFormat = CSVFormat.DEFAULT;
+            final CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
             @SuppressWarnings("resource")
             final CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat);
             csvPrinter.close(false);
@@ -61,7 +64,7 @@ public class CSVPrinterCloseTest {
     public void testCloseWithFlushOn() throws IOException {
         try (final Writer writer = mock(Writer.class)) {
             @SuppressWarnings("resource")
-            final CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
+            final CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormatPredefinedFormats.Default.getFormat());
             csvPrinter.close(true);
             verify(writer, times(1)).flush();
         }

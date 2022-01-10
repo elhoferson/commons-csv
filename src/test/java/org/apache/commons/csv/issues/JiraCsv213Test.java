@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
@@ -42,13 +43,13 @@ public class JiraCsv213Test {
 
     private void createEndChannel(final File csvFile) {
         // @formatter:off
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                    .setDelimiter(';')
-                    .setHeader()
-                    .setSkipHeaderRecord(true)
-                    .setRecordSeparator('\n')
-                    .setQuoteMode(QuoteMode.ALL)
-                    .build();
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        csvFormat.setDelimiter(";");
+        csvFormat.setHeader();
+        csvFormat.setSkipHeaderRecord(true);
+        csvFormat.setRecordSeparator("\n");
+        csvFormat.setQuoteMode(QuoteMode.ALL);
+
         // @formatter:on
         try (Reader reader = Files.newBufferedReader(csvFile.toPath(), StandardCharsets.UTF_8);
             ICSVParser parser = new CSVParser(reader, csvFormat)) {

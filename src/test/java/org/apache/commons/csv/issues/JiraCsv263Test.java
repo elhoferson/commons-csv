@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.QuoteMode;
@@ -36,17 +37,18 @@ public class JiraCsv263Test {
     @Test
     public void testPrintFromReaderWithQuotes() throws IOException {
         // @formatter:off
-        final CSVFormat format = CSVFormat.RFC4180.builder()
-            .setDelimiter(',')
-            .setQuote('"')
-            .setEscape('?')
-            .setQuoteMode(QuoteMode.NON_NUMERIC)
-            .build();
+
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        csvFormat.setDelimiter(",");
+        csvFormat.setQuoteCharacter('"');
+        csvFormat.setEscapeCharacter('?');
+        csvFormat.setQuoteMode(QuoteMode.NON_NUMERIC);
+
         // @formatter:on
         final StringBuilder out = new StringBuilder();
 
         final Reader atStartOnly = new StringReader("\"a,b,c\r\nx,y,z");
-        CSVPrinter csvPrinter = new CSVPrinter(out, format);
+        CSVPrinter csvPrinter = new CSVPrinter(out, csvFormat);
         csvPrinter.print(atStartOnly, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"", out.toString());
 

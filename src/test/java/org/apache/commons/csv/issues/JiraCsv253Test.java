@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
@@ -43,7 +44,8 @@ public class JiraCsv253Test {
     @Test
     public void testHandleAbsentValues() throws IOException {
         final String source = "\"John\",,\"Doe\"\n" + ",\"AA\",123\n" + "\"John\",90,\n" + "\"\",,90";
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.NON_NUMERIC).build();
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        csvFormat.setQuoteMode(QuoteMode.NON_NUMERIC);
         try (final ICSVParser parser = new CSVParser(new StringReader(source), csvFormat)) {
             final Iterator<CSVRecord> csvRecords = parser.iterator();
             assertArrayEqual(new String[] {"John", null, "Doe"}, csvRecords.next());

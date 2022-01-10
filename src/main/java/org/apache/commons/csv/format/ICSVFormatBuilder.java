@@ -65,18 +65,6 @@ public interface ICSVFormatBuilder {
 
     CSVFormatBuilder setEscape(Character escapeCharacter);
 
-    CSVFormatBuilder setHeader(Class<? extends Enum<?>> headerEnum);
-
-    CSVFormatBuilder setHeader(ResultSet resultSet) throws SQLException;
-
-    CSVFormatBuilder setHeader(ResultSetMetaData resultSetMetaData) throws SQLException;
-
-    CSVFormatBuilder setHeader(String... header);
-
-    CSVFormatBuilder setHeaderComments(Object... headerComments);
-
-    CSVFormatBuilder setHeaderComments(String... headerComments);
-
     CSVFormatBuilder setIgnoreEmptyLines(boolean ignoreEmptyLines);
 
     CSVFormatBuilder setIgnoreHeaderCase(boolean ignoreHeaderCase);

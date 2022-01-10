@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class CSVPrinterExcelTest extends AbstractCSVPrinterTest {
     @Test
     public void testExcelPrintAllArrayOfArrays() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.EXCEL)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Excel.getFormat())) {
             printer.printRecords((Object[]) new String[][] { { "r1c1", "r1c2" }, { "r2c1", "r2c2" } });
             assertEquals("r1c1,r1c2" + recordSeparator + "r2c1,r2c2" + recordSeparator, sw.toString());
         }
@@ -24,7 +25,7 @@ public class CSVPrinterExcelTest extends AbstractCSVPrinterTest {
     @Test
     public void testExcelPrintAllArrayOfLists() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.EXCEL)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Excel.getFormat())) {
             printer.printRecords(
                     (Object[]) new List[] { Arrays.asList("r1c1", "r1c2"), Arrays.asList("r2c1", "r2c2") });
             assertEquals("r1c1,r1c2" + recordSeparator + "r2c1,r2c2" + recordSeparator, sw.toString());
@@ -34,7 +35,7 @@ public class CSVPrinterExcelTest extends AbstractCSVPrinterTest {
     @Test
     public void testExcelPrintAllIterableOfArrays() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.EXCEL)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Excel.getFormat())) {
             printer.printRecords(Arrays.asList(new String[][] { { "r1c1", "r1c2" }, { "r2c1", "r2c2" } }));
             assertEquals("r1c1,r1c2" + recordSeparator + "r2c1,r2c2" + recordSeparator, sw.toString());
         }
@@ -43,7 +44,7 @@ public class CSVPrinterExcelTest extends AbstractCSVPrinterTest {
     @Test
     public void testExcelPrintAllIterableOfLists() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.EXCEL)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Excel.getFormat())) {
             printer.printRecords(
                     Arrays.asList(Arrays.asList("r1c1", "r1c2"), Arrays.asList("r2c1", "r2c2")));
             assertEquals("r1c1,r1c2" + recordSeparator + "r2c1,r2c2" + recordSeparator, sw.toString());
@@ -53,7 +54,7 @@ public class CSVPrinterExcelTest extends AbstractCSVPrinterTest {
     @Test
     public void testExcelPrinter1() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.EXCEL)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Excel.getFormat())) {
             printer.printRecord("a", "b");
             assertEquals("a,b" + recordSeparator, sw.toString());
         }
@@ -62,7 +63,7 @@ public class CSVPrinterExcelTest extends AbstractCSVPrinterTest {
     @Test
     public void testExcelPrinter2() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.EXCEL)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Excel.getFormat())) {
             printer.printRecord("a,b", "b");
             assertEquals("\"a,b\",b" + recordSeparator, sw.toString());
         }

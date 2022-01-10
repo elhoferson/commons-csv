@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
@@ -56,22 +57,22 @@ public class JiraCsv167Test {
                 }
             }
         }
-        final CSVFormat format = CSVFormat.DEFAULT.builder()
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
         // @formatter:off
-            .setAllowMissingColumnNames(false)
-            .setCommentMarker('#')
-            .setDelimiter(',')
-            .setEscape('\\')
-            .setHeader("author", "title", "publishDate")
-            .setHeaderComments("headerComment")
-            .setNullString("NULL")
-            .setIgnoreEmptyLines(true)
-            .setIgnoreSurroundingSpaces(true)
-            .setQuote('"')
-            .setQuoteMode(QuoteMode.ALL)
-            .setRecordSeparator('\n')
-            .setSkipHeaderRecord(false)
-            .build();
+        format.setAllowMissingColumnNames(false);
+        format.setCommentMarker('#');
+        format.setDelimiter(",");
+        format.setEscapeCharacter('\\');
+        format.setHeader("author", "title", "publishDate");
+        format.setHeaderComments("headerComment");
+        format.setNullString("NULL");
+        format.setIgnoreEmptyLines(true);
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteCharacter('"');
+        format.setQuoteMode(QuoteMode.ALL);
+        format.setRecordSeparator("\n");
+        format.setSkipHeaderRecord(false);
+
         // @formatter:on
         int comments = 0;
         int records = 0;

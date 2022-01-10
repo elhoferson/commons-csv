@@ -24,6 +24,9 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -289,10 +292,6 @@ public class CSVFormat implements ICSVFormat {
         return header != null ? header.clone() : null;
     }
 
-    public void setHeader(String[] header) {
-        this.header = header;
-    }
-
     /**
      * Returns a copy of the header comment array.
      *
@@ -301,10 +300,6 @@ public class CSVFormat implements ICSVFormat {
     @Override
     public String[] getHeaderComments() {
         return headerComments != null ? headerComments.clone() : null;
-    }
-
-    public void setHeaderComments(String[] headerComments) {
-        this.headerComments = headerComments;
     }
 
 
@@ -737,23 +732,6 @@ public class CSVFormat implements ICSVFormat {
     }
 
     /**
-     * Creates a new CSV format with the specified delimiter.
-     *
-     * <p>
-     * Use this method if you want to create a CSVFormat from scratch. All fields but the delimiter will be initialized with null/false.
-     * </p>
-     *
-     * @param delimiter the char used for value separation, must not be a line break character
-     * @return a new CSV format.
-     * @throws IllegalArgumentException if the delimiter is a line break character
-     *
-     */
-    public static CSVFormat newFormat(final char delimiter) {
-        return new CSVFormat(String.valueOf(delimiter), null, null, null, null, false, false, null, null, null, null, false, false, false, false, false, false,
-                true);
-    }
-
-    /**
      * Gets one of the predefined formats from {@link CSVFormatPredefinedFormats}.
      *
      * @param format name
@@ -762,5 +740,140 @@ public class CSVFormat implements ICSVFormat {
      */
     public static CSVFormat valueOf(final String format) {
         return CSVFormatPredefinedFormats.valueOf(format).getFormat();
+    }
+
+    /**
+     * Sets the header defined by the given {@link Enum} class.
+     *
+     * <p>
+     * Example:
+     * </p>
+     *
+     * <pre>
+     * public enum HeaderEnum {
+     *     Name, Email, Phone
+     * }
+     *
+     * Builder builder = builder.setHeader(HeaderEnum.class);
+     * </pre>
+     * <p>
+     * The header is also used by the {@link CSVPrinter}.
+     * </p>
+     *
+     * @param headerEnum the enum defining the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     */
+    public void setHeader(final Class<? extends Enum<?>> headerEnum) {
+        String[] header = null;
+        if (headerEnum != null) {
+            final Enum<?>[] enumValues = headerEnum.getEnumConstants();
+            header = new String[enumValues.length];
+            for (int i = 0; i < enumValues.length; i++) {
+                header[i] = enumValues[i].name();
+            }
+        }
+        setHeader(header);
+    }
+
+    /**
+     * Sets the header from the result set metadata. The header can either be parsed automatically from the input file with:
+     *
+     * <pre>
+     * builder.setHeader();
+     * </pre>
+     *
+     * or specified manually with:
+     *
+     * <pre>
+     * builder.setHeader(resultSet);
+     * </pre>
+     * <p>
+     * The header is also used by the {@link CSVPrinter}.
+     * </p>
+     *
+     * @param resultSet the resultSet for the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     * @throws SQLException SQLException if a database access error occurs or this method is called on a closed result set.
+     */
+    public void setHeader(final ResultSet resultSet) throws SQLException {
+        setHeader(resultSet != null ? resultSet.getMetaData() : null);
+    }
+
+    /**
+     * Sets the header from the result set metadata. The header can either be parsed automatically from the input file with:
+     *
+     * <pre>
+     * builder.setHeader();
+     * </pre>
+     *
+     * or specified manually with:
+     *
+     * <pre>
+     * builder.setHeader(resultSetMetaData);
+     * </pre>
+     * <p>
+     * The header is also used by the {@link CSVPrinter}.
+     * </p>
+     *
+     * @param resultSetMetaData the metaData for the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     * @throws SQLException SQLException if a database access error occurs or this method is called on a closed result set.
+     */
+    public void setHeader(final ResultSetMetaData resultSetMetaData) throws SQLException {
+        String[] labels = null;
+        if (resultSetMetaData != null) {
+            final int columnCount = resultSetMetaData.getColumnCount();
+            labels = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                labels[i] = resultSetMetaData.getColumnLabel(i + 1);
+            }
+        }
+        setHeader(labels);
+    }
+
+    /**
+     * Sets the header to the given values. The header can either be parsed automatically from the input file with:
+     *
+     * <pre>
+     * builder.setHeader();
+     * </pre>
+     *
+     * or specified manually with:
+     *
+     * <pre>
+     * builder.setHeader(&quot;name&quot;, &quot;email&quot;, &quot;phone&quot;);
+     * </pre>
+     * <p>
+     * The header is also used by the {@link CSVPrinter}.
+     * </p>
+     *
+     * @param header the header, {@code null} if disabled, empty if parsed automatically, user specified otherwise.
+     */
+    public void setHeader(final String... header) {
+        this.header = CSVFormat.clone(header);
+    }
+
+    /**
+     * Sets the header comments set to the given values. The comments will be printed first, before the headers. This setting is ignored by the parser.
+     *
+     * <pre>
+     * builder.setHeaderComments(&quot;Generated by Apache Commons CSV.&quot;, Instant.now());
+     * </pre>
+     *
+     * @param headerComments the headerComments which will be printed by the Printer before the actual CSV data.
+     */
+    public void setHeaderComments(final Object... headerComments) {
+        this.headerComments = CSVFormat.clone(CSVFormatHelper.toStringArray(headerComments));
+    }
+
+    /**
+     * Sets the header comments set to the given values. The comments will be printed first, before the headers. This setting is ignored by the parser.
+     *
+     * <pre>
+     * Builder.setHeaderComments(&quot;Generated by Apache Commons CSV.&quot;, Instant.now());
+     * </pre>
+     *
+     * @param headerComments the headerComments which will be printed by the Printer before the actual CSV data.
+     * @return This instance.
+     */
+    public void setHeaderComments(final String... headerComments) {
+        this.headerComments = CSVFormat.clone(headerComments);
     }
 }

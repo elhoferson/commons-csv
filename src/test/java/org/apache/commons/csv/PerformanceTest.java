@@ -18,6 +18,7 @@
 package org.apache.commons.csv;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.*;
 import org.apache.commons.csv.record.CSVRecord;
 import org.apache.commons.io.IOUtils;
@@ -73,7 +74,7 @@ public class PerformanceTest {
     private static int num; // number of elapsed times recorded
 
     private static final long[] ELAPSED_TIMES = new long[max];
-    private static final CSVFormat format = CSVFormat.EXCEL;
+    private static final CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
 
     private static final String TEST_RESRC = "org/apache/commons/csv/perf/worldcitiespop.txt.gz";
 

@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +43,10 @@ public class JiraCsv135Test extends AbstractCSVPrinterTest {
     @Test
     @Disabled
     public void testJira135_part1() throws IOException {
-        final CSVFormat format = CSVFormat.DEFAULT.withRecordSeparator('\n').withQuote(DQUOTE_CHAR).withEscape(BACKSLASH);
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator("\n");
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setEscapeCharacter(BACKSLASH);
         final StringWriter sw = new StringWriter();
         final List<String> list = new LinkedList<>();
         try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
@@ -58,7 +62,10 @@ public class JiraCsv135Test extends AbstractCSVPrinterTest {
     @Test
     @Disabled
     public void testJira135_part2() throws IOException {
-        final CSVFormat format = CSVFormat.DEFAULT.withRecordSeparator('\n').withQuote(DQUOTE_CHAR).withEscape(BACKSLASH);
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator("\n");
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setEscapeCharacter(BACKSLASH);
         final StringWriter sw = new StringWriter();
         final List<String> list = new LinkedList<>();
         try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
@@ -74,7 +81,10 @@ public class JiraCsv135Test extends AbstractCSVPrinterTest {
     @Test
     @Disabled
     public void testJira135_part3() throws IOException {
-        final CSVFormat format = CSVFormat.DEFAULT.withRecordSeparator('\n').withQuote(DQUOTE_CHAR).withEscape(BACKSLASH);
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator("\n");
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setEscapeCharacter(BACKSLASH);
         final StringWriter sw = new StringWriter();
         final List<String> list = new LinkedList<>();
         try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
@@ -90,7 +100,10 @@ public class JiraCsv135Test extends AbstractCSVPrinterTest {
     @Test
     @Disabled
     public void testJira135All() throws IOException {
-        final CSVFormat format = CSVFormat.DEFAULT.withRecordSeparator('\n').withQuote(DQUOTE_CHAR).withEscape(BACKSLASH);
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator("\n");
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setEscapeCharacter(BACKSLASH);
         final StringWriter sw = new StringWriter();
         final List<String> list = new LinkedList<>();
         try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
@@ -106,7 +119,10 @@ public class JiraCsv135Test extends AbstractCSVPrinterTest {
     }
 
     private void tryFormat(final List<String> list, final Character quote, final Character escape, final String expected) throws IOException {
-        final CSVFormat format = CSVFormat.DEFAULT.withQuote(quote).withEscape(escape).withRecordSeparator(null);
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setRecordSeparator(null);
+        format.setQuoteCharacter(quote);
+        format.setEscapeCharacter(escape);
         final Appendable out = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(out, format)) {
             printer.printRecord(list);

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Test;
 
@@ -30,11 +31,12 @@ public class JiraCsv154Test {
     public void testJiraCsv154_withCommentMarker() throws IOException {
         final String comment = "This is a header comment";
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-            .setHeader("H1", "H2")
-            .setCommentMarker('#')
-            .setHeaderComments(comment)
-            .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setHeader("H1", "H2");
+        format.setCommentMarker('#');
+        format.setHeaderComments(comment);
+
         // @formatter:on
         final StringBuilder out = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(out, format)) {
@@ -49,11 +51,12 @@ public class JiraCsv154Test {
     public void testJiraCsv154_withHeaderComments() throws IOException {
         final String comment = "This is a header comment";
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-            .setHeader("H1", "H2")
-            .setHeaderComments(comment)
-            .setCommentMarker('#')
-            .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setHeader("H1", "H2");
+        format.setHeaderComments(comment);
+        format.setCommentMarker('#');
+
         // @formatter:on
         final StringBuilder out = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(out, format)) {
