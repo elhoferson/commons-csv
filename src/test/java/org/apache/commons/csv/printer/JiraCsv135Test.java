@@ -1,7 +1,6 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,5 @@
 package org.apache.commons.csv.format;
 
-import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -140,7 +139,7 @@ public class CSVFormatEqualsTest {
                             final Object a = method.invoke(CSVFormat.DEFAULT, new Object[] {new String[] {null, null}});
                             final Object b = method.invoke(CSVFormat.DEFAULT, new Object[] {new String[] {"f", "g"}});
                             assertNotEquals(name, type, a, b);
-                        } else if ("org.apache.commons.csv.QuoteMode".equals(type)){
+                        } else if ("org.apache.commons.csv.format.QuoteMode".equals(type)){
                             final Object a = method.invoke(CSVFormat.DEFAULT, QuoteMode.MINIMAL);
                             final Object b = method.invoke(CSVFormat.DEFAULT, QuoteMode.ALL);
                             assertNotEquals(name, type, a, b);

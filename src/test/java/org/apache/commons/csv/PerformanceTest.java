@@ -17,24 +17,18 @@
 
 package org.apache.commons.csv;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.parser.*;
+import org.apache.commons.csv.record.CSVRecord;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
-
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Basic test harness.
@@ -44,7 +38,7 @@ public class PerformanceTest {
 
     @FunctionalInterface
     private interface CSVParserFactory {
-        CSVParser createParser() throws IOException;
+        ICSVParser createParser() throws IOException;
     }
 
     // Container for basic statistics
@@ -240,7 +234,7 @@ public class PerformanceTest {
                     default:
                         throw new IllegalStateException("Unexpected Token type: " + token.type);
                     }
-                } while (!token.type.equals(Token.Type.EOF));
+                } while (!token.type.equals(Type.EOF));
                 stats = new Stats(count, fields);
             }
             show(simpleName + dynamic + " " + (newToken ? "new" : "reset"), stats, startMillis);
@@ -302,7 +296,7 @@ public class PerformanceTest {
         for (int i = 0; i < max; i++) {
             final long startMillis;
             final Stats stats;
-            try (final CSVParser parser = fac.createParser()) {
+            try (final ICSVParser parser = fac.createParser()) {
                 startMillis = System.currentTimeMillis();
                 stats = iterate(parser);
             }

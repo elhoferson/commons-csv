@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.record;
 
+import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.format.CSVFormat;
 import org.apache.commons.csv.format.CSVFormatBuilder;
+import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -41,7 +39,7 @@ import java.util.stream.Stream;
  * mapping when transferring serialised forms pre-1.8 to 1.8 and vice versa.
  * </p>
  */
-public final class CSVRecord implements Serializable, Iterable<String> {
+public class CSVRecord implements Serializable, Iterable<String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,10 +55,10 @@ public final class CSVRecord implements Serializable, Iterable<String> {
     private final String[] values;
 
     /** The parser that originates this record. This is not serialized. */
-    private final transient CSVParser parser;
+    private final transient ICSVParser parser;
 
-    CSVRecord(final CSVParser parser, final String[] values, final String comment, final long recordNumber,
-            final long characterPosition) {
+    public CSVRecord(final ICSVParser parser, final String[] values, final String comment, final long recordNumber,
+                     final long characterPosition) {
         this.recordNumber = recordNumber;
         this.values = values != null ? values : Constants.EMPTY_STRING_ARRAY;
         this.parser = parser;
@@ -125,11 +123,11 @@ public final class CSVRecord implements Serializable, Iterable<String> {
                 headerMap.keySet()));
         }
         try {
-            return values[index.intValue()];
+            return values[index];
         } catch (final ArrayIndexOutOfBoundsException e) {
             throw new IllegalArgumentException(String.format(
                 "Index for header '%s' is %d but CSVRecord only has %d values!", name, index,
-                Integer.valueOf(values.length)));
+                    values.length));
         }
     }
 
@@ -170,7 +168,7 @@ public final class CSVRecord implements Serializable, Iterable<String> {
      * @return the parser.
      * @since 1.7
      */
-    public CSVParser getParser() {
+    public ICSVParser getParser() {
         return parser;
     }
 
@@ -248,7 +246,7 @@ public final class CSVRecord implements Serializable, Iterable<String> {
      * @return whether a given columns is mapped and has a value
      */
     public boolean isSet(final String name) {
-        return isMapped(name) && getHeaderMapRaw().get(name).intValue() < values.length;
+        return isMapped(name) && Objects.requireNonNull(getHeaderMapRaw()).get(name) < values.length;
     }
 
     /**

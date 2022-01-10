@@ -19,7 +19,7 @@ package org.apache.commons.csv.issues;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Test;
 
 public class JiraCsv148Test {

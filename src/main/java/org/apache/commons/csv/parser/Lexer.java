@@ -15,30 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
-import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.Constants;
+import org.apache.commons.csv.format.ICSVFormat;
 
-import static org.apache.commons.csv.Constants.BACKSPACE;
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.END_OF_STREAM;
-import static org.apache.commons.csv.Constants.FF;
-import static org.apache.commons.csv.Constants.LF;
-import static org.apache.commons.csv.Constants.TAB;
-import static org.apache.commons.csv.Constants.UNDEFINED;
-import static org.apache.commons.csv.Token.Type.COMMENT;
-import static org.apache.commons.csv.Token.Type.EOF;
-import static org.apache.commons.csv.Token.Type.EORECORD;
-import static org.apache.commons.csv.Token.Type.INVALID;
-import static org.apache.commons.csv.Token.Type.TOKEN;
-
-import java.io.Closeable;
 import java.io.IOException;
+
+import static org.apache.commons.csv.Constants.*;
+import static org.apache.commons.csv.parser.Type.COMMENT;
+import static org.apache.commons.csv.parser.Type.*;
 
 /**
  * Lexical analyzer.
  */
-final class Lexer implements Closeable {
+public class Lexer implements ILexer {
 
     private static final String CR_STRING = Character.toString(CR);
     private static final String LF_STRING = Character.toString(LF);
@@ -64,7 +55,7 @@ final class Lexer implements Closeable {
     private final ExtendedBufferedReader reader;
     private String firstEol;
 
-    Lexer(final CSVFormat format, final ExtendedBufferedReader reader) {
+    public Lexer(final ICSVFormat format, final ExtendedBufferedReader reader) {
         this.reader = reader;
         this.delimiter = format.getDelimiterString().toCharArray();
         this.escape = mapNullToDisabled(format.getEscapeCharacter());
@@ -92,7 +83,8 @@ final class Lexer implements Closeable {
      *
      * @return the current character position
      */
-    long getCharacterPosition() {
+    @Override
+    public long getCharacterPosition() {
         return reader.getPosition();
     }
 
@@ -101,15 +93,18 @@ final class Lexer implements Closeable {
      *
      * @return the current line number
      */
-    long getCurrentLineNumber() {
+    @Override
+    public long getCurrentLineNumber() {
         return reader.getCurrentLineNumber();
     }
 
-    String getFirstEol(){
+    @Override
+    public String getFirstEol(){
         return firstEol;
     }
 
-    boolean isClosed() {
+    @Override
+    public boolean isClosed() {
         return reader.isClosed();
     }
 
@@ -201,7 +196,7 @@ final class Lexer implements Closeable {
     }
 
     private char mapNullToDisabled(final Character c) {
-        return c == null ? DISABLED : c.charValue();
+        return c == null ? DISABLED : c;
     }
 
     /**
@@ -215,7 +210,8 @@ final class Lexer implements Closeable {
      * @return the next token found.
      * @throws java.io.IOException on stream access error.
      */
-    Token nextToken(final Token token) throws IOException {
+    @Override
+    public Token nextToken(final Token token) throws IOException {
 
         // get the last read char (required for empty line detection)
         int lastChar = reader.getLastChar();
@@ -329,16 +325,7 @@ final class Lexer implements Closeable {
             c = reader.read();
 
             if (isEscape(c)) {
-                if (isEscapeDelimiter()) {
-                    token.content.append(delimiter);
-                } else {
-                    final int unescaped = readEscape();
-                    if (unescaped == END_OF_STREAM) { // unexpected char after escape
-                        token.content.append((char) c).append((char) reader.getLastChar());
-                    } else {
-                        token.content.append((char) unescaped);
-                    }
-                }
+                handleEscape(token, (char) c);
             } else if (isQuoteChar(c)) {
                 if (isQuoteChar(reader.lookAhead())) {
                     // double or escaped encapsulator -> add single encapsulator to token
@@ -375,6 +362,19 @@ final class Lexer implements Closeable {
             } else {
                 // consume character
                 token.content.append((char) c);
+            }
+        }
+    }
+
+    private void handleEscape(Token token, char c) throws IOException {
+        if (isEscapeDelimiter()) {
+            token.content.append(delimiter);
+        } else {
+            final int unescaped = readEscape();
+            if (unescaped == END_OF_STREAM) { // unexpected char after escape
+                token.content.append(c).append((char) reader.getLastChar());
+            } else {
+                token.content.append((char) unescaped);
             }
         }
     }
@@ -417,16 +417,7 @@ final class Lexer implements Closeable {
             }
             // continue
             if (isEscape(ch)) {
-                if (isEscapeDelimiter()) {
-                    token.content.append(delimiter);
-                } else {
-                    final int unescaped = readEscape();
-                    if (unescaped == END_OF_STREAM) { // unexpected char after escape
-                        token.content.append((char) ch).append((char) reader.getLastChar());
-                    } else {
-                        token.content.append((char) unescaped);
-                    }
-                }
+                handleEscape(token, (char) ch);
             } else {
                 token.content.append((char) ch);
             }
@@ -479,7 +470,7 @@ final class Lexer implements Closeable {
      * @throws IOException if there is a problem reading the stream or the end of stream is detected:
      *      the escape character is not allowed at end of stream
      */
-    int readEscape() throws IOException {
+    public int readEscape() throws IOException {
         // the escape char has just been read (normally a backslash)
         final int ch = reader.read();
         switch (ch) {
@@ -511,7 +502,7 @@ final class Lexer implements Closeable {
         }
     }
 
-    void trimTrailingSpaces(final StringBuilder buffer) {
+    public void trimTrailingSpaces(final StringBuilder buffer) {
         int length = buffer.length();
         while (length > 0 && Character.isWhitespace(buffer.charAt(length - 1))) {
             length = length - 1;

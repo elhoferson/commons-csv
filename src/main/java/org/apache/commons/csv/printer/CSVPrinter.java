@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.printer;
 
-import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.ICSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.ExtendedBufferedReader;
+import org.apache.commons.csv.util.IOUtils;
 
 import java.io.*;
 import java.sql.Clob;
@@ -29,13 +32,13 @@ import java.util.Objects;
 import static org.apache.commons.csv.Constants.*;
 
 /**
- * Prints values in a {@link CSVFormat CSV format}.
+ * Prints values in a {@link ICSVFormat CSV format}.
  *
  * <p>Values can be appended to the output by calling the {@link #print(Object)} method.
  * Values are printed according to {@link String#valueOf(Object)}.
  * To complete a record the {@link #println()} method has to be called.
  * Comments can be appended by calling {@link #printComment(String)}.
- * However a comment will only be written to the output if the {@link CSVFormat} supports comments.
+ * However a comment will only be written to the output if the {@link ICSVFormat} supports comments.
  * </p>
  *
  * <p>The printer also supports appending a complete record at once by calling {@link #printRecord(Object...)}
@@ -65,11 +68,11 @@ import static org.apache.commons.csv.Constants.*;
  * 2,mary,Mary,Meyer,1985-03-29
  * </pre>
  */
-public final class CSVPrinter implements Flushable, Closeable {
+public class CSVPrinter implements ICSVPrinter {
 
     /** The place that the values get written. */
     private final Appendable appendable;
-    private final CSVFormat format;
+    private final ICSVFormat format;
 
     /** True if we just began a new record. */
     private boolean newRecord = true;
@@ -90,7 +93,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IllegalArgumentException
      *             thrown if the parameters of the format are inconsistent or if either out or format are null.
      */
-    public CSVPrinter(final Appendable appendable, final CSVFormat format) throws IOException {
+    public CSVPrinter(final Appendable appendable, final ICSVFormat format) throws IOException {
         Objects.requireNonNull(appendable, "appendable");
         Objects.requireNonNull(format, "format");
 
@@ -160,6 +163,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void print(final Object value) throws IOException {
         print(value, newRecord);
         newRecord = false;
@@ -177,7 +181,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * If comments are disabled in the current CSV format this method does nothing.
      * </p>
      *
-     * <p>This method detects line breaks inside the comment string and inserts {@link CSVFormat#getRecordSeparator()}
+     * <p>This method detects line breaks inside the comment string and inserts {@link ICSVFormat#getRecordSeparator()}
      * to start a new line of the comment. Note that this might produce unexpected results for formats that do not use
      * line breaks as record separator.</p>
      *
@@ -186,6 +190,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printComment(final String comment) throws IOException {
         if (comment == null || !format.isCommentMarkerSet()) {
             return;
@@ -193,7 +198,7 @@ public final class CSVPrinter implements Flushable, Closeable {
         if (!newRecord) {
             println();
         }
-        appendable.append(format.getCommentMarker().charValue());
+        appendable.append(format.getCommentMarker());
         appendable.append(SP);
         for (int i = 0; i < comment.length(); i++) {
             final char c = comment.charAt(i);
@@ -205,7 +210,7 @@ public final class CSVPrinter implements Flushable, Closeable {
                 //$FALL-THROUGH$ break intentionally excluded.
             case LF:
                 println();
-                appendable.append(format.getCommentMarker().charValue());
+                appendable.append(format.getCommentMarker());
                 appendable.append(SP);
                 break;
             default:
@@ -224,6 +229,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws SQLException If a database access error occurs or this method is called on a closed result set.
      * @since 1.9.0
      */
+    @Override
     public void printHeaders(final ResultSet resultSet) throws IOException, SQLException {
         printRecord((Object[]) format.builder().setHeader(resultSet).build().getHeader());
     }
@@ -241,6 +247,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecord(final Iterable<?> values) throws IOException {
         for (final Object value : values) {
             print(value);
@@ -261,6 +268,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecord(final Object... values) throws IOException {
         printRecord(Arrays.asList(values));
     }
@@ -304,6 +312,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecords(final Iterable<?> values) throws IOException {
         for (final Object value : values) {
             if (value instanceof Object[]) {
@@ -355,6 +364,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
+    @Override
     public void printRecords(final Object... values) throws IOException {
         printRecords(Arrays.asList(values));
     }
@@ -369,6 +379,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws SQLException
      *             if a database access error occurs
      */
+    @Override
     public void printRecords(final ResultSet resultSet) throws SQLException, IOException {
         final int columnCount = resultSet.getMetaData().getColumnCount();
         while (resultSet.next()) {
@@ -390,6 +401,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws SQLException if a database access error occurs
      * @since 1.9.0
      */
+    @Override
     public void printRecords(final ResultSet resultSet, final boolean printHeader) throws SQLException, IOException {
         if (printHeader) {
             printHeaders(resultSet);
@@ -417,13 +429,14 @@ public final class CSVPrinter implements Flushable, Closeable {
 
     /**
      * Prints the {@code value} as the next value on the line to {@code out}. The value will be escaped or encapsulated as needed. Useful when one wants to
-     * avoid creating CSVPrinters. Trims the value if {@link CSVFormat#getTrim()} is true.
+     * avoid creating CSVPrinters. Trims the value if {@link ICSVFormat#getTrim()} is true.
      *
      * @param value     value to output.
      * @param newRecord if this a new record.
      * @throws IOException If an I/O error occurs.
      * @since 1.4
      */
+    @Override
     public void print(final Object value, final boolean newRecord) throws IOException {
         // null values are considered empty
         // Only call CharSequence.toString() if you have to, helps GC-free use cases.
@@ -476,7 +489,7 @@ public final class CSVPrinter implements Flushable, Closeable {
 
         final char[] delim = format.getDelimiterString().toCharArray();
         final int delimLength = delim.length;
-        final char escape = format.getEscapeCharacter().charValue();
+        final char escape = format.getEscapeCharacter();
 
         while (pos < end) {
             char c = charSeq.charAt(pos);
@@ -523,7 +536,7 @@ public final class CSVPrinter implements Flushable, Closeable {
         final ExtendedBufferedReader bufferedReader = new ExtendedBufferedReader(reader);
         final char[] delim = format.getDelimiterString().toCharArray();
         final int delimLength = delim.length;
-        final char escape = format.getEscapeCharacter().charValue();
+        final char escape = format.getEscapeCharacter();
         final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
 
         int c;
@@ -578,11 +591,11 @@ public final class CSVPrinter implements Flushable, Closeable {
 
         final char[] delim = format.getDelimiterString().toCharArray();
         final int delimLength = delim.length;
-        final char quoteChar = format.getQuoteCharacter().charValue();
+        final char quoteChar = format.getQuoteCharacter();
         // If escape char not specified, default to the quote char
         // This avoids having to keep checking whether there is an escape character
         // at the cost of checking against quote twice
-        final char escapeChar = format.isEscapeCharacterSet() ? format.getEscapeCharacter().charValue() : quoteChar;
+        final char escapeChar = format.isEscapeCharacterSet() ? format.getEscapeCharacter() : quoteChar;
 
         QuoteMode quoteModePolicy = format.getQuoteMode();
         if (quoteModePolicy == null) {
@@ -691,7 +704,7 @@ public final class CSVPrinter implements Flushable, Closeable {
 
         int pos = 0;
 
-        final char quote = format.getQuoteCharacter().charValue();
+        final char quote = format.getQuoteCharacter();
         final StringBuilder builder = new StringBuilder(IOUtils.DEFAULT_BUFFER_SIZE);
 
         append(quote);
@@ -727,6 +740,7 @@ public final class CSVPrinter implements Flushable, Closeable {
      * @throws IOException If an I/O error occurs.
      * @since 1.4
      */
+    @Override
     public void println() throws IOException {
         if (format.getTrailingDelimiter()) {
             append(format.getDelimiterString());

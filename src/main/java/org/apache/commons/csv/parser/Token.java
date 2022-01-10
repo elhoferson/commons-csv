@@ -15,49 +15,32 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
-import static org.apache.commons.csv.Token.Type.INVALID;
+import static org.apache.commons.csv.parser.Type.INVALID;
 
 /**
  * Internal token representation.
  * <p/>
  * It is used as contract between the lexer and the parser.
  */
-final class Token {
-
-    enum Type {
-        /** Token has no valid content, i.e. is in its initialized state. */
-        INVALID,
-
-        /** Token with content, at beginning or in the middle of a line. */
-        TOKEN,
-
-        /** Token (which can have content) when the end of file is reached. */
-        EOF,
-
-        /** Token with content when the end of a line is reached. */
-        EORECORD,
-
-        /** Token is a comment line. */
-        COMMENT
-    }
+public class Token {
 
     /** length of the initial token (content-)buffer */
     private static final int INITIAL_TOKEN_LENGTH = 50;
 
     /** Token type */
-    Token.Type type = INVALID;
+    public Type type = INVALID;
 
     /** The content buffer. */
-    final StringBuilder content = new StringBuilder(INITIAL_TOKEN_LENGTH);
+    public final StringBuilder content = new StringBuilder(INITIAL_TOKEN_LENGTH);
 
     /** Token ready flag: indicates a valid token with content (ready for the parser). */
-    boolean isReady;
+    public boolean isReady;
 
-    boolean isQuoted;
+    public boolean isQuoted;
 
-    void reset() {
+    public void reset() {
         content.setLength(0);
         type = INVALID;
         isReady = false;

@@ -1,8 +1,12 @@
 package org.apache.commons.csv.printer;
 
-import org.apache.commons.csv.*;
 import org.apache.commons.csv.enums.EmptyEnum;
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
+import org.apache.commons.csv.record.CSVRecord;
+import org.apache.commons.csv.util.IOUtils;
 import org.apache.commons.csv.util.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.NullOutputStream;
@@ -45,10 +49,10 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[][] res = {{"a1", "b1"}, {"a2", "b2"}, {"a3", "b3"}, {"a4", "b4"}};
         final CSVFormat format = CSVFormat.DEFAULT;
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, format); final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, format); final ICSVParser parser = CSVParser.parse(code, format)) {
             printer.printRecords(parser);
         }
-        try (final CSVParser parser = CSVParser.parse(sw.toString(), format)) {
+        try (final ICSVParser parser = CSVParser.parse(sw.toString(), format)) {
             final List<CSVRecord> records = parser.getRecords();
             assertFalse(records.isEmpty());
             Utils.compare("Fail", res, records);
@@ -65,12 +69,12 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[][] res = {{"a1", "b1"}, {"a2", "b2"}, {"a3", "b3"}, {"a4", "b4"}};
         final CSVFormat format = CSVFormat.DEFAULT;
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, format); final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, format); final ICSVParser parser = CSVParser.parse(code, format)) {
             for (final CSVRecord record : parser) {
                 printer.printRecord(record);
             }
         }
-        try (final CSVParser parser = CSVParser.parse(sw.toString(), format)) {
+        try (final ICSVParser parser = CSVParser.parse(sw.toString(), format)) {
             final List<CSVRecord> records = parser.getRecords();
             assertFalse(records.isEmpty());
             Utils.compare("Fail", res, records);
@@ -87,10 +91,10 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[][] res = {{"a1", "b1"}, {"a2", "b2"}, {"a3", "b3"}, {"a4", "b4"}};
         final CSVFormat format = CSVFormat.DEFAULT;
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, format); final CSVParser parser = CSVParser.parse(code, format)) {
+        try (final CSVPrinter printer = new CSVPrinter(sw, format); final ICSVParser parser = CSVParser.parse(code, format)) {
             printer.printRecords(parser.getRecords());
         }
-        try (final CSVParser parser = CSVParser.parse(sw.toString(), format)) {
+        try (final ICSVParser parser = CSVParser.parse(sw.toString(), format)) {
             final List<CSVRecord> records = parser.getRecords();
             assertFalse(records.isEmpty());
             Utils.compare("Fail", res, records);
@@ -234,7 +238,7 @@ public class CSVPrinterPrintTest extends AbstractCSVPrinterTest {
         final String[] values = {"A", "B", "C"};
         final String rowData = StringUtils.join(values, ',');
         final CharArrayWriter charArrayWriter = new CharArrayWriter(0);
-        try (final CSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT);
+        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT);
              final CSVPrinter csvPrinter = new CSVPrinter(charArrayWriter, CSVFormat.INFORMIX_UNLOAD)) {
             for (final CSVRecord record : parser) {
                 csvPrinter.printRecord(record);

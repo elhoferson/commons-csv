@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
 import static org.apache.commons.csv.Constants.BACKSPACE;
 import static org.apache.commons.csv.Constants.CR;
 import static org.apache.commons.csv.Constants.FF;
 import static org.apache.commons.csv.Constants.LF;
 import static org.apache.commons.csv.Constants.TAB;
-import static org.apache.commons.csv.Token.Type.COMMENT;
-import static org.apache.commons.csv.Token.Type.EOF;
-import static org.apache.commons.csv.Token.Type.EORECORD;
-import static org.apache.commons.csv.Token.Type.TOKEN;
-import static org.apache.commons.csv.TokenMatchers.hasContent;
-import static org.apache.commons.csv.TokenMatchers.matches;
+import static org.apache.commons.csv.parser.Type.COMMENT;
+import static org.apache.commons.csv.parser.Type.EOF;
+import static org.apache.commons.csv.parser.Type.EORECORD;
+import static org.apache.commons.csv.parser.Type.TOKEN;
+import static org.apache.commons.csv.parser.TokenMatchers.hasContent;
+import static org.apache.commons.csv.parser.TokenMatchers.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.commons.csv;
+package org.apache.commons.csv.parser;
 
 import static org.apache.commons.csv.Constants.END_OF_STREAM;
 import static org.apache.commons.csv.Constants.UNDEFINED;
@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.StringReader;
 
+import org.apache.commons.csv.parser.ExtendedBufferedReader;
 import org.junit.jupiter.api.Test;
 
 /**

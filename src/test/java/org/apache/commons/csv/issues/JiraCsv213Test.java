@@ -16,17 +16,18 @@
  */
 package org.apache.commons.csv.issues;
 
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.QuoteMode;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests https://issues.apache.org/jira/browse/CSV-213
@@ -50,7 +51,7 @@ public class JiraCsv213Test {
                     .build();
         // @formatter:on
         try (Reader reader = Files.newBufferedReader(csvFile.toPath(), StandardCharsets.UTF_8);
-            CSVParser parser = new CSVParser(reader, csvFormat)) {
+            ICSVParser parser = new CSVParser(reader, csvFormat)) {
             if (parser.iterator().hasNext()) {
                 // System.out.println(parser.getCurrentLineNumber());
                 // System.out.println(parser.getRecordNumber());

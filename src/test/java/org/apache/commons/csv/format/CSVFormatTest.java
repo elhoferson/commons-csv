@@ -38,8 +38,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Objects;
 
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -17,20 +17,18 @@
 
 package org.apache.commons.csv.issues;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
+import org.apache.commons.csv.record.CSVRecord;
+import org.junit.jupiter.api.Test;
 
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JiraCsv247Test {
 
@@ -41,7 +39,7 @@ public class JiraCsv247Test {
         assertTrue(format.getAllowMissingColumnNames(), "We should allow missing column names");
 
         final Reader in = new StringReader("a,,c,d,e\n1,2,3,4,5\nv,w,x,y,z");
-        try (final CSVParser parser = new CSVParser(in, format)) {
+        try (final ICSVParser parser = new CSVParser(in, format)) {
             assertEquals(Arrays.asList("a", "", "c", "d", "e"), parser.getHeaderNames());
             final Iterator<CSVRecord> iterator = parser.iterator();
             CSVRecord record = iterator.next();
@@ -68,14 +66,14 @@ public class JiraCsv247Test {
 
         assertThrows(IllegalArgumentException.class, () -> {
             try (final Reader reader = new StringReader("a,,c,d,e\n1,2,3,4,5\nv,w,x,y,z");
-                CSVParser parser = new CSVParser(reader, format);) {
+                 ICSVParser parser = new CSVParser(reader, format);) {
                 // should fail
             }
         }, "1 missing column header is not allowed");
 
         assertThrows(IllegalArgumentException.class, () -> {
             try (final Reader reader = new StringReader("a,,c,d,\n1,2,3,4,5\nv,w,x,y,z");
-                CSVParser parser = new CSVParser(reader, format);) {
+                 ICSVParser parser = new CSVParser(reader, format);) {
                 // should fail
             }
         }, "2+ missing column headers is not allowed!");

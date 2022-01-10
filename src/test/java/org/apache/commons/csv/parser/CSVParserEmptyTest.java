@@ -1,8 +1,7 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -15,7 +14,7 @@ public class CSVParserEmptyTest {
 
     @Test
     public void testEmptyFile() throws Exception {
-        try (final CSVParser parser = CSVParser.parse(Paths.get("src/test/resources/org/apache/commons/csv/empty.txt"),
+        try (final ICSVParser parser = CSVParser.parse(Paths.get("src/test/resources/org/apache/commons/csv/empty.txt"),
                 StandardCharsets.UTF_8, CSVFormat.DEFAULT)) {
             assertNull(parser.nextRecord());
         }
@@ -23,7 +22,7 @@ public class CSVParserEmptyTest {
 
     @Test
     public void testEmptyFileHeaderParsing() throws Exception {
-        try (final CSVParser parser = CSVParser.parse("", CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+        try (final ICSVParser parser = CSVParser.parse("", CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
             assertNull(parser.nextRecord());
             assertTrue(parser.getHeaderNames().isEmpty());
         }
@@ -35,7 +34,7 @@ public class CSVParserEmptyTest {
         final String[][] res = {{"hello", ""} // CSV format ignores empty lines
         };
         for (final String code : codes) {
-            try (final CSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
+            try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT)) {
                 final List<CSVRecord> records = parser.getRecords();
                 assertEquals(res.length, records.size());
                 assertFalse(records.isEmpty());
@@ -52,7 +51,7 @@ public class CSVParserEmptyTest {
         final String[][] res = {{"hello", ""}, {""}, // Excel format does not ignore empty lines
                 {""}};
         for (final String code : codes) {
-            try (final CSVParser parser = CSVParser.parse(code, CSVFormat.EXCEL)) {
+            try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.EXCEL)) {
                 final List<CSVRecord> records = parser.getRecords();
                 assertEquals(res.length, records.size());
                 assertFalse(records.isEmpty());
@@ -65,7 +64,7 @@ public class CSVParserEmptyTest {
 
     @Test
     public void testEmptyString() throws Exception {
-        try (final CSVParser parser = CSVParser.parse("", CSVFormat.DEFAULT)) {
+        try (final ICSVParser parser = CSVParser.parse("", CSVFormat.DEFAULT)) {
             assertNull(parser.nextRecord());
         }
     }

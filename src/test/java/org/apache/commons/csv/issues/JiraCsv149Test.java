@@ -16,15 +16,16 @@
  */
 package org.apache.commons.csv.issues;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
+import org.apache.commons.csv.record.CSVRecord;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JiraCsv149Test {
 
@@ -49,7 +50,7 @@ public class JiraCsv149Test {
             .build();
         // @formatter:on
         int lineCounter = 2;
-        try (final CSVParser parser = new CSVParser(records, format)) {
+        try (final ICSVParser parser = new CSVParser(records, format)) {
             for (final CSVRecord record : parser) {
                 assertEquals(lineCounter++, parser.getCurrentLineNumber());
             }

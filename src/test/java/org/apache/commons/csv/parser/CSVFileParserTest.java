@@ -17,10 +17,10 @@
 
 package org.apache.commons.csv.parser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.record.CSVRecord;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,11 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Parse tests using test files
@@ -93,7 +89,7 @@ public class CSVFileParserTest {
             // We use a buffered reader internally so no need to create one here.
 
             // Version 1 - read directly from file
-            try (final CSVParser parser = CSVParser.parse(new File(BASE_DIR, split[0]), Charset.defaultCharset(), format)) {
+            try (final ICSVParser parser = CSVParser.parse(new File(BASE_DIR, split[0]), Charset.defaultCharset(), format)) {
                 for (final CSVRecord record : parser) {
                     String parsed = Arrays.toString(record.values());
                     final String comment = record.getComment();
@@ -113,7 +109,7 @@ public class CSVFileParserTest {
 
             // Version 2 - read by URL
             final URL resource = ClassLoader.getSystemResource("org/apache/commons/csv/CSVFileParser/" + split[0]);
-            try (final CSVParser parser = CSVParser.parse(resource, StandardCharsets.UTF_8, format)) {
+            try (final ICSVParser parser = CSVParser.parse(resource, StandardCharsets.UTF_8, format)) {
                 for (final CSVRecord record : parser) {
                     String parsed = Arrays.toString(record.values());
                     final String comment = record.getComment();

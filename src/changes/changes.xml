@@ -86,7 +86,9 @@
       <action issue="CSV-283" type="fix" dev="ggregory" due-to="belugabehr">Remove Whitespace Check Determines Delimiter Twice #167.</action>
       <action issue="CSV-283" type="fix" dev="ggregory" due-to="belugabehr">Document and Automate CSV Benchmark Harness #166.</action>
       <action issue="CSV-279" type="fix" dev="ggregory" due-to="belugabehr">Optimize Lexer Delimiter Check for One Character Delimiter #163.</action>
-      <action                 type="fix" dev="ggregory" due-to="Gary Gregory">SpotBugs Error: Medium: org.apache.commons.csv.CSVParser.getHeaderNames() may expose internal representation by returning CSVParser.headerNames [org.apache.commons.csv.CSVParser] At CSVParser.java:[line 599] EI_EXPOSE_REP.</action>
+      <action                 type="fix" dev="ggregory" due-to="Gary Gregory">SpotBugs Error: Medium:
+          org.apache.commons.csv.parser.CSVParser.getHeaderNames() may expose internal representation by returning
+          CSVParser.headerNames [org.apache.commons.csv.CSVParser] At CSVParser.java:[line 599] EI_EXPOSE_REP.</action>
       <action                 type="fix" dev="ggregory" due-to="Gary Gregory">SpotBugs Error: Medium: new org.apache.commons.csv.CSVParser(Reader, CSVFormat, long, long) may expose internal representation by storing an externally mutable object into CSVParser.format [org.apache.commons.csv.CSVParser] At CSVParser.java:[line 433] EI_EXPOSE_REP2.</action>
       <action                 type="fix" dev="ggregory" due-to="Gary Gregory">SpotBugs Error: Medium: new org.apache.commons.csv.CSVParser(Reader, CSVFormat, long, long) may expose internal representation by storing an externally mutable object into CSVParser.headerMap [org.apache.commons.csv.CSVParser] At CSVParser.java:[line 437] EI_EXPOSE_REP2.</action>
       <action                 type="fix" dev="ggregory" due-to="Gary Gregory">SpotBugs Error: Medium: new org.apache.commons.csv.CSVParser(Reader, CSVFormat, long, long) may expose internal representation by storing an externally mutable object into CSVParser.headerNames [org.apache.commons.csv.CSVParser] At CSVParser.java:[line 438] EI_EXPOSE_REP2.</action>

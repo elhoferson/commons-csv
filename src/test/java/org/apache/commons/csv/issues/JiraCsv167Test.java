@@ -16,18 +16,19 @@
  */
 package org.apache.commons.csv.issues;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.parser.CSVParser;
+import org.apache.commons.csv.parser.ICSVParser;
+import org.apache.commons.csv.record.CSVRecord;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.apache.commons.csv.format.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JiraCsv167Test {
 
@@ -74,7 +75,7 @@ public class JiraCsv167Test {
         // @formatter:on
         int comments = 0;
         int records = 0;
-        try (final Reader reader = getTestReader(); final CSVParser parser = new CSVParser(reader, format)) {
+        try (final Reader reader = getTestReader(); final ICSVParser parser = new CSVParser(reader, format)) {
             for (final CSVRecord csvRecord : parser) {
                 records++;
                 if (csvRecord.hasComment()) {
