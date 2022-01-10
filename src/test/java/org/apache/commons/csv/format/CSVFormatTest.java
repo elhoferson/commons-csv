@@ -17,30 +17,15 @@
 
 package org.apache.commons.csv.format;
 
-import static org.apache.commons.csv.format.CSVFormat.RFC4180;
-import static org.apache.commons.csv.Constants.CRLF;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Objects;
-
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.*;
+import java.util.Objects;
+
+import static org.apache.commons.csv.Constants.CRLF;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests {@link CSVFormat}.
@@ -49,7 +34,7 @@ public class CSVFormatTest {
 
     @Test
     public void testFormat() {
-        final CSVFormat format = CSVFormat.DEFAULT;
+        final CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
 
         assertEquals("", format.format());
         assertEquals("a,b,c", format.format("a", "b", "c"));
@@ -59,7 +44,7 @@ public class CSVFormatTest {
     @Test  //I assume this to be a defect.
     public void testFormatThrowsNullPointerException() {
 
-        final CSVFormat csvFormat = CSVFormat.MYSQL;
+        final CSVFormat csvFormat = CSVFormatPredefinedFormats.MySQL.getFormat();
 
         final NullPointerException e = assertThrows(NullPointerException.class, () -> csvFormat.format((Object[]) null));
         assertEquals(Objects.class.getName(), e.getStackTrace()[0].getClassName());
@@ -67,10 +52,17 @@ public class CSVFormatTest {
 
     @Test
     public void testFormatToString() {
-        final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',')
-                .withQuoteMode(QuoteMode.MINIMAL).withRecordSeparator(CRLF).withQuote('"')
-                .withNullString("").withIgnoreHeaderCase(true)
-                .withHeaderComments("This is HeaderComments").withHeader("col1","col2","col3");
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setEscapeCharacter('?');
+        format.setQuoteMode(QuoteMode.MINIMAL);
+        format.setDelimiter(",");
+        format.setQuoteCharacter('"');
+        format.setRecordSeparator(CRLF);
+        format.setNullString("");
+        format.setIgnoreHeaderCase(true);
+        format.setHeaderComments(new String[] {"This is HeaderComments"});
+        format.setHeader(new String[] {"col1","col2","col3"});
+
         assertEquals("Delimiter=<,> Escape=<?> QuoteChar=<\"> QuoteMode=<MINIMAL> NullString=<> RecordSeparator=<" +CRLF+
                 "> IgnoreHeaderCase:ignored SkipHeaderRecord:false HeaderComments:[This is HeaderComments] Header:[col1, col2, col3]", format.toString());
     }
@@ -78,8 +70,9 @@ public class CSVFormatTest {
     @Test
     public void testHashCodeAndWithIgnoreHeaderCase() {
 
-        final CSVFormat csvFormat = CSVFormat.INFORMIX_UNLOAD_CSV;
-        final CSVFormat csvFormatTwo = csvFormat.withIgnoreHeaderCase();
+        final CSVFormat csvFormat = CSVFormatPredefinedFormats.InformixUnloadCsv.getFormat();
+        final CSVFormat csvFormatTwo = csvFormat.copy();
+        csvFormatTwo.setIgnoreHeaderCase(true);
         csvFormatTwo.hashCode();
 
         assertFalse(csvFormat.getIgnoreHeaderCase());
@@ -158,7 +151,11 @@ public class CSVFormatTest {
     public void testPrintWithEscapesEndWithCRLF() throws IOException {
         final Reader in = new StringReader("x,y,x\r\na,?b,c\r\n");
         final Appendable out = new StringBuilder();
-        final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',').withQuote(null).withRecordSeparator(CRLF);
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setEscapeCharacter('?');
+        format.setDelimiter(",");
+        format.setQuoteCharacter(null);
+        format.setRecordSeparator(CRLF);
         CSVPrinter csvPrinter = new CSVPrinter(out, format);
         csvPrinter.print(in,  true);
         assertEquals("x?,y?,x?r?na?,??b?,c?r?n", out.toString());
@@ -168,7 +165,11 @@ public class CSVFormatTest {
     public void testPrintWithEscapesEndWithoutCRLF() throws IOException {
         final Reader in = new StringReader("x,y,x");
         final Appendable out = new StringBuilder();
-        final CSVFormat format = CSVFormat.RFC4180.withEscape('?').withDelimiter(',').withQuote(null).withRecordSeparator(CRLF);
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setEscapeCharacter('?');
+        format.setDelimiter(",");
+        format.setQuoteCharacter(null);
+        format.setRecordSeparator(CRLF);
         CSVPrinter csvPrinter = new CSVPrinter(out, format);
         csvPrinter.print(in, true);
         assertEquals("x?,y?,x", out.toString());
@@ -176,13 +177,15 @@ public class CSVFormatTest {
 
     @Test
     public void testRFC4180() {
-        assertNull(RFC4180.getCommentMarker());
-        assertEquals(',', RFC4180.getDelimiter());
-        assertNull(RFC4180.getEscapeCharacter());
-        assertFalse(RFC4180.getIgnoreEmptyLines());
-        assertEquals(Character.valueOf('"'), RFC4180.getQuoteCharacter());
-        assertNull(RFC4180.getQuoteMode());
-        assertEquals("\r\n", RFC4180.getRecordSeparator());
+
+        final CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        assertNull(format.getCommentMarker());
+        assertEquals(',', format.getDelimiter());
+        assertNull(format.getEscapeCharacter());
+        assertFalse(format.getIgnoreEmptyLines());
+        assertEquals(Character.valueOf('"'), format.getQuoteCharacter());
+        assertNull(format.getQuoteMode());
+        assertEquals("\r\n", format.getRecordSeparator());
     }
 
     @SuppressWarnings("boxing") // no need to worry about boxing here
@@ -191,7 +194,7 @@ public class CSVFormatTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try (final ObjectOutputStream oos = new ObjectOutputStream(out)) {
-            oos.writeObject(CSVFormat.DEFAULT);
+            oos.writeObject(CSVFormatPredefinedFormats.Default.getFormat());
             oos.flush();
         }
 
@@ -199,19 +202,20 @@ public class CSVFormatTest {
         final CSVFormat format = (CSVFormat) in.readObject();
 
         assertNotNull(format);
-        assertEquals(CSVFormat.DEFAULT.getDelimiter(), format.getDelimiter(), "delimiter");
-        assertEquals(CSVFormat.DEFAULT.getQuoteCharacter(), format.getQuoteCharacter(), "encapsulator");
-        assertEquals(CSVFormat.DEFAULT.getCommentMarker(), format.getCommentMarker(), "comment start");
-        assertEquals(CSVFormat.DEFAULT.getRecordSeparator(), format.getRecordSeparator(), "record separator");
-        assertEquals(CSVFormat.DEFAULT.getEscapeCharacter(), format.getEscapeCharacter(), "escape");
-        assertEquals(CSVFormat.DEFAULT.getIgnoreSurroundingSpaces(), format.getIgnoreSurroundingSpaces(), "trim");
-        assertEquals(CSVFormat.DEFAULT.getIgnoreEmptyLines(), format.getIgnoreEmptyLines(), "empty lines");
+        final CSVFormat targetFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        assertEquals(targetFormat.getDelimiter(), format.getDelimiter(), "delimiter");
+        assertEquals(targetFormat.getQuoteCharacter(), format.getQuoteCharacter(), "encapsulator");
+        assertEquals(targetFormat.getCommentMarker(), format.getCommentMarker(), "comment start");
+        assertEquals(targetFormat.getRecordSeparator(), format.getRecordSeparator(), "record separator");
+        assertEquals(targetFormat.getEscapeCharacter(), format.getEscapeCharacter(), "escape");
+        assertEquals(targetFormat.getIgnoreSurroundingSpaces(), format.getIgnoreSurroundingSpaces(), "trim");
+        assertEquals(targetFormat.getIgnoreEmptyLines(), format.getIgnoreEmptyLines(), "empty lines");
     }
 
     @Test
     public void testToString() {
 
-        final String string = CSVFormat.INFORMIX_UNLOAD.toString();
+        final String string = CSVFormatPredefinedFormats.InformixUnload.getFormat().toString();
 
         assertEquals("Delimiter=<|> Escape=<\\> QuoteChar=<\"> RecordSeparator=<\n> EmptyLines:ignored SkipHeaderRecord:false", string);
 
@@ -251,8 +255,8 @@ public class CSVFormatTest {
         assertEquals('\"', (char)csvFormat.getQuoteCharacter());
 
         final Character character = Character.valueOf('n');
-
-        final CSVFormat csvFormatTwo = csvFormat.withCommentMarker(character);
+        final CSVFormat csvFormatTwo = csvFormat.copy();
+        csvFormatTwo.setCommentMarker(character);
 
         assertNull(csvFormat.getEscapeCharacter());
         assertTrue(csvFormat.isQuoteCharacterSet());
@@ -321,7 +325,11 @@ public class CSVFormatTest {
 
     @Test
     public void testTrim() throws IOException {
-        final CSVFormat formatWithTrim = CSVFormat.DEFAULT.withDelimiter(',').withTrim().withQuote(null).withRecordSeparator(CRLF);
+        CSVFormat formatWithTrim = CSVFormatPredefinedFormats.Default.getFormat();
+        formatWithTrim.setDelimiter(",");
+        formatWithTrim.setQuoteCharacter(null);
+        formatWithTrim.setRecordSeparator(CRLF);
+        formatWithTrim.setTrim(true);
 
         CharSequence in = "a,b,c";
         final StringBuilder out = new StringBuilder();

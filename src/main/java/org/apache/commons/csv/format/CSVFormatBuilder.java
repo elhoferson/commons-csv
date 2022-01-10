@@ -1,5 +1,6 @@
 package org.apache.commons.csv.format;
 
+import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.printer.CSVPrinter;
 
 import java.sql.ResultSet;
@@ -18,9 +19,9 @@ public class CSVFormatBuilder {
      *
      * @return a copy of the builder
      */
-    public static CSVFormatBuilder create() {
-        return new CSVFormatBuilder(CSVFormat.DEFAULT);
-    }
+    //public static CSVFormatBuilder create() {
+    //    return new CSVFormatBuilder(CSVFormat.DEFAULT);
+    //}
 
     /**
      * Creates a new builder for the given format.
@@ -28,9 +29,9 @@ public class CSVFormatBuilder {
      * @param csvFormat the source format.
      * @return a copy of the builder
      */
-    public static CSVFormatBuilder create(final CSVFormat csvFormat) {
-        return new CSVFormatBuilder(csvFormat);
-    }
+    //public static CSVFormatBuilder create(final CSVFormat csvFormat) {
+    //    return new CSVFormatBuilder(csvFormat);
+    //}
 
     private boolean allowDuplicateHeaderNames;
 
@@ -150,27 +151,28 @@ public class CSVFormatBuilder {
 
     private boolean trim;
 
-    private CSVFormatBuilder(final CSVFormat csvFormat) {
-        this.delimiter = csvFormat.getDelimiterString();
-        this.quoteCharacter = csvFormat.getQuoteCharacter();
-        this.quoteMode = csvFormat.getQuoteMode();
-        this.commentMarker = csvFormat.getCommentMarker();
-        this.escapeCharacter = csvFormat.getEscapeCharacter();
-        this.ignoreSurroundingSpaces = csvFormat.getIgnoreSurroundingSpaces();
-        this.allowMissingColumnNames = csvFormat.getAllowMissingColumnNames();
-        this.ignoreEmptyLines = csvFormat.getIgnoreEmptyLines();
-        this.recordSeparator = csvFormat.getRecordSeparator();
-        this.nullString = csvFormat.getNullString();
-        this.headerComments = csvFormat.getHeaderComments();
-        this.headers = csvFormat.getHeader();
-        this.skipHeaderRecord = csvFormat.getSkipHeaderRecord();
-        this.ignoreHeaderCase = csvFormat.getIgnoreHeaderCase();
-        this.trailingDelimiter = csvFormat.getTrailingDelimiter();
-        this.trim = csvFormat.getTrim();
-        this.autoFlush = csvFormat.getAutoFlush();
-        this.quotedNullString = csvFormat.getQuotedNullString();
-        this.allowDuplicateHeaderNames = csvFormat.getAllowDuplicateHeaderNames();
+    public CSVFormatBuilder() {
+        this.delimiter = Constants.COMMA;
+        this.quoteCharacter = Constants.DOUBLE_QUOTE_CHAR;
+        this.quoteMode = null;
+        this.commentMarker = null;
+        this.escapeCharacter = null;
+        this.ignoreSurroundingSpaces = false;
+        this.ignoreEmptyLines = true;
+        this.recordSeparator = Constants.CRLF;
+        this.nullString = null;
+        this.headerComments = null;
+        this.headers = null;
+        this.skipHeaderRecord = false;
+        this.allowMissingColumnNames = false;
+        this.ignoreHeaderCase = false;
+        this.trim = false;
+        this.trailingDelimiter = false;
+        this.autoFlush = false;
+        this.allowDuplicateHeaderNames = true;
     }
+
+
 
     /**
      * Builds a new CSVFormat instance.
@@ -178,7 +180,17 @@ public class CSVFormatBuilder {
      * @return a new CSVFormat instance.
      */
     public CSVFormat build() {
-        return new CSVFormat(this);
+        return new CSVFormat(this.getDelimiter(),this.getQuoteCharacter(),
+                this.getQuoteMode(),this.getCommentMarker(),
+                this.getEscapeCharacter(),this.isIgnoreSurroundingSpaces(),
+                this.isIgnoreEmptyLines(),
+                this.getRecordSeparator(),this.getNullString(),
+                this.getHeaderComments(),this.getHeaders(),
+                this.isSkipHeaderRecord(),
+                this.isAllowMissingColumnNames(), this.isIgnoreHeaderCase(),
+                this.isTrim(), this.isTrailingDelimiter(),
+                this.isAutoFlush(),
+                this.isAllowDuplicateHeaderNames());
     }
 
     /**

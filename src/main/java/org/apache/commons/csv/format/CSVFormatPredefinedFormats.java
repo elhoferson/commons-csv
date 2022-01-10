@@ -1,5 +1,7 @@
 package org.apache.commons.csv.format;
 
+import static org.apache.commons.csv.Constants.*;
+
 /**
  * Predefines formats.
  *
@@ -7,70 +9,79 @@ package org.apache.commons.csv.format;
  */
 public enum CSVFormatPredefinedFormats {
 
-    /**
-     * @see CSVFormat#DEFAULT
-     */
-    Default(CSVFormat.DEFAULT),
+    Default(new CSVFormatBuilder().build()),
 
-    /**
-     * @see CSVFormat#EXCEL
-     */
-    Excel(CSVFormat.EXCEL),
+    Excel(new CSVFormatBuilder().setIgnoreEmptyLines(false)
+            .setAllowMissingColumnNames(true)
+            .build()),
 
-    /**
-     * @see CSVFormat#INFORMIX_UNLOAD
-     * @since 1.3
-     */
-    InformixUnload(CSVFormat.INFORMIX_UNLOAD),
+    InformixUnload(new CSVFormatBuilder().setDelimiter(PIPE)
+            .setEscape(BACKSLASH)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setRecordSeparator(LF)
+            .build()),
 
-    /**
-     * @see CSVFormat#INFORMIX_UNLOAD_CSV
-     * @since 1.3
-     */
-    InformixUnloadCsv(CSVFormat.INFORMIX_UNLOAD_CSV),
+    InformixUnloadCsv(new CSVFormatBuilder().setDelimiter(COMMA)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setRecordSeparator(LF)
+            .build()),
 
-    /**
-     * @see CSVFormat#MONGODB_CSV
-     * @since 1.7
-     */
-    MongoDBCsv(CSVFormat.MONGODB_CSV),
+    MongoDBCsv(new CSVFormatBuilder().setDelimiter(COMMA)
+            .setEscape(DOUBLE_QUOTE_CHAR)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setQuoteMode(QuoteMode.MINIMAL)
+            .setSkipHeaderRecord(false)
+            .build()),
 
-    /**
-     * @see CSVFormat#MONGODB_TSV
-     * @since 1.7
-     */
-    MongoDBTsv(CSVFormat.MONGODB_TSV),
+    MongoDBTsv(new CSVFormatBuilder().setDelimiter(TAB)
+            .setEscape(DOUBLE_QUOTE_CHAR)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setQuoteMode(QuoteMode.MINIMAL)
+            .setSkipHeaderRecord(false)
+            .build()),
 
-    /**
-     * @see CSVFormat#MYSQL
-     */
-    MySQL(CSVFormat.MYSQL),
+    MySQL(new CSVFormatBuilder().setDelimiter(TAB)
+            .setEscape(BACKSLASH)
+            .setIgnoreEmptyLines(false)
+            .setQuote(null)
+            .setRecordSeparator(LF)
+            .setNullString("\\N")
+            .setQuoteMode(QuoteMode.ALL_NON_NULL)
+            .build()),
 
-    /**
-     * @see CSVFormat#ORACLE
-     */
-    Oracle(CSVFormat.ORACLE),
+    Oracle(new CSVFormatBuilder().setDelimiter(COMMA)
+            .setEscape(BACKSLASH)
+            .setIgnoreEmptyLines(false)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setNullString("\\N")
+            .setTrim(true)
+            .setRecordSeparator(System.lineSeparator())
+            .setQuoteMode(QuoteMode.MINIMAL)
+            .build()),
 
-    /**
-     * @see CSVFormat#POSTGRESQL_CSV
-     * @since 1.5
-     */
-    PostgreSQLCsv(CSVFormat.POSTGRESQL_CSV),
+    PostgreSQLCsv(new CSVFormatBuilder().setDelimiter(COMMA)
+            .setEscape(DOUBLE_QUOTE_CHAR)
+            .setIgnoreEmptyLines(false)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setRecordSeparator(LF)
+            .setNullString(EMPTY)
+            .setQuoteMode(QuoteMode.ALL_NON_NULL)
+            .build()),
 
-    /**
-     * @see CSVFormat#POSTGRESQL_CSV
-     */
-    PostgreSQLText(CSVFormat.POSTGRESQL_TEXT),
+    PostgreSQLText(new CSVFormatBuilder().setDelimiter(TAB)
+            .setEscape(BACKSLASH)
+            .setIgnoreEmptyLines(false)
+            .setQuote(DOUBLE_QUOTE_CHAR)
+            .setRecordSeparator(LF)
+            .setNullString("\\N")
+            .setQuoteMode(QuoteMode.ALL_NON_NULL)
+            .build()),
 
-    /**
-     * @see CSVFormat#RFC4180
-     */
-    RFC4180(CSVFormat.RFC4180),
+    RFC4180(new CSVFormatBuilder().setIgnoreEmptyLines(false).build()),
 
-    /**
-     * @see CSVFormat#TDF
-     */
-    TDF(CSVFormat.TDF);
+    TDF(new CSVFormatBuilder().setDelimiter(TAB)
+            .setIgnoreSurroundingSpaces(true)
+            .build());
 
     private final CSVFormat format;
 
@@ -84,6 +95,6 @@ public enum CSVFormatPredefinedFormats {
      * @return the format.
      */
     public CSVFormat getFormat() {
-        return format;
+        return format.copy();
     }
 }
