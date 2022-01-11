@@ -239,18 +239,6 @@ public class CSVFormat implements ICSVFormat {
     }
 
     /**
-     * Returns the first character delimiting the values (typically ';', ',' or '\t').
-     *
-     * @return the first delimiter character.
-     * @deprecated Use {@link #getDelimiterString()}.
-     */
-    @Override
-    @Deprecated
-    public char getDelimiter() {
-        return delimiter.charAt(0);
-    }
-
-    /**
      * Returns the character delimiting the values (typically ";", "," or "\t").
      *
      * @return the delimiter.
@@ -552,7 +540,7 @@ public class CSVFormat implements ICSVFormat {
         }
         final CSVFormat other = (CSVFormat) obj;
         return getAllowDuplicateHeaderNames() == other.getAllowDuplicateHeaderNames() && getAllowMissingColumnNames() == other.getAllowMissingColumnNames() &&
-                getAutoFlush() == other.getAutoFlush() && Objects.equals(getCommentMarker(), other.getCommentMarker()) && Objects.equals(getDelimiter(), other.getDelimiter()) &&
+                getAutoFlush() == other.getAutoFlush() && Objects.equals(getCommentMarker(), other.getCommentMarker()) && Objects.equals(getDelimiterString(), other.getDelimiterString()) &&
                 Objects.equals(getEscapeCharacter(), other.getEscapeCharacter()) && Arrays.equals(getHeader(), other.getHeader()) &&
                 Arrays.equals(getHeaderComments(), other.getHeaderComments()) && getIgnoreEmptyLines() == other.getIgnoreEmptyLines() &&
                 getIgnoreHeaderCase() == other.getIgnoreHeaderCase() && getIgnoreSurroundingSpaces() == other.getIgnoreSurroundingSpaces() &&
@@ -586,7 +574,7 @@ public class CSVFormat implements ICSVFormat {
         int result = 1;
         result = prime * result + Arrays.hashCode(getHeader());
         result = prime * result + Arrays.hashCode(getHeaderComments());
-        return prime * result + Objects.hash(getAllowDuplicateHeaderNames(), getAllowMissingColumnNames(), getAutoFlush(), getCommentMarker(), getDelimiter(), getEscapeCharacter(),
+        return prime * result + Objects.hash(getAllowDuplicateHeaderNames(), getAllowMissingColumnNames(), getAutoFlush(), getCommentMarker(), getDelimiterString(), getEscapeCharacter(),
                 getIgnoreEmptyLines(), getIgnoreHeaderCase(), getIgnoreSurroundingSpaces(), getNullString(), getQuoteCharacter(), getQuoteMode(), getQuotedNullString(), getRecordSeparator(),
                 getSkipHeaderRecord(), getTrailingDelimiter(), getTrim());
     }
@@ -632,7 +620,7 @@ public class CSVFormat implements ICSVFormat {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Delimiter=<").append(getDelimiter()).append('>');
+        sb.append("Delimiter=<").append(getDelimiterString()).append('>');
         if (isEscapeCharacterSet()) {
             sb.append(' ');
             sb.append("Escape=<").append(getEscapeCharacter()).append('>');

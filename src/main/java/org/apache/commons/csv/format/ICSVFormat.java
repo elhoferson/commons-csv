@@ -11,9 +11,6 @@ public interface ICSVFormat extends Serializable {
 
     Character getCommentMarker();
 
-    @Deprecated
-    char getDelimiter();
-
     String getDelimiterString();
 
     Character getEscapeCharacter();

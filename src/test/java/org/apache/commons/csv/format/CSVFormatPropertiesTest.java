@@ -30,7 +30,7 @@ public class CSVFormatPropertiesTest {
     @Test
     public void testWithDelimiter() {
         final CSVFormat formatWithDelimiter = new CSVFormatBuilder().setDelimiter('!').build();
-        assertEquals('!', formatWithDelimiter.getDelimiter());
+        assertEquals("!", formatWithDelimiter.getDelimiterString());
     }
 
 
@@ -92,7 +92,7 @@ public class CSVFormatPropertiesTest {
         assertFalse(csvFormat.getSkipHeaderRecord());
         assertNull(csvFormat.getQuoteMode());
 
-        assertEquals(',', csvFormat.getDelimiter());
+        assertEquals(",", csvFormat.getDelimiterString());
         assertTrue(csvFormat.getIgnoreEmptyLines());
 
         assertFalse(csvFormat.getIgnoreHeaderCase());
@@ -123,7 +123,7 @@ public class CSVFormatPropertiesTest {
         assertFalse(csvFormat.getSkipHeaderRecord());
         assertNull(csvFormat.getQuoteMode());
 
-        assertEquals(',', csvFormat.getDelimiter());
+        assertEquals(",", csvFormat.getDelimiterString());
         assertTrue(csvFormat.getIgnoreEmptyLines());
 
         assertFalse(csvFormat.getIgnoreHeaderCase());
@@ -163,7 +163,7 @@ public class CSVFormatPropertiesTest {
         assertFalse(csvFormatTwo.getTrailingDelimiter());
 
         assertEquals("\r\n", csvFormatTwo.getRecordSeparator());
-        assertEquals(',', csvFormatTwo.getDelimiter());
+        assertEquals(",", csvFormatTwo.getDelimiterString());
 
         assertNull(csvFormatTwo.getCommentMarker());
         assertFalse(csvFormatTwo.isCommentMarkerSet());

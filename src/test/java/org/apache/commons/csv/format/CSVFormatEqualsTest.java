@@ -258,7 +258,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormatOne.isCommentMarkerSet());
         assertTrue(csvFormatOne.isQuoteCharacterSet());
 
-        assertEquals('|', csvFormatOne.getDelimiter());
+        assertEquals("|", csvFormatOne.getDelimiterString());
         assertFalse(csvFormatOne.getAllowMissingColumnNames());
 
         assertTrue(csvFormatOne.isEscapeCharacterSet());
@@ -280,7 +280,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormatTwo.getAllowMissingColumnNames());
         assertEquals(QuoteMode.ALL_NON_NULL, csvFormatTwo.getQuoteMode());
 
-        assertEquals('\t', csvFormatTwo.getDelimiter());
+        assertEquals("\t", csvFormatTwo.getDelimiterString());
         assertEquals("\n", csvFormatTwo.getRecordSeparator());
 
         assertFalse(csvFormatTwo.isQuoteCharacterSet());
@@ -410,7 +410,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormat.getAllowMissingColumnNames());
         assertEquals(QuoteMode.ALL_NON_NULL, csvFormat.getQuoteMode());
 
-        assertEquals('\t', csvFormat.getDelimiter());
+        assertEquals("\t", csvFormat.getDelimiterString());
         assertFalse(csvFormat.getSkipHeaderRecord());
 
         assertEquals("\n", csvFormat.getRecordSeparator());
@@ -437,7 +437,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormat.getAllowMissingColumnNames());
         assertEquals(QuoteMode.ALL_NON_NULL, csvFormat.getQuoteMode());
 
-        assertEquals('\t', csvFormat.getDelimiter());
+        assertEquals("\t", csvFormat.getDelimiterString());
         assertFalse(csvFormat.getSkipHeaderRecord());
 
         assertEquals("\n", csvFormat.getRecordSeparator());
