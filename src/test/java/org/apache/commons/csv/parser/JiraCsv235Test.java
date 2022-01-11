@@ -1,6 +1,7 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ public class JiraCsv235Test {
     @Test
     public void testCSV235() throws IOException {
         final String dqString = "\"aaa\",\"b\"\"bb\",\"ccc\""; // "aaa","b""bb","ccc"
-        final ICSVParser ICSVParser = new CSVParser(new StringReader(dqString), CSVFormat.RFC4180);
+        final ICSVParser ICSVParser = new CSVParser(new StringReader(dqString), CSVFormatPredefinedFormats.RFC4180.getFormat());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertFalse(records.hasNext());

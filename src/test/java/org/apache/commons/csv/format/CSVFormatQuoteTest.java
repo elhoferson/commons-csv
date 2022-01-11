@@ -14,77 +14,42 @@ public class CSVFormatQuoteTest {
 
     @Test
     public void testEqualsLeftNoQuoteRightQuote() {
-        final CSVFormat left = CSVFormat.newFormat(',').builder().setQuote(null).build();
-        final CSVFormat right = left.builder().setQuote('#').build();
+        CSVFormat left = CSVFormat.newFormat(',');
+        left.setQuoteCharacter(null);
+        CSVFormat right = left.copy();
+                right.setQuoteCharacter('#');
 
         assertNotEquals(left, right);
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEqualsLeftNoQuoteRightQuote_Deprecated() {
-        final CSVFormat left = CSVFormat.newFormat(',').withQuote(null);
-        final CSVFormat right = left.withQuote('#');
-
-        assertNotEquals(left, right);
-    }
 
     @Test
     public void testEqualsNoQuotes() {
-        final CSVFormat left = CSVFormat.newFormat(',').builder().setQuote(null).build();
-        final CSVFormat right = left.builder().setQuote(null).build();
+        CSVFormat left = CSVFormat.newFormat(',');
+        left.setQuoteCharacter(null);
+        CSVFormat right = left.copy();
+        right.setQuoteCharacter(null);
 
         assertEquals(left, right);
     }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEqualsNoQuotes_Deprecated() {
-        final CSVFormat left = CSVFormat.newFormat(',').withQuote(null);
-        final CSVFormat right = left.withQuote(null);
-
-        assertEquals(left, right);
-    }
-
 
     @Test
     public void testEqualsQuoteChar() {
-        final CSVFormat right = CSVFormat.newFormat('\'').builder().setQuote('"').build();
-        final CSVFormat left = right.builder().setQuote('!').build();
-
-        assertNotEquals(right, left);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEqualsQuoteChar_Deprecated() {
-        final CSVFormat right = CSVFormat.newFormat('\'').withQuote('"');
-        final CSVFormat left = right.withQuote('!');
+        CSVFormat left = CSVFormat.newFormat('\'');
+        left.setQuoteCharacter('"');
+        CSVFormat right = left.copy();
+        right.setQuoteCharacter('!');
 
         assertNotEquals(right, left);
     }
 
     @Test
     public void testEqualsQuotePolicy() {
-        final CSVFormat right = CSVFormat.newFormat('\'').builder()
-                .setQuote('"')
-                .setQuoteMode(QuoteMode.ALL)
-                .build();
-        final CSVFormat left = right.builder()
-                .setQuoteMode(QuoteMode.MINIMAL)
-                .build();
-
-        assertNotEquals(right, left);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEqualsQuotePolicy_Deprecated() {
-        final CSVFormat right = CSVFormat.newFormat('\'')
-                .withQuote('"')
-                .withQuoteMode(QuoteMode.ALL);
-        final CSVFormat left = right
-                .withQuoteMode(QuoteMode.MINIMAL);
+        CSVFormat left = CSVFormat.newFormat('\'');
+        left.setQuoteCharacter('"');
+        left.setQuoteMode(QuoteMode.ALL);
+        CSVFormat right = left.copy();
+        right.setQuoteMode(QuoteMode.MINIMAL);
 
         assertNotEquals(right, left);
     }
@@ -93,7 +58,11 @@ public class CSVFormatQuoteTest {
     public void testPrintWithoutQuotes() throws IOException {
         final Reader in = new StringReader("");
         final Appendable out = new StringBuilder();
-        final CSVFormat format = CSVFormat.RFC4180.withDelimiter(',').withQuote('"').withEscape('?').withQuoteMode(QuoteMode.NON_NUMERIC);
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setDelimiter(",");
+        format.setQuoteCharacter('"');
+        format.setEscapeCharacter('?');
+        format.setQuoteMode(QuoteMode.NON_NUMERIC);
         CSVPrinter csvPrinter = new CSVPrinter(out, format);
         csvPrinter.print(in, true);
         assertEquals("\"\"", out.toString());
@@ -103,7 +72,11 @@ public class CSVFormatQuoteTest {
     public void testPrintWithQuoteModeIsNONE() throws IOException {
         final Reader in = new StringReader("a,b,c");
         final Appendable out = new StringBuilder();
-        final CSVFormat format = CSVFormat.RFC4180.withDelimiter(',').withQuote('"').withEscape('?').withQuoteMode(QuoteMode.NONE);
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setDelimiter(",");
+        format.setQuoteCharacter('"');
+        format.setEscapeCharacter('?');
+        format.setQuoteMode(QuoteMode.NONE);
         CSVPrinter csvPrinter = new CSVPrinter(out, format);
         csvPrinter.print(in, true);
         assertEquals("a?,b?,c", out.toString());
@@ -113,7 +86,11 @@ public class CSVFormatQuoteTest {
     public void testPrintWithQuotes() throws IOException {
         final Reader in = new StringReader("\"a,b,c\r\nx,y,z");
         final Appendable out = new StringBuilder();
-        final CSVFormat format = CSVFormat.RFC4180.withDelimiter(',').withQuote('"').withEscape('?').withQuoteMode(QuoteMode.NON_NUMERIC);
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setDelimiter(",");
+        format.setQuoteCharacter('"');
+        format.setEscapeCharacter('?');
+        format.setQuoteMode(QuoteMode.NON_NUMERIC);
         CSVPrinter csvPrinter = new CSVPrinter(out, format);
         csvPrinter.print(in, true);
         assertEquals("\"\"\"a,b,c\r\nx,y,z\"", out.toString());
@@ -121,68 +98,40 @@ public class CSVFormatQuoteTest {
 
     @Test
     public void testQuoteCharSameAsCommentStartThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.builder().setQuote('!').setCommentMarker('!').build());
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setQuote('!').setCommentMarker('!').build());
     }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testQuoteCharSameAsCommentStartThrowsException_Deprecated() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.withQuote('!').withCommentMarker('!'));
-    }
-
     @Test
     public void testQuoteCharSameAsCommentStartThrowsExceptionForWrapperType() {
         // Cannot assume that callers won't use different Character objects
         assertThrows(
                 IllegalArgumentException.class,
-                () -> CSVFormat.DEFAULT.builder().setQuote(Character.valueOf('!')).setCommentMarker('!').build());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testQuoteCharSameAsCommentStartThrowsExceptionForWrapperType_Deprecated() {
-        // Cannot assume that callers won't use different Character objects
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> CSVFormat.DEFAULT.withQuote(Character.valueOf('!')).withCommentMarker('!'));
+                () -> new CSVFormatBuilder().setQuote(Character.valueOf('!')).setCommentMarker('!').build());
     }
 
     @Test
     public void testQuoteCharSameAsDelimiterThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.builder().setQuote('!').setDelimiter('!').build());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testQuoteCharSameAsDelimiterThrowsException_Deprecated() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.withQuote('!').withDelimiter('!'));
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setQuote('!').setDelimiter('!').build());
     }
 
     @Test
     public void testQuotePolicyNoneWithoutEscapeThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.newFormat('!').builder().setQuoteMode(QuoteMode.NONE).build());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testQuotePolicyNoneWithoutEscapeThrowsException_Deprecated() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.newFormat('!').withQuoteMode(QuoteMode.NONE));
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setDelimiter('!').setQuoteMode(QuoteMode.NONE).build());
     }
 
     @Test
     public void testWithQuoteChar() {
-        final CSVFormat formatWithQuoteChar = CSVFormat.DEFAULT.withQuote('"');
+        final CSVFormat formatWithQuoteChar = new CSVFormatBuilder().setQuote('"').build();
         assertEquals(Character.valueOf('"'), formatWithQuoteChar.getQuoteCharacter());
     }
 
     @Test
     public void testWithQuoteLFThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> CSVFormat.DEFAULT.withQuote(LF));
+        assertThrows(IllegalArgumentException.class, () -> new CSVFormatBuilder().setQuote(LF).build());
     }
 
     @Test
     public void testWithQuotePolicy() {
-        final CSVFormat formatWithQuotePolicy = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL);
+        final CSVFormat formatWithQuotePolicy = new CSVFormatBuilder().setQuoteMode(QuoteMode.ALL).build();
         assertEquals(QuoteMode.ALL, formatWithQuotePolicy.getQuoteMode());
     }
 }

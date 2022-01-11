@@ -1,6 +1,8 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatBuilder;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,7 @@ public class CSVParserHeaderTest {
     public void testHeader() throws Exception {
         final Reader in = new StringReader("a,b,c\n1,2,3\nx,y,z");
 
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
 
         for (int i = 0; i < 2; i++) {
@@ -39,7 +41,7 @@ public class CSVParserHeaderTest {
     public void testHeaderComment() throws Exception {
         final Reader in = new StringReader("# comment\na,b,c\n1,2,3\nx,y,z");
 
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withCommentMarker('#').withHeader());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setCommentMarker('#').setHeaders().build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
 
         for (int i = 0; i < 2; i++) {
@@ -57,7 +59,7 @@ public class CSVParserHeaderTest {
     public void testHeaderMissing() throws Exception {
         final Reader in = new StringReader("a,,c\n1,2,3\nx,y,z");
 
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader().withAllowMissingColumnNames());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().setAllowMissingColumnNames(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
 
         for (int i = 0; i < 2; i++) {
@@ -73,33 +75,33 @@ public class CSVParserHeaderTest {
     @Test
     public void testHeaderMissingWithNull() throws Exception {
         final Reader in = new StringReader("a,,c,,e\n1,2,3,4,5\nv,w,x,y,z");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader().withNullString("").withAllowMissingColumnNames());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().setAllowMissingColumnNames(true).setNullString("").build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
     }
 
     @Test
     public void testHeadersMissing() throws Exception {
         final Reader in = new StringReader("a,,c,,e\n1,2,3,4,5\nv,w,x,y,z");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader().withAllowMissingColumnNames());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().setAllowMissingColumnNames(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
     }
 
     @Test
     public void testHeadersMissingException() {
         final Reader in = new StringReader("a,,c,,e\n1,2,3,4,5\nv,w,x,y,z");
-        assertThrows(IllegalArgumentException.class, () -> new CSVParser(in, CSVFormat.DEFAULT.withHeader()).iterator());
+        assertThrows(IllegalArgumentException.class, () -> new CSVParser(in, new CSVFormatBuilder().setHeaders().build()).iterator());
     }
 
     @Test
     public void testHeadersMissingOneColumnException() throws Exception {
         final Reader in = new StringReader("a,,c,d,e\n1,2,3,4,5\nv,w,x,y,z");
-        assertThrows(IllegalArgumentException.class, () -> new CSVParser(in, CSVFormat.DEFAULT.withHeader()).iterator());
+        assertThrows(IllegalArgumentException.class, () -> new CSVParser(in, new CSVFormatBuilder().setHeaders().build()).iterator());
     }
 
     @Test
     public void testHeadersWithNullColumnName() throws IOException {
         final Reader in = new StringReader("header1,null,header3\n1,2,3\n4,5,6");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader().withNullString("null").withAllowMissingColumnNames());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().setAllowMissingColumnNames(true).setNullString("null").build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         // Expect the null header to be missing
@@ -110,7 +112,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testIgnoreCaseHeaderMapping() throws Exception {
         final Reader reader = new StringReader("1,2,3");
-        final ICSVParser ICSVParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader("One", "TWO", "three").withIgnoreHeaderCase());
+        final ICSVParser ICSVParser = new CSVParser(reader, new CSVFormatBuilder().setHeaders("One", "TWO", "three").setIgnoreHeaderCase(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertEquals("1", record.get("one"));
@@ -121,20 +123,20 @@ public class CSVParserHeaderTest {
 
     @Test
     public void testDuplicateHeadersAllowedByDefault() throws Exception {
-        CSVParser.parse("a,b,a\n1,2,3\nx,y,z", CSVFormat.DEFAULT.withHeader());
+        CSVParser.parse("a,b,a\n1,2,3\nx,y,z", new CSVFormatBuilder().setHeaders().build());
     }
 
     @Test
     public void testDuplicateHeadersNotAllowed() {
         assertThrows(IllegalArgumentException.class, () -> CSVParser.parse("a,b,a\n1,2,3\nx,y,z",
-                CSVFormat.DEFAULT.withHeader().withAllowDuplicateHeaderNames(false)));
+                new CSVFormatBuilder().setHeaders().setAllowDuplicateHeaderNames(false).build()));
     }
 
 
     @Test
     public void testGetHeaderMap() throws Exception {
         try (final ICSVParser parser = CSVParser.parse("a,b,c\n1,2,3\nx,y,z",
-                CSVFormat.DEFAULT.withHeader("A", "B", "C"))) {
+                new CSVFormatBuilder().setHeaders("A", "B", "C").build())) {
             final Map<String, Integer> headerMap = parser.getHeaderMap();
             final Iterator<String> columnNames = headerMap.keySet().iterator();
             // Headers are iterated in column order.
@@ -159,7 +161,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testGetHeaderNames() throws IOException {
         try (final ICSVParser parser = CSVParser.parse("a,b,c\n1,2,3\nx,y,z",
-                CSVFormat.DEFAULT.withHeader("A", "B", "C"))) {
+                new CSVFormatBuilder().setHeaders("A", "B", "C").build())) {
             final Map<String, Integer> nameIndexMap = parser.getHeaderMap();
             final List<String> headerNames = parser.getHeaderNames();
             assertNotNull(headerNames);
@@ -174,7 +176,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testGetHeaderNamesReadOnly() throws IOException {
         try (final ICSVParser parser = CSVParser.parse("a,b,c\n1,2,3\nx,y,z",
-                CSVFormat.DEFAULT.withHeader("A", "B", "C"))) {
+                new CSVFormatBuilder().setHeaders("A", "B", "C").build())) {
             final List<String> headerNames = parser.getHeaderNames();
             assertNotNull(headerNames);
             assertThrows(UnsupportedOperationException.class, () -> headerNames.add("This is a read-only list."));
@@ -186,7 +188,7 @@ public class CSVParserHeaderTest {
     public void testProvidedHeader() throws Exception {
         final Reader in = new StringReader("a,b,c\n1,2,3\nx,y,z");
 
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader("A", "B", "C"));
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders("A", "B", "C").build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
 
         for (int i = 0; i < 3; i++) {
@@ -208,7 +210,7 @@ public class CSVParserHeaderTest {
     public void testProvidedHeaderAuto() throws Exception {
         final Reader in = new StringReader("a,b,c\n1,2,3\nx,y,z");
 
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
 
         for (int i = 0; i < 2; i++) {
@@ -229,7 +231,8 @@ public class CSVParserHeaderTest {
     @Test
     public void testRepeatedHeadersAreReturnedInCSVRecordHeaderNames() throws IOException {
         final Reader in = new StringReader("header1,header2,header1\n1,2,3\n4,5,6");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim());
+
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().setSkipHeaderRecord(true).setTrim(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertEquals(Arrays.asList("header1", "header2", "header1"), record.getParser().getHeaderNames());
@@ -239,7 +242,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testSkipAutoHeader() throws Exception {
         final Reader in = new StringReader("a,b,c\n1,2,3\nx,y,z");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders().build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertEquals("1", record.get("a"));
@@ -250,7 +253,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testSkipHeaderOverrideDuplicateHeaders() throws Exception {
         final Reader in = new StringReader("a,a,a\n1,2,3\nx,y,z");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader("X", "Y", "Z").withSkipHeaderRecord());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders("X", "Y", "Z").setSkipHeaderRecord(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertEquals("1", record.get("X"));
@@ -261,7 +264,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testSkipSetAltHeaders() throws Exception {
         final Reader in = new StringReader("a,b,c\n1,2,3\nx,y,z");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader("X", "Y", "Z").withSkipHeaderRecord());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders("X", "Y", "Z").setSkipHeaderRecord(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertEquals("1", record.get("X"));
@@ -272,7 +275,7 @@ public class CSVParserHeaderTest {
     @Test
     public void testSkipSetHeader() throws Exception {
         final Reader in = new StringReader("a,b,c\n1,2,3\nx,y,z");
-        final ICSVParser ICSVParser = new CSVParser(in, CSVFormat.DEFAULT.withHeader("a", "b", "c").withSkipHeaderRecord());
+        final ICSVParser ICSVParser = new CSVParser(in, new CSVFormatBuilder().setHeaders("a", "b", "c").setSkipHeaderRecord(true).build());
         final Iterator<CSVRecord> records = ICSVParser.iterator();
         final CSVRecord record = records.next();
         assertEquals("1", record.get("a"));
@@ -288,7 +291,7 @@ public class CSVParserHeaderTest {
         final String[][] res = {{"hello", ""}, {""}, // Excel format does not ignore empty lines
                 {""}};
         for (final String code : codes) {
-            try (final ICSVParser parser = CSVParser.parse(code, CSVFormat.EXCEL)) {
+            try (final ICSVParser parser = CSVParser.parse(code, CSVFormatPredefinedFormats.Excel.getFormat())) {
                 final List<CSVRecord> records = parser.getRecords();
                 assertEquals(res.length, records.size());
                 assertFalse(records.isEmpty());

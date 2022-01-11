@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
@@ -134,52 +135,52 @@ public class CSVPrinterRandomTest extends AbstractCSVPrinterTest {
 
     @Test
     public void testRandomDefault() throws Exception {
-        doRandom(CSVFormat.DEFAULT, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.Default.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     public void testRandomExcel() throws Exception {
-        doRandom(CSVFormat.EXCEL, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.Excel.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     @Disabled
     public void testRandomMongoDbCsv() throws Exception {
-        doRandom(CSVFormat.MONGODB_CSV, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.MongoDBCsv.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     public void testRandomMySql() throws Exception {
-        doRandom(CSVFormat.MYSQL, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.MySQL.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     @Disabled
     public void testRandomOracle() throws Exception {
-        doRandom(CSVFormat.ORACLE, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.Oracle.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     @Disabled
     public void testRandomPostgreSqlCsv() throws Exception {
-        doRandom(CSVFormat.POSTGRESQL_CSV, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.PostgreSQLCsv.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     @Disabled
     public void testRandomPostgreSqlText() throws Exception {
-        doRandom(CSVFormat.POSTGRESQL_TEXT, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.PostgreSQLText.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
 
     @Test
     public void testRandomRfc4180() throws Exception {
-        doRandom(CSVFormat.RFC4180, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.RFC4180.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
     @Test
     public void testRandomTdf() throws Exception {
-        doRandom(CSVFormat.TDF, ITERATIONS_FOR_RANDOM_TEST);
+        doRandom(CSVFormatPredefinedFormats.TDF.getFormat(), ITERATIONS_FOR_RANDOM_TEST);
     }
 
 }

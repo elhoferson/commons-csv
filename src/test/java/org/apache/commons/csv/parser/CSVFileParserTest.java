@@ -18,6 +18,7 @@
 package org.apache.commons.csv.parser;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatBuilder;
 import org.apache.commons.csv.record.CSVRecord;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -65,17 +66,18 @@ public class CSVFileParserTest {
             final String[] split = line.split(" ");
             assertTrue(split.length >= 1, testFile.getName() + " require 1 param");
             // first line starts with csv data file name
-            CSVFormat format = CSVFormat.newFormat(',').withQuote('"');
+            CSVFormat format = new CSVFormatBuilder().setDelimiter(',').setQuote('"').setRecordSeparator(null).setIgnoreEmptyLines(false).build();
+            format.setQuoteCharacter('"');
             boolean checkComments = false;
             for (int i = 1; i < split.length; i++) {
                 final String option = split[i];
                 final String[] option_parts = option.split("=", 2);
                 if ("IgnoreEmpty".equalsIgnoreCase(option_parts[0])) {
-                    format = format.withIgnoreEmptyLines(Boolean.parseBoolean(option_parts[1]));
+                    format.setIgnoreEmptyLines(Boolean.parseBoolean(option_parts[1]));
                 } else if ("IgnoreSpaces".equalsIgnoreCase(option_parts[0])) {
-                    format = format.withIgnoreSurroundingSpaces(Boolean.parseBoolean(option_parts[1]));
+                    format.setIgnoreSurroundingSpaces(Boolean.parseBoolean(option_parts[1]));
                 } else if ("CommentStart".equalsIgnoreCase(option_parts[0])) {
-                    format = format.withCommentMarker(option_parts[1].charAt(0));
+                    format.setCommentMarker(option_parts[1].charAt(0));
                 } else if ("CheckComments".equalsIgnoreCase(option_parts[0])) {
                     checkComments = true;
                 } else {

@@ -18,6 +18,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.printer.CSVPrinter;
@@ -35,7 +36,8 @@ public class JiraCsv249Test {
 
     @Test
     public void testJiraCsv249() throws IOException {
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setEscape('\\').build();
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        csvFormat.setEscapeCharacter('\\');
         final StringWriter stringWriter = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(stringWriter, csvFormat)) {
             printer.printRecord("foo \\", "bar");

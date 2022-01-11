@@ -53,6 +53,4 @@ public interface ICSVFormat extends Serializable {
     boolean isNullStringSet();
 
     boolean isQuoteCharacterSet();
-
-    CSVFormatBuilder builder();
 }

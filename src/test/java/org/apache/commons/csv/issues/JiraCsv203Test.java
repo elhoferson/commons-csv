@@ -19,6 +19,7 @@ package org.apache.commons.csv.issues;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Test;
@@ -32,11 +33,12 @@ public class JiraCsv203Test {
     @Test
     public void testQuoteModeAll() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .setQuoteMode(QuoteMode.ALL)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setNullString("N/A");
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteMode(QuoteMode.ALL);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {
@@ -48,11 +50,12 @@ public class JiraCsv203Test {
     @Test
     public void testQuoteModeAllNonNull() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .setQuoteMode(QuoteMode.ALL_NON_NULL)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setNullString("N/A");
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteMode(QuoteMode.ALL_NON_NULL);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {
@@ -64,11 +67,12 @@ public class JiraCsv203Test {
     @Test
     public void testQuoteModeMinimal() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .setQuoteMode(QuoteMode.MINIMAL)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setNullString("N/A");
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteMode(QuoteMode.MINIMAL);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {
@@ -80,11 +84,12 @@ public class JiraCsv203Test {
     @Test
     public void testQuoteModeNonNumeric() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .setQuoteMode(QuoteMode.NON_NUMERIC)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setNullString("N/A");
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteMode(QuoteMode.NON_NUMERIC);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {
@@ -96,11 +101,12 @@ public class JiraCsv203Test {
     @Test
     public void testWithEmptyValues() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .setQuoteMode(QuoteMode.ALL)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setNullString("N/A");
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteMode(QuoteMode.ALL);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {
@@ -113,11 +119,11 @@ public class JiraCsv203Test {
     @Test
     public void testWithoutNullString() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                //.setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .setQuoteMode(QuoteMode.ALL)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setIgnoreSurroundingSpaces(true);
+        format.setQuoteMode(QuoteMode.ALL);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {
@@ -129,10 +135,11 @@ public class JiraCsv203Test {
     @Test
     public void testWithoutQuoteMode() throws Exception {
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setNullString("N/A")
-                .setIgnoreSurroundingSpaces(true)
-                .build();
+
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setNullString("N/A");
+        format.setIgnoreSurroundingSpaces(true);
+
         // @formatter:on
         final StringBuilder buffer = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(buffer, format)) {

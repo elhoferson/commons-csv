@@ -9,16 +9,7 @@ public class JiraCsv106 {
 
     @Test
     public void testNullRecordSeparatorCsv106() {
-        final CSVFormat format = CSVFormat.newFormat(';').builder().setSkipHeaderRecord(true).setHeader("H1", "H2").build();
-        final String formatStr = format.format("A", "B");
-        assertNotNull(formatStr);
-        assertFalse(formatStr.endsWith("null"));
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testNullRecordSeparatorCsv106__Deprecated() {
-        final CSVFormat format = CSVFormat.newFormat(';').withSkipHeaderRecord().withHeader("H1", "H2");
+        final CSVFormat format = new CSVFormatBuilder().setDelimiter(';').setSkipHeaderRecord(true).setHeaders("H1", "H2").build();
         final String formatStr = format.format("A", "B");
         assertNotNull(formatStr);
         assertFalse(formatStr.endsWith("null"));

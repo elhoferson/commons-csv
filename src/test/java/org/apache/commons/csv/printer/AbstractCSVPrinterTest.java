@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ public abstract class AbstractCSVPrinterTest {
 
     public static final char DQUOTE_CHAR = '"';
 
-    public final String recordSeparator = CSVFormat.DEFAULT.getRecordSeparator();
+    public final String recordSeparator = CSVFormatPredefinedFormats.Default.getFormat().getRecordSeparator();
 
 
     /**

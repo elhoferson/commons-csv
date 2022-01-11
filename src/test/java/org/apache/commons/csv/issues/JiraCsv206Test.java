@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.printer.CSVPrinter;
@@ -36,7 +37,8 @@ public class JiraCsv206Test {
         // Read with multiple character delimiter
         final String source = "FirstName[|]LastName[|]Address\r\nJohn[|]Smith[|]123 Main St.";
         final StringReader reader = new StringReader(source);
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setDelimiter("[|]").build();
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        csvFormat.setDelimiter("[|]");
         CSVRecord record = null;
         try (final ICSVParser ICSVParser = new CSVParser(reader, csvFormat)) {
             final Iterator<CSVRecord> iterator = ICSVParser.iterator();
@@ -54,10 +56,12 @@ public class JiraCsv206Test {
             + "John[I]Smith[I]123 Main St.";
         final String comment = "Change delimiter to [I]";
         // @formatter:off
-        final CSVFormat format = CSVFormat.EXCEL.builder()
-                .setDelimiter("[I]").setHeader("first name", "last name", "address")
-                .setCommentMarker('#')
-                .setHeaderComments(comment).build();
+        CSVFormat format = CSVFormatPredefinedFormats.Excel.getFormat();
+        format.setDelimiter("[I]");
+        format.setHeader("first name", "last name", "address");
+        format.setCommentMarker('#');
+        format.setHeaderComments(comment);
+
         // @formatter:on
         final StringBuilder out = new StringBuilder();
         try (final CSVPrinter printer = new CSVPrinter(out, format)) {

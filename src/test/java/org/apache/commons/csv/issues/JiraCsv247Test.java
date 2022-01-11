@@ -18,6 +18,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
@@ -34,7 +35,9 @@ public class JiraCsv247Test {
 
     @Test
     public void testHeadersMissingOneColumnWhenAllowingMissingColumnNames() throws Exception {
-        final CSVFormat format = CSVFormat.DEFAULT.builder().setHeader().setAllowMissingColumnNames(true).build();
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader();
+        format.setAllowMissingColumnNames(true);
 
         assertTrue(format.getAllowMissingColumnNames(), "We should allow missing column names");
 
@@ -60,7 +63,8 @@ public class JiraCsv247Test {
 
     @Test
     public void testHeadersMissingThrowsWhenNotAllowingMissingColumnNames() {
-        final CSVFormat format = CSVFormat.DEFAULT.builder().setHeader().build();
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader();
 
         assertFalse(format.getAllowMissingColumnNames(), "By default we should not allow missing column names");
 

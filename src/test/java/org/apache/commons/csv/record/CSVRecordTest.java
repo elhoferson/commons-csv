@@ -17,6 +17,7 @@
 package org.apache.commons.csv.record;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.printer.CSVPrinter;
@@ -65,11 +66,14 @@ public class CSVRecordTest {
     public void setUp() throws Exception {
         values = new String[] { "A", "B", "C" };
         final String rowData = StringUtils.join(values, ',');
-        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT)) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), format)) {
             record = parser.iterator().next();
         }
         final String[] headers = { "first", "second", "third" };
-        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT.withHeader(headers))) {
+        CSVFormat format1 = format.copy();
+        format1.setHeader(headers);
+        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), format1)) {
             recordWithHeader = parser.iterator().next();
             headerMap = parser.getHeaderMap();
         }
@@ -77,7 +81,9 @@ public class CSVRecordTest {
 
     @Test
     public void testCSVRecordNULLValues() throws IOException {
-        final ICSVParser parser = CSVParser.parse("A,B\r\nONE,TWO", CSVFormat.DEFAULT.withHeader());
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader();
+        final ICSVParser parser = CSVParser.parse("A,B\r\nONE,TWO", format);
         final CSVRecord csvRecord = new CSVRecord(parser, null, null, 0L, 0L);
         assertEquals(0, csvRecord.size());
         assertThrows(IllegalArgumentException.class, () -> csvRecord.get("B"));
@@ -154,7 +160,9 @@ public class CSVRecordTest {
     public void testIsInconsistent() throws IOException {
         final String[] headers = { "first", "second", "third" };
         final String rowData = StringUtils.join(values, ',');
-        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), CSVFormat.DEFAULT.withHeader(headers))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader(headers);
+        try (final ICSVParser parser = new CSVParser(new StringReader(rowData), format)) {
             final Map<String, Integer> map = parser.getHeaderMapRaw();
             final CSVRecord record1 = parser.iterator().next();
             map.put("fourth", Integer.valueOf(4));
@@ -208,7 +216,7 @@ public class CSVRecordTest {
     @Test
     public void testRemoveAndAddColumns() throws IOException {
         // do:
-        try (final CSVPrinter printer = new CSVPrinter(new StringBuilder(), CSVFormat.DEFAULT)) {
+        try (final CSVPrinter printer = new CSVPrinter(new StringBuilder(), CSVFormatPredefinedFormats.Default.getFormat())) {
             final Map<String, String> map = recordWithHeader.toMap();
             map.remove("OldColumn");
             map.put("ZColumn", "NewValue");
@@ -216,14 +224,17 @@ public class CSVRecordTest {
             final ArrayList<String> list = new ArrayList<>(map.values());
             Collections.sort(list);
             printer.printRecord(list);
-            assertEquals("A,B,C,NewValue" + CSVFormat.DEFAULT.getRecordSeparator(), printer.getOut().toString());
+            assertEquals("A,B,C,NewValue" + CSVFormatPredefinedFormats.Default.getFormat().getRecordSeparator(), printer.getOut().toString());
         }
     }
 
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         final CSVRecord shortRec;
-        try (final ICSVParser parser = CSVParser.parse("A,B\n#my comment\nOne,Two", CSVFormat.DEFAULT.withHeader().withCommentMarker('#'))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader();
+        format.setCommentMarker('#');
+        try (final ICSVParser parser = CSVParser.parse("A,B\n#my comment\nOne,Two", format)) {
             shortRec = parser.iterator().next();
         }
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -284,7 +295,8 @@ public class CSVRecordTest {
 
     @Test
     public void testToMapWithNoHeader() throws Exception {
-        try (final ICSVParser parser = CSVParser.parse("a,b", CSVFormat.newFormat(','))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        try (final ICSVParser parser = CSVParser.parse("a,b", format)) {
             final CSVRecord shortRec = parser.iterator().next();
             final Map<String, String> map = shortRec.toMap();
             assertNotNull(map, "Map is not null.");
@@ -294,7 +306,9 @@ public class CSVRecordTest {
 
     @Test
     public void testToMapWithShortRecord() throws Exception {
-        try (final ICSVParser parser = CSVParser.parse("a,b", CSVFormat.DEFAULT.withHeader("A", "B", "C"))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader("A", "B", "C");
+        try (final ICSVParser parser = CSVParser.parse("a,b", format)) {
             final CSVRecord shortRec = parser.iterator().next();
             shortRec.toMap();
         }

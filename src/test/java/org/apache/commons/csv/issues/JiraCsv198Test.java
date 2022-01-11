@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
@@ -33,14 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JiraCsv198Test {
 
-    // @formatter:off
-    private static final CSVFormat CSV_FORMAT = CSVFormat.EXCEL.builder()
-        .setDelimiter('^')
-        .setHeader()
-        .setSkipHeaderRecord(true)
-        .build();
-    // @formatter:on
-
     @Test
     @Disabled
     public void test() throws UnsupportedEncodingException, IOException {
@@ -48,7 +41,7 @@ public class JiraCsv198Test {
             .getResourceAsStream("/org/apache/commons/csv/CSV-198/optd_por_public.csv");
         assertNotNull(pointsOfReference);
         try (@SuppressWarnings("resource")
-             ICSVParser parser = new CSVParser(new InputStreamReader(pointsOfReference, StandardCharsets.UTF_8), CSVFormat.DEFAULT)) {
+             ICSVParser parser = new CSVParser(new InputStreamReader(pointsOfReference, StandardCharsets.UTF_8), CSVFormatPredefinedFormats.Default.getFormat())) {
             for (final CSVRecord record : parser) {
                 final String locationType = record.get("location_type");
                 assertNotNull(locationType);

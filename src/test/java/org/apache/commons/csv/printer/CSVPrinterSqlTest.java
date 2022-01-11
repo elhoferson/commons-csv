@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.util.IOUtils;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,7 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         try (final Connection connection = getH2Connection()) {
             setUpTable(connection);
             try (final Statement stmt = connection.createStatement();
-                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT);
+                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Default.getFormat());
                  final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST");) {
                 printer.printRecords(resultSet);
             }
@@ -38,10 +39,13 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         Class.forName("org.h2.Driver");
         try (final Connection connection = getH2Connection()) {
             setUpTable(connection);
+            CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
             try (final Statement stmt = connection.createStatement();
-                 final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST");
-                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(resultSet))) {
-                printer.printRecords(resultSet);
+                 final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST")) {
+                format.setHeader(resultSet);
+                try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
+                    printer.printRecords(resultSet);
+                }
             }
         }
         assertEquals("ID,NAME,TEXT" + recordSeparator + "1,r1,\"long text 1\"" + recordSeparator + "2,r2,\"" + longText2
@@ -54,7 +58,7 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         try (final Connection connection = getH2Connection()) {
             setUpTable(connection);
             try (final Statement stmt = connection.createStatement();
-                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT);) {
+                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormatPredefinedFormats.Default.getFormat());) {
                 try (final ResultSet resultSet = stmt.executeQuery("select ID, NAME from TEST")) {
                     printer.printRecords(resultSet, true);
                     assertEquals("ID,NAME" + recordSeparator + "1,r1" + recordSeparator + "2,r2" + recordSeparator,
@@ -75,10 +79,14 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         Class.forName("org.h2.Driver");
         try (final Connection connection = getH2Connection()) {
             setUpTable(connection);
+            CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
             try (final Statement stmt = connection.createStatement();
-                 final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST");
-                 final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(resultSet.getMetaData()))) {
-                printer.printRecords(resultSet);
+                 final ResultSet resultSet = stmt.executeQuery("select ID, NAME, TEXT from TEST")) {
+                format.setHeader(resultSet.getMetaData());
+                try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
+                    printer.printRecords(resultSet);
+                }
+
                 assertEquals("ID,NAME,TEXT" + recordSeparator + "1,r1,\"long text 1\"" + recordSeparator + "2,r2,\""
                         + longText2 + "\"" + recordSeparator, sw.toString());
             }
@@ -89,12 +97,15 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
     public void testMySqlNullOutput() throws IOException {
         Object[] s = new String[] { "NULL", null };
         String expected = "\"NULL\"\tNULL\n";
-        CSVFormat format = CSVFormat.MYSQL.withQuote(DQUOTE_CHAR).withNullString("NULL")
-                .withQuoteMode(QuoteMode.NON_NUMERIC);
+        CSVFormat format = CSVFormatPredefinedFormats.MySQL.getFormat();
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setNullString("NULL");
+        format.setQuoteMode(QuoteMode.NON_NUMERIC);
         compareActualOutputWithExpectedOutputMySQL(s, expected, format, false);
 
         s = new String[] { "\\N", null };
-        format = CSVFormat.MYSQL.withNullString("\\N");
+        format = CSVFormatPredefinedFormats.MySQL.getFormat();
+        format.setNullString("\\N");
         expected = "\\\\N\t\\N\n";
         compareActualOutputWithExpectedOutputMySQL(s, expected, format, true);
 
@@ -107,12 +118,13 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         compareActualOutputWithExpectedOutputMySQL(s, expected, format, true);
 
         s = new String[] { "", null };
-        format = CSVFormat.MYSQL.withNullString("NULL");
+        format = CSVFormatPredefinedFormats.MySQL.getFormat();
+        format.setNullString("NULL");
         expected = "\tNULL\n";
         compareActualOutputWithExpectedOutputMySQL(s, expected, format, true);
 
         s = new String[] { "", null };
-        format = CSVFormat.MYSQL;
+        format = CSVFormatPredefinedFormats.MySQL.getFormat();
         expected = "\t\\N\n";
         compareActualOutputWithExpectedOutputMySQL(s, expected, format, true);
 
@@ -131,19 +143,23 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
 
     @Test
     public void testMySqlNullStringDefault() {
-        assertEquals("\\N", CSVFormat.MYSQL.getNullString());
+        assertEquals("\\N", CSVFormatPredefinedFormats.MySQL.getFormat().getNullString());
     }
 
 
     @Test
     public void testPostgreSqlCsvNullOutput() throws IOException {
         Object[] s = new String[] { "NULL", null };
-        CSVFormat format = CSVFormat.POSTGRESQL_CSV.withQuote(DQUOTE_CHAR).withNullString("NULL").withQuoteMode(QuoteMode.ALL_NON_NULL);
+        CSVFormat format = CSVFormatPredefinedFormats.PostgreSQLCsv.getFormat();
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setNullString("NULL");
+        format.setQuoteMode(QuoteMode.ALL_NON_NULL);
         String expected = "\"NULL\",NULL\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
         s = new String[] { "\\N", null };
-        format = CSVFormat.POSTGRESQL_CSV.withNullString("\\N");
+        format = CSVFormatPredefinedFormats.PostgreSQLCsv.getFormat();
+        format.setNullString("\\N");
         expected = "\"\\N\",\\N\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
@@ -160,7 +176,7 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
         s = new String[] { "", null };
-        format = CSVFormat.POSTGRESQL_CSV;
+        format = CSVFormatPredefinedFormats.PostgreSQLCsv.getFormat();
         expected = "\"\",\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
@@ -176,12 +192,16 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
     @Test
     public void testPostgreSqlCsvTextOutput() throws IOException {
         Object[] s = new String[] { "NULL", null };
-        CSVFormat format = CSVFormat.POSTGRESQL_TEXT.withQuote(DQUOTE_CHAR).withNullString("NULL").withQuoteMode(QuoteMode.ALL_NON_NULL);
+        CSVFormat format = CSVFormatPredefinedFormats.PostgreSQLText.getFormat();
+        format.setQuoteCharacter(DQUOTE_CHAR);
+        format.setNullString("NULL");
+        format.setQuoteMode(QuoteMode.ALL_NON_NULL);
         String expected = "\"NULL\"\tNULL\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
         s = new String[] { "\\N", null };
-        format = CSVFormat.POSTGRESQL_TEXT.withNullString("\\N");
+        format = CSVFormatPredefinedFormats.PostgreSQLText.getFormat();
+        format.setNullString("\\N");
         expected = "\"\\\\N\"\t\\N\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
@@ -194,12 +214,13 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
         s = new String[] { "", null };
-        format = CSVFormat.POSTGRESQL_TEXT.withNullString("NULL");
+        format = CSVFormatPredefinedFormats.PostgreSQLText.getFormat();
+        format.setNullString("NULL");
         expected = "\"\"\tNULL\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
         s = new String[] { "", null };
-        format = CSVFormat.POSTGRESQL_TEXT;
+        format = CSVFormatPredefinedFormats.PostgreSQLText.getFormat();
         expected = "\"\"\t\\N\n";
         compareActualOutputWithExpectedOutputPostgres(s, expected, format);
 
@@ -214,12 +235,12 @@ public class CSVPrinterSqlTest extends AbstractCSVPrinterTest {
 
     @Test
     public void testPostgreSqlNullStringDefaultCsv() {
-        assertEquals("", CSVFormat.POSTGRESQL_CSV.getNullString());
+        assertEquals("", CSVFormatPredefinedFormats.PostgreSQLCsv.getFormat().getNullString());
     }
 
     @Test
     public void testPostgreSqlNullStringDefaultText() {
-        assertEquals("\\N", CSVFormat.POSTGRESQL_TEXT.getNullString());
+        assertEquals("\\N", CSVFormatPredefinedFormats.PostgreSQLText.getFormat().getNullString());
     }
 
     private void setUpTable(final Connection connection) throws SQLException {

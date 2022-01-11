@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.format.QuoteMode;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,9 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterQuoted() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote('\''))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter('\'');
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a,b,c");
             printer.print("xyz");
             assertEquals("'a,b,c',xyz", sw.toString());
@@ -24,7 +27,9 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterQuoteNone() throws IOException {
         final StringWriter sw = new StringWriter();
-        final CSVFormat format = CSVFormat.DEFAULT.withEscape('!').withQuoteMode(QuoteMode.NONE);
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter('!');
+        format.setQuoteMode(QuoteMode.NONE);
         try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a,b,c");
             printer.print("xyz");
@@ -35,7 +40,10 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterStringQuoted() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.builder().setDelimiter("[|]").setQuote('\'').build())) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setDelimiter("[|]");
+        format.setQuoteCharacter('\'');
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a[|]b[|]c");
             printer.print("xyz");
             assertEquals("'a[|]b[|]c'[|]xyz", sw.toString());
@@ -45,7 +53,10 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterStringQuoteNone() throws IOException {
         final StringWriter sw = new StringWriter();
-        final CSVFormat format = CSVFormat.DEFAULT.builder().setDelimiter("[|]").setEscape('!').setQuoteMode(QuoteMode.NONE).build();
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setDelimiter("[|]");
+        format.setEscapeCharacter('!');
+        format.setQuoteMode(QuoteMode.NONE);
         try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a[|]b[|]c");
             printer.print("xyz");
@@ -57,7 +68,10 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterEscaped() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withEscape('!').withQuote(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter('!');
+        format.setQuoteCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a,b,c");
             printer.print("xyz");
             assertEquals("a!,b!,c,xyz", sw.toString());
@@ -67,7 +81,9 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterPlain() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a,b,c");
             printer.print("xyz");
             assertEquals("a,b,c,xyz", sw.toString());
@@ -77,7 +93,11 @@ public class CSVPrinterDelimiterTest {
     @Test
     public void testDelimiterStringEscaped() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.builder().setDelimiter("|||").setEscape('!').setQuote(null).build())) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setDelimiter("|||");
+        format.setEscapeCharacter('!');
+        format.setQuoteCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("a|||b|||c");
             printer.print("xyz");
             assertEquals("a!|!|!|b!|!|!|c|||xyz", sw.toString());

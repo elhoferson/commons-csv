@@ -17,8 +17,7 @@
 
 package org.apache.commons.csv.printer;
 
-import org.apache.commons.csv.format.ICSVFormat;
-import org.apache.commons.csv.format.QuoteMode;
+import org.apache.commons.csv.format.*;
 import org.apache.commons.csv.parser.ExtendedBufferedReader;
 import org.apache.commons.csv.util.IOUtils;
 
@@ -231,7 +230,9 @@ public class CSVPrinter implements ICSVPrinter {
      */
     @Override
     public void printHeaders(final ResultSet resultSet) throws IOException, SQLException {
-        printRecord((Object[]) format.builder().setHeader(resultSet).build().getHeader());
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setHeader(resultSet);
+        printRecord((Object[]) format.getHeader());
     }
 
     /**

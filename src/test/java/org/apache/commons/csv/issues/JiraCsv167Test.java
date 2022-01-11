@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.format.QuoteMode;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
@@ -56,22 +57,15 @@ public class JiraCsv167Test {
                 }
             }
         }
-        final CSVFormat format = CSVFormat.DEFAULT.builder()
+
         // @formatter:off
-            .setAllowMissingColumnNames(false)
-            .setCommentMarker('#')
-            .setDelimiter(',')
-            .setEscape('\\')
-            .setHeader("author", "title", "publishDate")
-            .setHeaderComments("headerComment")
-            .setNullString("NULL")
-            .setIgnoreEmptyLines(true)
-            .setIgnoreSurroundingSpaces(true)
-            .setQuote('"')
-            .setQuoteMode(QuoteMode.ALL)
-            .setRecordSeparator('\n')
-            .setSkipHeaderRecord(false)
-            .build();
+        CSVFormat format = new CSVFormat(",", '"', QuoteMode.ALL,
+                '#', '\\', true,
+                true, "\n", "NULL", new String[] {"headerComment"},
+                new String[]{"author", "title", "publishDate"}, false,
+                false, true, true,
+                true, true, true);
+
         // @formatter:on
         int comments = 0;
         int records = 0;

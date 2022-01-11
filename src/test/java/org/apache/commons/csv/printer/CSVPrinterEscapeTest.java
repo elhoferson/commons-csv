@@ -1,6 +1,7 @@
 package org.apache.commons.csv.printer;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +16,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeBackslash1() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote(QUOTE_CH))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter(QUOTE_CH);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\");
         }
         assertEquals("\\", sw.toString());
@@ -24,7 +27,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeBackslash2() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote(QUOTE_CH))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter(QUOTE_CH);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\\r");
         }
         assertEquals("'\\\r'", sw.toString());
@@ -33,7 +38,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeBackslash3() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote(QUOTE_CH))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter(QUOTE_CH);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("X\\\r");
         }
         assertEquals("'X\\\r'", sw.toString());
@@ -42,7 +49,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeBackslash4() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote(QUOTE_CH))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter(QUOTE_CH);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\\\");
         }
         assertEquals("\\\\", sw.toString());
@@ -51,7 +60,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeBackslash5() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuote(QUOTE_CH))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setQuoteCharacter(QUOTE_CH);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\\\");
         }
         assertEquals("\\\\", sw.toString());
@@ -60,7 +71,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeNull1() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withEscape(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\");
         }
         assertEquals("\\", sw.toString());
@@ -69,7 +82,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeNull2() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withEscape(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\\r");
         }
         assertEquals("\"\\\r\"", sw.toString());
@@ -78,7 +93,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeNull3() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withEscape(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("X\\\r");
         }
         assertEquals("\"X\\\r\"", sw.toString());
@@ -87,7 +104,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeNull4() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withEscape(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\\\");
         }
         assertEquals("\\\\", sw.toString());
@@ -96,7 +115,9 @@ public class CSVPrinterEscapeTest {
     @Test
     public void testEscapeNull5() throws IOException {
         final StringWriter sw = new StringWriter();
-        try (final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withEscape(null))) {
+        CSVFormat format = CSVFormatPredefinedFormats.Default.getFormat();
+        format.setEscapeCharacter(null);
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
             printer.print("\\\\");
         }
         assertEquals("\\\\", sw.toString());

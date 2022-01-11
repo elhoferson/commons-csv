@@ -18,6 +18,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
@@ -44,11 +45,12 @@ public class JiraCsv265Test {
                          + "# Comment3\n"
                          + "Value3,Value4\n"
                          + "# Comment4\n";
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setCommentMarker('#')
-            .setHeader()
-            .setSkipHeaderRecord(true)
-            .build();
+
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        csvFormat.setCommentMarker('#');
+        csvFormat.setHeader();
+        csvFormat.setSkipHeaderRecord(true);
+
         // @formatter:on
         try (final ICSVParser parser = new CSVParser(new StringReader(csv), csvFormat)) {
             final Iterator<CSVRecord> itr = parser.iterator();
@@ -71,11 +73,12 @@ public class JiraCsv265Test {
                          + "# Comment5\n"
                          + "# Comment6\n"
                          + "Value3,Value4";
-        final CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setCommentMarker('#')
-            .setHeader()
-            .setSkipHeaderRecord(true)
-            .build();
+
+        CSVFormat csvFormat = CSVFormatPredefinedFormats.Default.getFormat();
+        csvFormat.setCommentMarker('#');
+        csvFormat.setHeader();
+        csvFormat.setSkipHeaderRecord(true);
+
         // @formatter:on
         try (final ICSVParser parser = new CSVParser(new StringReader(csv), csvFormat)) {
             final Iterator<CSVRecord> itr = parser.iterator();

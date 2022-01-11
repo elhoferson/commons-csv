@@ -17,6 +17,7 @@
 package org.apache.commons.csv.issues;
 
 import org.apache.commons.csv.format.CSVFormat;
+import org.apache.commons.csv.format.CSVFormatPredefinedFormats;
 import org.apache.commons.csv.parser.CSVParser;
 import org.apache.commons.csv.parser.ICSVParser;
 import org.apache.commons.csv.record.CSVRecord;
@@ -36,6 +37,7 @@ public class JiraCsv149Test {
         testJiraCsv149EndWithEolAtEof(true);
     }
 
+    @Test
     private void testJiraCsv149EndWithEolAtEof(final boolean eolAtEof) throws IOException {
         String source = "A,B,C,D" + CR_LF + "a1,b1,c1,d1" + CR_LF + "a2,b2,c2,d2";
         if (eolAtEof) {
@@ -43,11 +45,11 @@ public class JiraCsv149Test {
         }
         final StringReader records = new StringReader(source);
         // @formatter:off
-        final CSVFormat format = CSVFormat.RFC4180.builder()
-            .setHeader()
-            .setSkipHeaderRecord(true)
-            .setQuote('"')
-            .build();
+        CSVFormat format = CSVFormatPredefinedFormats.RFC4180.getFormat();
+        format.setHeader();
+        format.setSkipHeaderRecord(true);
+        format.setQuoteCharacter('"');
+
         // @formatter:on
         int lineCounter = 2;
         try (final ICSVParser parser = new CSVParser(records, format)) {
