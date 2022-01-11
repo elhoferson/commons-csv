@@ -17,6 +17,7 @@
 
 package org.apache.commons.csv.format;
 
+import org.apache.commons.csv.Constants;
 import org.apache.commons.csv.printer.CSVPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -353,4 +354,9 @@ public class CSVFormatTest {
         assertEquals("header", out.toString());
     }
 
+    @Test
+    public void testConstantsInitialization() {
+        Constants constants = new Constants();
+        assertNotNull(constants);
+    }
 }
