@@ -1,7 +1,10 @@
 package org.apache.commons.csv.format;
 
+import org.h2.tools.SimpleResultSet;
 import org.junit.jupiter.api.Test;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import static org.apache.commons.csv.Constants.CR;
@@ -29,6 +32,7 @@ public class CSVFormatHeaderTest {
                 () -> new CSVFormatBuilder().setAllowDuplicateHeaderNames(false).setHeaders("A", "A").build());
     }
 
+    @Test
     public void testDuplicateHeaderElementsTrue() {
         new CSVFormatBuilder().setAllowDuplicateHeaderNames(true).setHeaders("A", "A").build();
     }
@@ -52,7 +56,7 @@ public class CSVFormatHeaderTest {
         assertNotEquals(right, left);
     }
 
-
+    @Test
     public void testEqualsSkipHeaderRecord() {
         final CSVFormat right = new CSVFormatBuilder().setDelimiter('\'')
                 .setRecordSeparator(CR)
@@ -89,5 +93,26 @@ public class CSVFormatHeaderTest {
     public void testWithHeaderEnum() {
         final CSVFormat formatWithHeader = new CSVFormatBuilder().setHeader(Header.class).build();
         assertArrayEquals(new String[]{ "Name", "Email", "Phone" }, formatWithHeader.getHeader());
+    }
+
+    @Test
+    public void testWithHeaderEnumInFormatClass() {
+        final CSVFormat formatWithHeader = CSVFormatPredefinedFormats.Default.getFormat();
+        formatWithHeader.setHeader(Header.class);
+        assertArrayEquals(new String[]{ "Name", "Email", "Phone" }, formatWithHeader.getHeader());
+    }
+
+    @Test
+    public void testWithHeaderResultSetMetadata() throws SQLException {
+        final ResultSet resultSet = new SimpleResultSet();
+        final CSVFormat formatWithHeader = new CSVFormatBuilder().setHeader(resultSet.getMetaData()).build();
+        assertEquals(0, formatWithHeader.getHeader().length);
+    }
+
+    @Test
+    public void testWithHeaderResultSet() throws SQLException {
+        final ResultSet resultSet = new SimpleResultSet();
+        final CSVFormat formatWithHeader = new CSVFormatBuilder().setHeader(resultSet).build();
+        assertEquals(0, formatWithHeader.getHeader().length);
     }
 }

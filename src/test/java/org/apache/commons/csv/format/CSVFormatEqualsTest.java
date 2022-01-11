@@ -1,13 +1,13 @@
 package org.apache.commons.csv.format;
 
+import org.apache.commons.csv.Constants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.LF;
+import static org.apache.commons.csv.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CSVFormatEqualsTest {
@@ -40,6 +40,22 @@ public class CSVFormatEqualsTest {
 
         assertEquals(right.hashCode(), right.hashCode());
         assertEquals(right.hashCode(), left.hashCode());
+    }
+
+    @Test
+    public void testEqualsNullObj() {
+        final CSVFormat right = CSVFormatPredefinedFormats.Default.getFormat();
+        final CSVFormat left = null;
+
+        assertFalse(right.equals(left));
+    }
+
+    @Test
+    public void testEqualsWrongClass() {
+        final CSVFormat right = CSVFormatPredefinedFormats.Default.getFormat();
+        final String left = "asdf";
+
+        assertFalse(right.equals(left));
     }
 
     @Test
@@ -178,13 +194,50 @@ public class CSVFormatEqualsTest {
                 .setNullString("null")
                 .build();
         final CSVFormat left = right.copy();
-                left.setNullString("---");
+        left.setNullString("---");
 
 
         assertNotEquals(right, left);
     }
 
+    @Test
+    public void testEqualsAllowDuplicateHeaderNames() {
+        final CSVFormat right = new CSVFormatBuilder().setDelimiter('\'')
+                .setAllowDuplicateHeaderNames(true)
+                .build();
+        final CSVFormat left = right.copy();
+        left.setAllowDuplicateHeaderNames(false);
 
+
+        assertNotEquals(right, left);
+    }
+
+    @Test
+    public void testEqualsAllowMissingColumnNames() {
+        final CSVFormat right = new CSVFormatBuilder().setDelimiter('\'')
+                .setAllowDuplicateHeaderNames(true)
+                .setAllowMissingColumnNames(true)
+                .build();
+        final CSVFormat left = right.copy();
+        left.setAllowMissingColumnNames(false);
+
+
+        assertNotEquals(right, left);
+    }
+
+    @Test
+    public void testEqualsAutoflush() {
+        final CSVFormat right = new CSVFormatBuilder().setDelimiter('\'')
+                .setAllowDuplicateHeaderNames(true)
+                .setAllowMissingColumnNames(true)
+                .setAutoFlush(true)
+                .build();
+        final CSVFormat left = right.copy();
+        left.setAutoFlush(false);
+
+
+        assertNotEquals(right, left);
+    }
 
     @Test
     public void testEqualsOne() {
@@ -205,7 +258,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormatOne.isCommentMarkerSet());
         assertTrue(csvFormatOne.isQuoteCharacterSet());
 
-        assertEquals('|', csvFormatOne.getDelimiter());
+        assertEquals("|", csvFormatOne.getDelimiterString());
         assertFalse(csvFormatOne.getAllowMissingColumnNames());
 
         assertTrue(csvFormatOne.isEscapeCharacterSet());
@@ -227,7 +280,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormatTwo.getAllowMissingColumnNames());
         assertEquals(QuoteMode.ALL_NON_NULL, csvFormatTwo.getQuoteMode());
 
-        assertEquals('\t', csvFormatTwo.getDelimiter());
+        assertEquals("\t", csvFormatTwo.getDelimiterString());
         assertEquals("\n", csvFormatTwo.getRecordSeparator());
 
         assertFalse(csvFormatTwo.isQuoteCharacterSet());
@@ -260,21 +313,79 @@ public class CSVFormatEqualsTest {
     public void testEqualsRecordSeparator() {
         final CSVFormat right = new CSVFormatBuilder()
                 .setRecordSeparator(CR)
+                .setCommentMarker(US)
+                .setEscape('+')
+                .setIgnoreEmptyLines(true)
+                .setIgnoreSurroundingSpaces(true)
+                .setQuote(RS)
+                .setQuoteMode(QuoteMode.ALL)
+                .build();
+        final CSVFormat left = right.copy();
+        left.setRecordSeparator(LF);
+
+        assertNotEquals(right, left);
+    }
+
+    @Test
+    public void testEqualsHeaderComments() {
+        final CSVFormat right = new CSVFormatBuilder()
+                .setRecordSeparator(NEXT_LINE)
                 .setCommentMarker('#')
                 .setEscape('+')
                 .setIgnoreEmptyLines(true)
                 .setIgnoreSurroundingSpaces(true)
                 .setQuote('"')
                 .setQuoteMode(QuoteMode.ALL)
+                .setHeaderComments("D", "E")
                 .build();
         final CSVFormat left = right.copy();
-                left.setRecordSeparator(LF);
+        left.setHeaderComments("D");
 
         assertNotEquals(right, left);
     }
 
+    @Test
+    public void testEqualsHeaderComments2() {
+        final CSVFormat right = new CSVFormatBuilder()
+                .setRecordSeparator(LINE_SEPARATOR)
+                .setCommentMarker('#')
+                .setEscape('+')
+                .setIgnoreEmptyLines(true)
+                .setIgnoreSurroundingSpaces(true)
+                .setQuote('"')
+                .setQuoteMode(QuoteMode.ALL)
+                .setHeaderComments("D", "E")
+                .build();
+        final CSVFormat left = right.copy();
+        left.setHeaderComments("D", 34);
 
+        assertNotEquals(right, left);
+    }
 
+    @Test
+    public void testEqualsNullQuotedString() {
+        final CSVFormat right = new CSVFormatBuilder()
+                .setAllowDuplicateHeaderNames(true)
+                .setAllowMissingColumnNames(true)
+                .setAutoFlush(true)
+                .setDelimiter(",")
+                .setRecordSeparator(PARAGRAPH_SEPARATOR)
+                .setCommentMarker('#')
+                .setEscape('+')
+                .setHeader("A", "B")
+                .setIgnoreHeaderCase(true)
+                .setIgnoreEmptyLines(true)
+                .setIgnoreSurroundingSpaces(true)
+                .setQuote('"')
+                .setQuoteMode(QuoteMode.ALL)
+                .setNullString("NULL")
+                .build();
+        right.setQuotedNullString("\"NULL\"");
+        final CSVFormat left = right.copy();
+        left.setQuotedNullString("NULL");
+
+        assertNotEquals(right, left);
+    }
 
     @Test
     public void testEqualsWithNull() {
@@ -299,7 +410,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormat.getAllowMissingColumnNames());
         assertEquals(QuoteMode.ALL_NON_NULL, csvFormat.getQuoteMode());
 
-        assertEquals('\t', csvFormat.getDelimiter());
+        assertEquals("\t", csvFormat.getDelimiterString());
         assertFalse(csvFormat.getSkipHeaderRecord());
 
         assertEquals("\n", csvFormat.getRecordSeparator());
@@ -326,7 +437,7 @@ public class CSVFormatEqualsTest {
         assertFalse(csvFormat.getAllowMissingColumnNames());
         assertEquals(QuoteMode.ALL_NON_NULL, csvFormat.getQuoteMode());
 
-        assertEquals('\t', csvFormat.getDelimiter());
+        assertEquals("\t", csvFormat.getDelimiterString());
         assertFalse(csvFormat.getSkipHeaderRecord());
 
         assertEquals("\n", csvFormat.getRecordSeparator());
